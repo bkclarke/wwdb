@@ -16,15 +16,16 @@ class Calibration(models.Model):
     appliedloadhigh = models.IntegerField(db_column='AppliedLoadHigh', blank=True, null=True)  # Field name made lowercase.
     tensionhigh = models.IntegerField(db_column='TensionHigh', blank=True, null=True)  # Field name made lowercase.
     rawmvhigh = models.FloatField(db_column='RawmVHigh', blank=True, null=True)  # Field name made lowercase.
-    calibrationid = models.IntegerField(db_column='CalibrationId', blank=True, null=True)  # Field name made lowercase.
+    calibrationid = models.ForeignKey('CalibrationMeta', models.DO_NOTHING, db_column='CalibrationId', blank=True, null=True),  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'Calibration'
+        verbose_name_plural = "Calibration"
 
 
-class Calibrationsmetadata(models.Model):
-    id = models.AutoField(db_column='CalibrationsId', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+class CalibrationMeta(models.Model):
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     winchid = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', blank=True, null=True)  # Field name made lowercase.
     date = models.DateField(db_column='Date', blank=True, null=True)  # Field name made lowercase.
     operatorid = models.ForeignKey('Winchoperator', models.DO_NOTHING, db_column='OperatorId', blank=True, null=True)  # Field name made lowercase.
@@ -36,7 +37,8 @@ class Calibrationsmetadata(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'CalibrationsMetadata'
+        db_table = 'CalibrationMeta'
+        verbose_name_plural = "CalibrationMeta"
 
 
 class Cast(models.Model):
@@ -54,6 +56,7 @@ class Cast(models.Model):
     class Meta:
         managed = False
         db_table = 'Cast'
+        verbose_name_plural = "Cast"
 
 
 class Cutbacksretermination(models.Model):
@@ -70,6 +73,7 @@ class Cutbacksretermination(models.Model):
     class Meta:
         managed = False
         db_table = 'CutbacksRetermination'
+        verbose_name_plural = "CutbacksRetermination"
 
 
 class Deploymenttype(models.Model):
@@ -80,6 +84,7 @@ class Deploymenttype(models.Model):
     class Meta:
         managed = False
         db_table = 'DeploymentType'
+        verbose_name_plural = "DeploymentType"
 
 
 class Drum(models.Model):
@@ -95,6 +100,7 @@ class Drum(models.Model):
     class Meta:
         managed = False
         db_table = 'Drum'
+        verbose_name_plural = "Drum"
 
 
 class Dynomometer(models.Model):
@@ -105,6 +111,7 @@ class Dynomometer(models.Model):
     class Meta:
         managed = False
         db_table = 'Dynomometer'
+        verbose_name_plural = "Dynomometer"
 
 
 class Frame(models.Model):
@@ -114,6 +121,7 @@ class Frame(models.Model):
     class Meta:
         managed = False
         db_table = 'Frame'
+        verbose_name_plural = "Frame"
 
 
 class Location(models.Model):
@@ -123,6 +131,7 @@ class Location(models.Model):
     class Meta:
         managed = False
         db_table = 'Location'
+        verbose_name_plural = "Location"
 
 
 class Lubrication(models.Model):
@@ -136,6 +145,7 @@ class Lubrication(models.Model):
     class Meta:
         managed = False
         db_table = 'Lubrication'
+        verbose_name_plural = "Lubrication"
 
 
 class Safeworkinglimit(models.Model):
@@ -149,6 +159,7 @@ class Safeworkinglimit(models.Model):
     class Meta:
         managed = False
         db_table = 'SafeWorkingLimit'
+        verbose_name_plural = "SafeWorkingLimit"
 
 
 class Termination(models.Model):
@@ -159,6 +170,7 @@ class Termination(models.Model):
     class Meta:
         managed = False
         db_table = 'Termination'
+        verbose_name_plural = "Termination"
 
 
 class Winch(models.Model):
@@ -173,6 +185,7 @@ class Winch(models.Model):
     class Meta:
         managed = False
         db_table = 'Winch'
+        verbose_name_plural = "Winch"
 
 
 class Winchoperator(models.Model):
@@ -184,25 +197,36 @@ class Winchoperator(models.Model):
     class Meta:
         managed = False
         db_table = 'WinchOperator'
+        verbose_name_plural = "WinchOperator"
 
+class WireRopeData(models.Model):
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    manufacturer = models.TextField(db_column='Manufacturer',blank=True, null=True)
+    manufacturerpartnumber = models.TextField(db_column='ManufacturerPartNumber', blank=True, null=True)  # Field name made lowercase.
+    cabletype = models.TextField(db_column='CableType', blank=True, null=True)  # Field name made lowercase.
+    nominalbreakingload = models.IntegerField(db_column='nominalbreakingload', blank=True, null=True)  # Field name made lowercase.
+    weightperfoot = models.FloatField(db_column='WeightPerFoot', blank=True, null=True)  # Field name made lowercase.
+    
+    class Meta:
+        managed = False
+        db_table = 'WireRopeData'
+        verbose_name_plural = 'WireRopeData'
 
 class Wire(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    wireropeid = models.ForeignKey(WireRopeData, models.DO_NOTHING, db_column='WireRopeId', blank=True, null=True)  # Field name made lowercase.
     manufacturerid = models.TextField(db_column='ManufacturerId', blank=True, null=True)  # Field name made lowercase.
     nsfid = models.TextField(db_column='NsfId', blank=True, null=True)  # Field name made lowercase.
-    manufacturerpartnumber = models.TextField(db_column='ManufacturerPartNumber', blank=True, null=True)  # Field name made lowercase.
-    manufacturer = models.TextField(db_column='Manufacturer', blank=True, null=True)  # Field name made lowercase.
-    cabletype = models.TextField(db_column='CableType', blank=True, null=True)  # Field name made lowercase.
     dateacquired = models.DateTimeField(db_column='DateAcquired', blank=True, null=True)  # Field name made lowercase.
     totalbreakingload = models.IntegerField(db_column='TotalBreakingLoad', blank=True, null=True)  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
-    nominalbreakingload = models.IntegerField(db_column='NominalBreakingLoad', blank=True, null=True)  # Field name made lowercase.
     length = models.IntegerField(db_column='Length', blank=True, null=True)  # Field name made lowercase.
+    status = models.IntegerField(db_column='Status', blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'Wire'
-
+        verbose_name_plural = "Wire"
 
 class Wiredrum(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -214,6 +238,7 @@ class Wiredrum(models.Model):
     class Meta:
         managed = False
         db_table = 'WireDrum'
+        verbose_name_plural = "WireDrum"
 
 
 class Wiretermination(models.Model):
@@ -226,3 +251,4 @@ class Wiretermination(models.Model):
     class Meta:
         managed = False
         db_table = 'WireTermination'
+        verbose_name_plural = "WireTermination"

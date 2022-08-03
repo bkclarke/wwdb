@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.apps import apps
+from django.db import models
+from django.forms import TextInput, Textarea
 
 app = apps.get_app_config('wwdb')
 
