@@ -6,6 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.urls import reverse
 
 
 class Calibration(models.Model):
@@ -58,6 +59,11 @@ class Cast(models.Model):
         db_table = 'Cast'
         verbose_name_plural = "Cast"
 
+    def __str__(self):
+        return self.operatorid
+
+    def get_absolute_url(self):
+        return reverse('castdetail', kwargs={'pk':self.pk})
 
 class Cutbacksretermination(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -151,10 +157,7 @@ class Lubrication(models.Model):
 class Safeworkinglimit(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True)  # Field name made lowercase.
-    freeendsafetyfactor = models.IntegerField(db_column='FreeEndSafetyFactor', blank=True, null=True)  # Field name made lowercase.
-    fixedendsafetyfactor = models.IntegerField(db_column='FixedEndSafetyFactor', blank=True, null=True)  # Field name made lowercase.
-    freeendsafeworkingload = models.IntegerField(db_column='FreeEndSafeWorkingLoad', blank=True, null=True)  # Field name made lowercase.
-    fixedendsafeworkingload = models.IntegerField(db_column='FixedEndSafeWorkingLoad', blank=True, null=True)  # Field name made lowercase.
+    factorofsafety = models.IntegerField(db_column='FactorofSafety', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -189,10 +192,12 @@ class Winch(models.Model):
 
 
 class Winchoperator(models.Model):
-    id = models.TextField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase. This field type is a guess.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase. This field type is a guess.
     status = models.BooleanField(db_column='Status', blank=True, null=True)  # Field name made lowercase.
     firstname = models.TextField(db_column='FirstName', blank=True, null=True)  # Field name made lowercase.
     lastname = models.TextField(db_column='LastName', blank=True, null=True)  # Field name made lowercase.
+    username = models.TextField(db_column='UserName', blank=True, null=True)  # Field name made lowercase.
+
 
     class Meta:
         managed = False
@@ -252,3 +257,4 @@ class Wiretermination(models.Model):
         managed = False
         db_table = 'WireTermination'
         verbose_name_plural = "WireTermination"
+
