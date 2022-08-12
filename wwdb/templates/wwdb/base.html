@@ -1,0 +1,26 @@
+﻿<!--template/base.html-->
+{% load static %}
+<html>
+    <head>
+        <title>WWDB</title>
+        <link href="{% static 'css/base.css' %}" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400" rel="stylesheet">
+    </head>
+    <body>
+        <div>
+            <header>
+                <div class="nav-left">
+                    <h1><a href="{% url 'home' %}">Winch Wire DataBase</a></h1>
+                </div>
+                <div class="nav-right">
+                    <a href="{% url 'startcast' %}">Start Cast</a>
+                </div>
+                <!---<div class="nav-right">
+                    <a href="{% url 'usersettings' %}">user settings</a>
+                </div>--->
+            </header>
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </body>
+</html>

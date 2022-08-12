@@ -1,0 +1,14 @@
+﻿<!--templates/usersettings.html-->
+{% extends "wwdb/base.html" %}
+
+{% block content %}
+
+{% for operator in winchoperator_list %}
+<div class="operator-entry">
+    <h2><a href="{% url 'userdetail' operator.pk %}">{{winchoperator.pk}}</a></h2>
+    <p>{{winchoperator.username}}</p>
+</div>
+{% endfor %}
+
+<a href="{% url 'adduser' %}"> Add User</a>
+{% endblock content %}

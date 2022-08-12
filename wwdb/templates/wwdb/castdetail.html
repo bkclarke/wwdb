@@ -1,0 +1,18 @@
+﻿<!--templates/castdetail.html-->
+{% extends "wwdb/base.html" %}
+
+{% block content %}
+<div class="cast-entry">
+    <h2>{{cast.operatorid}}</h2>
+    <p>{{cast.startdate}}</p>
+    <p>{{cast.enddate}}</p>
+    <p>{{cast.deploymenttypeid}}</p>
+    <p>{{cast.wireid}}</p>
+    <p>{{cast.winchid}}</p>
+    <p>{{cast.notes}}</p>
+    <p>{{cast.maxtension}}</p>
+    <p>{{cast.maxpayout}}</p>
+</div>
+
+<a href="{% url 'endcast' cast.pk %}"> End Cast</a>
+{% endblock content %}
