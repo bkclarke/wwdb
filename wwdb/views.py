@@ -11,13 +11,18 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-#from django import forms
-#from django.contrib.admin.widgets import AdminTimeWidget, AdminDateWidget
+from django import forms
+from django.contrib.admin.widgets import AdminTimeWidget, AdminDateWidget, AdminSplitDateTime
 from django.urls import reverse
+
+def home(request):
+    template = loader.get_template('wwdb/home.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
 
 class CastList(ListView):
     model = Cast
-    template_name="wwdb/home.html"
+    template_name="wwdb/castlist.html"
 
 class CastDetail(DetailView):
     model = Cast
@@ -26,26 +31,42 @@ class CastDetail(DetailView):
 class StartCast(CreateView):
     model = Cast
     template_name="wwdb/startcast.html"
-    fields=['operatorid','startdate','deploymenttypeid','winchid','notes']
-#    def get_form(self, form_class=None):
-#        form = super(StartCast, self).get_form(form_class)
-#        form.fields['startdate'].widget = AdminDateWidget(attrs={'type': 'date'})
-#        return form
+    fields=['operatorid','startdate','starttime','deploymenttypeid','winchid','notes']
+    
+    def get_form(self, form_class=None):
+        form = super(StartCast, self).get_form(form_class)
+        form.fields['startdate'].widget = AdminDateWidget(attrs={'type': 'date'})
+        form.fields['starttime'].widget = AdminDateWidget(attrs={'type': 'time'})
+        return form
 
-def endcastsuccess(request):
-    template = loader.get_template('wwdb/endcastsuccess.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
+    def form_valid(self, form):
+        item = form.save()
+        self.pk = item.pk
+        return super(StartCast, self).form_valid(form)
+
+    def get_success_url(self):
+       return reverse('endcast', kwargs={'pk': self.pk})
+
+class EndCastDetail(DetailView):
+    model = Cast
+    template_name="wwdb/endcastdetail.html"
                
 class EndCast(UpdateView):
     model = Cast
     template_name="wwdb/endcast.html"
     fields=['operatorid','enddate','notes']
-#    def get_form(self, form_class=None):
-#        form = super(StartCast, self).get_form(form_class)
-#        form.fields['enddate'].widget = AdminDateWidget(attrs={'type': 'date'})
-#        return form
-    success_url= reverse_lazy('endcastsuccess')
+    def get_form(self, form_class=None):
+        form = super(EndCast, self).get_form(form_class)
+        form.fields['enddate'].widget = AdminDateWidget(attrs={'type': 'date'})
+        return form
+
+    def form_valid(self, form):
+        item = form.save()
+        self.pk = item.pk
+        return super(EndCast, self).form_valid(form)
+
+    def get_success_url(self):
+       return reverse('endcastdetail', kwargs={'pk': self.pk})
 
 class EditCast(UpdateView):
     model = Cast
@@ -70,9 +91,6 @@ class AddUser(CreateView):
     template_name="wwdb/adduser.html"
     fields=['username','firstname','lastname','status']
 
-"""
-def index(request):
-    return HttpResponse("Welcome to WWDB")
 
 def wirelist(request):
     wire_list = Wire.objects.filter(status = '1').order_by('-id')[:5]
@@ -81,6 +99,11 @@ def wirelist(request):
         'wire_list': wire_list,
     }
     return HttpResponse(template.render(context, request))
+
+"""
+def index(request):
+    return HttpResponse("Welcome to WWDB")
+
 
 def wire(request, wire_id):
     wire = Wire.objects.get(id=wire_id)

@@ -1,8 +1,8 @@
 # wwdb/urls.py
 from django.urls import path
+from . import views
 from .views import *
 
-from . import views
 
 urlpatterns = [
     #path('', views.index, name='index'),
@@ -11,10 +11,10 @@ urlpatterns = [
     #path('startcast/', views.startcast, name='startcast'),
     #path('endcast/', views.endcast, name='endcast'),
     #path('castcomplete/', views.castcomplete, name='castcomplete'),
-    path('home/', CastList.as_view(), name='home'),
+    path('home/', views.home, name='home'),
+    path('castlist/', CastList.as_view(), name='castlist'),
     path('cast/<int:pk>/', CastDetail.as_view(), name='castdetail'),
-    path('endcastsuccess', views.endcastsuccess, name='endcastsuccess'),
-    #path('home/', Home.as_view(), name='home'),
+    path('cast/<int:pk>/endcastdetail', EndCastDetail.as_view(), name='endcastdetail'),
     path('startcast/', StartCast.as_view(), name='startcast'),
     path('cast/<int:pk>/edit/', EditCast.as_view(), name='editcast'),
     path('cast/<int:pk>/delete/', DeleteCast.as_view(), name='deletecast'),

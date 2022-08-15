@@ -1,34 +1,47 @@
 ﻿<!--template/base.html-->
-{% load static %}
+
 <html>
-    <head>
-        <title>WWDB</title>
-        <link href="{% static 'css/base.css' %}" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400" rel="stylesheet">
-    </head>
-    <body>
-        <div>
-            <header>
-                <div class="nav-left">
-                    <h1><a href="{% url 'home' %}">Winch Wire DataBase</a></h1>
-                </div>
-                <div class="nav-right">
-                    <a href="{% url 'startcast' %}">Start Cast</a>
-                </div>
-                <!---<div class="nav-right">
-            <a href="{% url 'usersettings' %}">user settings</a>
-        </div>--->
-            </header>
-            {% if user.is_authenticated %}
-                <p>Hi {{user.username}}!</p>
-                <p><a href="{% url 'logout' %}">Log out</a></p>
-            {% else %}
-                <p>You are not logged in.</p>
-                <p><a href="{% url 'login' %}">Log in</a></p>
-                <p><a href="{% url 'signup' %}">Sign up</a></p>
-            {% endif %}
-            {% block content %}
-            {% endblock content %}
+<head>
+    <title>WWDB</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+</head>
+<body>
+    <center>
+        <nav class='navbar navbar-default navbar-static-top'></nav>
+        <div class='container'>
+            <ul class='nav-left navbar-nav'>
+                <li>
+                    <a class='navbar-brand' href='{% url 'home' %}'>
+                        Home
+                    </a></li>
+                <li>
+                    <a class='navbar-brand' href='{% url 'startcast' %}'>
+                        Start a Cast
+                    </a>
+                </li>
+                <li>
+                    <a class='navbar-brand' href='{% url 'castlist' %}'>
+                        View Casts
+                    </a>
+                </li>
+            </ul>
         </div>
-    </body>
+    </center>
+    </header>
+    {% if user.is_authenticated %}
+    <p>Hi {{user.username}}!</p>
+    <p><a href="{% url 'logout' %}">Log out</a></p>
+    {% else %}
+    <p>You are not logged in.</p>
+    <p><a href="{% url 'login' %}">Log in</a></p>
+    <p><a href="{% url 'signup' %}">Sign up</a></p>
+    {% endif %}
+    {% block content %}
+    {% endblock content %}
+    </div>
+</body>
 </html>
+
+

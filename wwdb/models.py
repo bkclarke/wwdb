@@ -17,10 +17,10 @@ class Calibration(models.Model):
     appliedloadhigh = models.IntegerField(db_column='AppliedLoadHigh', blank=True, null=True)  # Field name made lowercase.
     tensionhigh = models.IntegerField(db_column='TensionHigh', blank=True, null=True)  # Field name made lowercase.
     rawmvhigh = models.FloatField(db_column='RawmVHigh', blank=True, null=True)  # Field name made lowercase.
-    calibrationid = models.ForeignKey('CalibrationMeta', models.DO_NOTHING, db_column='CalibrationId', blank=True, null=True),  # Field name made lowercase.
+    calibrationid = models.ForeignKey('CalibrationMeta', models.DO_NOTHING, db_column='CalibrationId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Calibration'
         verbose_name_plural = "Calibration"
 
@@ -37,25 +37,27 @@ class CalibrationMeta(models.Model):
     monitoringaccuracy = models.IntegerField(db_column='MonitoringAccuracy', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'CalibrationMeta'
         verbose_name_plural = "CalibrationMeta"
 
 
 class Cast(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    operatorid = models.ForeignKey('Winchoperator', models.DO_NOTHING, db_column='OperatorId')  # Field name made lowercase.
-    startdate = models.DateField(db_column='StartDate')  # Field name made lowercase.
+    operatorid = models.ForeignKey('Winchoperator', models.DO_NOTHING, db_column='OperatorId', null=True)  # Field name made lowercase.
+    startdate = models.DateField(db_column='StartDate', null=True)  # Field name made lowercase.
     enddate = models.DateField(db_column='EndDate', blank=True, null=True)  # Field name made lowercase.
-    deploymenttypeid = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId')  # Field name made lowercase.
+    starttime = models.TimeField(db_column='StartTime', null=True)  # Field name made lowercase.
+    endtime = models.TimeField(db_column='EndTime', blank=True, null=True)  # Field name made lowercase.
+    deploymenttypeid = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True)  # Field name made lowercase.
     wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True)  # Field name made lowercase.
-    winchid = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId')  # Field name made lowercase.
+    winchid = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', null=True)  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
     maxtension = models.IntegerField(db_column='MaxTension', blank=True, null=True)  # Field name made lowercase.
     maxpayout = models.IntegerField(db_column='MaxPayout', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Cast'
         verbose_name_plural = "Cast"
 
@@ -63,7 +65,7 @@ class Cast(models.Model):
         return self.operatorid
 
     def get_absolute_url(self):
-        return reverse('castdetail', kwargs={'pk':self.pk})
+        return reverse('castlist', kwargs={'pk':self.pk})
 
 class Cutbacksretermination(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -77,7 +79,7 @@ class Cutbacksretermination(models.Model):
     terminationid = models.ForeignKey('Termination', models.DO_NOTHING, db_column='TerminationId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'CutbacksRetermination'
         verbose_name_plural = "CutbacksRetermination"
 
@@ -88,7 +90,7 @@ class Deploymenttype(models.Model):
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'DeploymentType'
         verbose_name_plural = "DeploymentType"
 
@@ -104,7 +106,7 @@ class Drum(models.Model):
     locationid = models.ForeignKey('Location', models.DO_NOTHING, db_column='LocationId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Drum'
         verbose_name_plural = "Drum"
 
@@ -115,7 +117,7 @@ class Dynomometer(models.Model):
     comments = models.TextField(db_column='Comments', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Dynomometer'
         verbose_name_plural = "Dynomometer"
 
@@ -125,7 +127,7 @@ class Frame(models.Model):
     frametype = models.TextField(db_column='FrameType', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Frame'
         verbose_name_plural = "Frame"
 
@@ -135,7 +137,7 @@ class Location(models.Model):
     location = models.TextField(db_column='Location', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Location'
         verbose_name_plural = "Location"
 
@@ -149,7 +151,7 @@ class Lubrication(models.Model):
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Lubrication'
         verbose_name_plural = "Lubrication"
 
@@ -160,7 +162,7 @@ class Safeworkinglimit(models.Model):
     factorofsafety = models.IntegerField(db_column='FactorofSafety', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'SafeWorkingLimit'
         verbose_name_plural = "SafeWorkingLimit"
 
@@ -171,7 +173,7 @@ class Termination(models.Model):
     terminationid = models.TextField(db_column='TerminationId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Termination'
         verbose_name_plural = "Termination"
 
@@ -186,7 +188,7 @@ class Winch(models.Model):
     wiretrainschematicaframe = models.TextField(db_column='WireTrainSchematicAFrame', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Winch'
         verbose_name_plural = "Winch"
 
@@ -200,7 +202,7 @@ class Winchoperator(models.Model):
 
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'WinchOperator'
         verbose_name_plural = "WinchOperator"
 
@@ -213,7 +215,7 @@ class WireRopeData(models.Model):
     weightperfoot = models.FloatField(db_column='WeightPerFoot', blank=True, null=True)  # Field name made lowercase.
     
     class Meta:
-        managed = False
+        managed = True
         db_table = 'WireRopeData'
         verbose_name_plural = 'WireRopeData'
 
@@ -229,7 +231,7 @@ class Wire(models.Model):
     status = models.IntegerField(db_column='Status', blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Wire'
         verbose_name_plural = "Wire"
 
@@ -241,7 +243,7 @@ class Wiredrum(models.Model):
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'WireDrum'
         verbose_name_plural = "WireDrum"
 
@@ -254,7 +256,7 @@ class Wiretermination(models.Model):
     terminationid = models.ForeignKey(Termination, models.DO_NOTHING, db_column='TerminationId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'WireTermination'
         verbose_name_plural = "WireTermination"
 

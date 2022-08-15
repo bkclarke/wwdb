@@ -1,12 +1,16 @@
 {
   "ExpandedNodes": [
     "",
+    "\\accounts",
+    "\\root",
+    "\\static",
     "\\wwdb",
-    "\\wwdb\\migrations",
     "\\wwdb\\migrations\\__pycache__",
+    "\\wwdb\\templates",
+    "\\wwdb\\templates\\wwdb",
     "\\wwdb_proj",
     "\\wwdb_proj\\__pycache__"
   ],
-  "SelectedNode": "\\wwdb_proj\\__pycache__",
+  "SelectedNode": "\\wwdb\\views.py",
   "PreviewInSolutionExplorer": false
 }
