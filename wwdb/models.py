@@ -45,10 +45,10 @@ class CalibrationMeta(models.Model):
 class Cast(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     operatorid = models.ForeignKey('Winchoperator', models.DO_NOTHING, db_column='OperatorId', null=True)  # Field name made lowercase.
-    startdate = models.DateField(db_column='StartDate', null=True)  # Field name made lowercase.
-    enddate = models.DateField(db_column='EndDate', blank=True, null=True)  # Field name made lowercase.
-    starttime = models.TimeField(db_column='StartTime', null=True)  # Field name made lowercase.
-    endtime = models.TimeField(db_column='EndTime', blank=True, null=True)  # Field name made lowercase.
+    startdate = models.DateTimeField(db_column='StartDate', null=True)  # Field name made lowercase.
+    enddate = models.DateTimeField(db_column='EndDate', blank=True, null=True)  # Field name made lowercase.
+#    starttime = models.TimeField(db_column='StartTime', null=True)  # Field name made lowercase.
+#    endtime = models.TimeField(db_column='EndTime', blank=True, null=True)  # Field name made lowercase.
     deploymenttypeid = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True)  # Field name made lowercase.
     wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True)  # Field name made lowercase.
     winchid = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', null=True)  # Field name made lowercase.

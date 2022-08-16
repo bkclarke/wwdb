@@ -1,19 +1,13 @@
 from django import template
 from django.http import HttpResponse
-from django.http import HttpResponseRedirect
 from django.template import loader
-from .models import Wire
-from django.template import RequestContext
-from django.shortcuts import render
 from .models import Cast, Winchoperator
-#from .forms import endcastform, startcastform
-from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import *
 from django.urls import reverse_lazy
-from django import forms
 from django.contrib.admin.widgets import AdminTimeWidget, AdminDateWidget, AdminSplitDateTime
 from django.urls import reverse
+from bootstrap_datepicker_plus.widgets import *
+
 
 def home(request):
     template = loader.get_template('wwdb/home.html')
@@ -31,19 +25,31 @@ class CastDetail(DetailView):
 class StartCast(CreateView):
     model = Cast
     template_name="wwdb/startcast.html"
-    fields=['operatorid','startdate','starttime','deploymenttypeid','winchid','notes']
-    
-    def get_form(self, form_class=None):
-        form = super(StartCast, self).get_form(form_class)
-        form.fields['startdate'].widget = AdminDateWidget(attrs={'type': 'date'})
-        form.fields['starttime'].widget = AdminDateWidget(attrs={'type': 'time'})
+    fields=['operatorid','startdate','deploymenttypeid','winchid','notes']
+ 
+#datetimepicker using bootstrap4
+    def get_form(self):
+        form = super().get_form()
+        form.fields['startdate'].widget = DateTimePickerInput()
         return form
 
+#datetimepicker using admin widget
+#    def get_form(self, form_class=None):
+#        form = super(StartCast, self).get_form(form_class)
+#        form.fields['startdate'].widget = AdminDateWidget(attrs={'type': 'date'})
+#        form.fields['starttime'].widget = AdminDateWidget(attrs={'type': 'time'})
+#        return form
+    
+    def __str__(sef):
+        return str(self.operatorid)
+
+#return pk for get_success_url
     def form_valid(self, form):
         item = form.save()
         self.pk = item.pk
         return super(StartCast, self).form_valid(form)
 
+#direct to endcast url on submittion of form
     def get_success_url(self):
        return reverse('endcast', kwargs={'pk': self.pk})
 
@@ -55,10 +61,19 @@ class EndCast(UpdateView):
     model = Cast
     template_name="wwdb/endcast.html"
     fields=['operatorid','enddate','notes']
-    def get_form(self, form_class=None):
-        form = super(EndCast, self).get_form(form_class)
-        form.fields['enddate'].widget = AdminDateWidget(attrs={'type': 'date'})
+
+
+#datetimepicker using bootstrap4
+    def get_form(self):
+        form = super().get_form()
+        form.fields['enddate'].widget = DateTimePickerInput()
         return form
+
+#datetimepicker using admin widget
+#    def get_form(self, form_class=None):
+#        form = super(EndCast, self).get_form(form_class)
+#        form.fields['enddate'].widget = AdminDateWidget(attrs={'type': 'date'})
+#        return form
 
     def form_valid(self, form):
         item = form.save()
