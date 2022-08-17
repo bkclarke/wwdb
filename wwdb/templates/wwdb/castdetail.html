@@ -3,17 +3,15 @@
 
 {% block content %}
 <div class="cast-entry">
-    <h2>{{cast.operatorid}}</h2>
-    <p>{{cast.startdate}}</p>
-    <p>{{cast.starttime}}</p>
-    <p>{{cast.enddate}}</p>
-    <p>{{cast.endtime}}</p>
-    <p>{{cast.deploymenttypeid}}</p>
-    <p>{{cast.wireid}}</p>
-    <p>{{cast.winchid}}</p>
-    <p>{{cast.notes}}</p>
-    <p>{{cast.maxtension}}</p>
-    <p>{{cast.maxpayout}}</p>
+    <p>Start operator: {{cast.startoperatorid}}</p>
+    <p>End operator: {{cast.endoperatorid}}</p>
+    <p>Start date: {{cast.startdate}}</p>
+    <p>End date: {{cast.enddate}}</p>
+    <p>Deployment type: {{cast.deploymenttypeid}}</p>
+    <p>Winch: {{cast.winchid}}</p>
+    <p>Notes: {{cast.notes}}</p>
+    <p>Max tension: {{cast.maxtension}}</p>
+    <p>Max payout: {{cast.maxpayout}}</p>
 </div>
 
 <a href="{% url 'castedit' cast.pk %}"> Edit Cast</a>

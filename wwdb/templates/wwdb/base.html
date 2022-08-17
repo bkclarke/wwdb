@@ -1,4 +1,5 @@
 ﻿<!--template/base.html-->
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -13,37 +14,33 @@
     {{form.media}}
 </head>
 <body>
-    <center>
-        <nav class='navbar navbar-default navbar-static-top'></nav>
-        <div class='container'>
-            <ul class='nav-left navbar-nav'>
+    <header>
+        <nav class="navbar navbar-default navbar-static-top"></nav>
+        <div class="container">
+            <ul class="nav-left navbar-nav">
                 <li>
-                    <a class='navbar-brand' href='{% url 'home' %}'>
+                    <a class="navbar-brand" href="{% url 'home' %}">
                         Home
                     </a>
                 </li>
                 <li>
-                    <a class='navbar-brand' href='{% url 'caststart' %}'>
+                    <a class="navbar-brand" href="{% url 'caststart' %}">
                         Start a Cast
                     </a>
                 </li>
                 <li>
-                    <a class='navbar-brand' href='{% url 'castlist' %}'>
+                    <a class="navbar-brand" href="{% url 'castlist' %}">
                         View Casts
                     </a>
                 </li>
             </ul>
         </div>
-    </center>
     </header>
+    <div>
+        {% block content %}
+        {% endblock content %}
     </div>
-</body>
-{% block content %}
-{% endblock content %}
-<br />
-<br />
-<footer>
-    <center>
+    <footer>
         {% if user.is_authenticated %}
         <p>Hi {{user.username}}!</p>
         <p><a href="{% url 'logout' %}">Log out</a></p>
@@ -52,41 +49,8 @@
         <p><a href="{% url 'login' %}">Log in</a></p>
         <p><a href="{% url 'signup' %}">Sign up</a></p>
         {% endif %}
-        <nav class="navbar fixed-bottom navbar-light bg-light">
-            <a class="navbar-brand" href="#">Fixed bottom</a>
-        </nav>
-        <div class='container'>
-            <ul class='nav-left navbar-nav'>
-                <li>
-                    <a class='navbar-brand' href='{% url 'wirelist' %}'>
-                        Wire Inventory
-                    </a>
-                </li>
-                <li>
-                    <a class='navbar-brand' href='{% url 'winchlist' %}'>
-                        Winch Inventory
-                    </a>
-                </li>
-                <li>
-                    <a class='navbar-brand' href='{% url 'operatorlist' %}'>
-                        View Operators
-                    </a>
-                </li>
-                <li>
-                    <a class='navbar-brand' href='{% url 'deploymentlist' %}'>
-                        View Deployments
-                    </a>
-                </li>
-                <li>
-                    <a class='navbar-brand' href='{% url 'cutbackreterminationlist' %}'>
-                        View Cutbacks and Reterminations
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </center>
-</footer>
-</html>
+    </footer>
+</body>
 </html>
 
 

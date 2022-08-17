@@ -4,8 +4,7 @@
 {% block content %}
 {% for cast in cast_list %}
     <div class="cast-entry">
-        <h2><a href="{% url 'castdetail' cast.pk %}">{{cast.operatorid}}</a></h2>
-        <p>{{cast.startdate}}</p>
+        <h2><a href="{% url 'castdetail' cast.pk %}">{{cast.startdate}}</a></h2>
     </div>
 {% endfor %}
 {% endblock content %}

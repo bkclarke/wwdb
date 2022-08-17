@@ -1,10 +1,3 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.urls import reverse
 
@@ -41,10 +34,14 @@ class CalibrationMeta(models.Model):
         db_table = 'CalibrationMeta'
         verbose_name_plural = "CalibrationMeta"
 
+    def __str__(self):
+        return str(self.date)
+
 
 class Cast(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    operatorid = models.ForeignKey('Winchoperator', models.DO_NOTHING, db_column='OperatorId', null=True)  # Field name made lowercase.
+    startoperatorid = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='StartOperatorId', null=True, related_name='startoperatorid')  # Field name made lowercase.
+    endoperatorid = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='EndOperatorId', null=True, related_name='endoperatorid')  # Field name made lowercase.
     startdate = models.DateTimeField(db_column='StartDate', null=True)  # Field name made lowercase.
     enddate = models.DateTimeField(db_column='EndDate', blank=True, null=True)  # Field name made lowercase.
     deploymenttypeid = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True)  # Field name made lowercase.
@@ -62,6 +59,9 @@ class Cast(models.Model):
     def get_absolute_url(self):
         return reverse('castdetail', kwargs={'pk':self.pk})
 
+    def __str__(self):
+        return str(self.startdate)
+
 class CutbackRetermination(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True)  # Field name made lowercase.
@@ -78,9 +78,13 @@ class CutbackRetermination(models.Model):
         db_table = 'CutbackRetermination'
         verbose_name_plural = "CutbackRetermination"
 
+    def __str__(self):
+        return str(self.date)
+
 
 class DeploymentType(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    name = models.TextField(db_column='Name', blank=True, null=True)
     equipment = models.TextField(db_column='Equipment', blank=True, null=True)  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
 
@@ -92,6 +96,8 @@ class DeploymentType(models.Model):
     def get_absolute_url(self):
         return reverse('deploymentdetail', kwargs={'pk':self.pk})
 
+    def __str__(self):
+        return str(self.name)
 
 class Drum(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -108,9 +114,12 @@ class Drum(models.Model):
         db_table = 'Drum'
         verbose_name_plural = "Drum"
 
+    def __str__(self):
+        return str(self.internalid)
 
 class Dynomometer(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    name = models.TextField(db_column='Name', blank=True, null=True)  # Field name made lowercase.
     dynomometertype = models.TextField(db_column='DynomometerType', blank=True, null=True)  # Field name made lowercase.
     comments = models.TextField(db_column='Comments', blank=True, null=True)  # Field name made lowercase.
 
@@ -119,15 +128,21 @@ class Dynomometer(models.Model):
         db_table = 'Dynomometer'
         verbose_name_plural = "Dynomometer"
 
+    def __str__(self):
+        return str(self.name)
 
 class Frame(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    name = models.TextField(db_column='Name', blank=True, null=True)  # Field name made lowercase.
     frametype = models.TextField(db_column='FrameType', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = True
         db_table = 'Frame'
         verbose_name_plural = "Frame"
+
+    def __str__(self):
+        return str(self.name)
 
 
 class Location(models.Model):
@@ -139,6 +154,8 @@ class Location(models.Model):
         db_table = 'Location'
         verbose_name_plural = "Location"
 
+    def __str__(self):
+        return str(self.location)
 
 class Lubrication(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -153,6 +170,8 @@ class Lubrication(models.Model):
         db_table = 'Lubrication'
         verbose_name_plural = "Lubrication"
 
+    def __str__(self):
+        return str(self.date)
 
 class Safeworkinglimit(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -168,16 +187,19 @@ class Safeworkinglimit(models.Model):
 class Termination(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     description = models.TextField(db_column='Description', blank=True, null=True)  # Field name made lowercase.
-    terminationid = models.TextField(db_column='TerminationId', blank=True, null=True)  # Field name made lowercase.
+    name = models.TextField(db_column='TerminationId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = True
         db_table = 'Termination'
         verbose_name_plural = "Termination"
 
+    def __str__(self):
+        return str(self.name)
 
 class Winch(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    name = models.TextField(db_column='Name', blank=True, null=True)
     locationid = models.ForeignKey(Location, models.DO_NOTHING, db_column='LocationId', blank=True, null=True)  # Field name made lowercase.
     ship = models.TextField(db_column='Ship', blank=True, null=True)  # Field name made lowercase.
     institution = models.TextField(db_column='Institution', blank=True, null=True)  # Field name made lowercase.
@@ -193,6 +215,8 @@ class Winch(models.Model):
     def get_absolute_url(self):
         return reverse('winchdetail', kwargs={'pk':self.pk})
 
+    def __str__(self):
+        return str(self.name)
 
 class WinchOperator(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase. This field type is a guess.
@@ -210,8 +234,12 @@ class WinchOperator(models.Model):
     def get_absolute_url(self):
         return reverse('operatordetail', kwargs={'pk':self.pk})
 
+    def __str__(self):
+        return str(self.username)
+
 class WireRopeData(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    name = models.TextField(db_column='Name', blank=True, null=True)
     manufacturer = models.TextField(db_column='Manufacturer',blank=True, null=True)
     manufacturerpartnumber = models.TextField(db_column='ManufacturerPartNumber', blank=True, null=True)  # Field name made lowercase.
     cabletype = models.TextField(db_column='CableType', blank=True, null=True)  # Field name made lowercase.
@@ -222,6 +250,9 @@ class WireRopeData(models.Model):
         managed = True
         db_table = 'WireRopeData'
         verbose_name_plural = 'WireRopeData'
+
+    def __str__(self):
+        return str(self.name)
 
 class Wire(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -242,6 +273,9 @@ class Wire(models.Model):
     def get_absolute_url(self):
         return reverse('wiredetail', kwargs={'pk':self.pk})
 
+    def __str__(self):
+        return str(self.nsfid)
+
 class Wiredrum(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True)  # Field name made lowercase.
@@ -254,6 +288,8 @@ class Wiredrum(models.Model):
         db_table = 'WireDrum'
         verbose_name_plural = "WireDrum"
 
+    def __str__(self):
+        return str(self.drumid)
 
 class Wiretermination(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.

@@ -29,7 +29,7 @@ class CastDetail(DetailView):
 class CastEdit(UpdateView):
     model = Cast
     template_name="wwdb/castedit.html"
-    fields=['operatorid','startdate','deploymenttypeid','winchid','notes']
+    fields=['startoperatorid','endoperatorid','startdate','deploymenttypeid','winchid','notes']
 
 class CastDelete(DeleteView):
     model = Cast
@@ -44,7 +44,7 @@ Classes related to starting and ending a cast, viewing and updating after ending
 class CastStart(CreateView):
     model = Cast
     template_name="wwdb/caststart.html"
-    fields=['operatorid','startdate','deploymenttypeid','winchid','notes']
+    fields=['startoperatorid','startdate','deploymenttypeid','winchid','notes']
  
 #datetimepicker using bootstrap4
     def get_form(self):
@@ -74,7 +74,7 @@ class CastEndDetail(DetailView):
 class CastEnd(UpdateView):
     model = Cast
     template_name="wwdb/castend.html"
-    fields=['operatorid','enddate','notes']
+    fields=['endoperatorid','enddate','notes']
 
 
 #datetimepicker using bootstrap4
