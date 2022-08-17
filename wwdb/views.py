@@ -1,18 +1,22 @@
 from django import template
 from django.http import HttpResponse
 from django.template import loader
-from .models import Cast, Winchoperator
+from .models import *
 from django.views.generic import *
 from django.urls import reverse_lazy
-from django.contrib.admin.widgets import AdminTimeWidget, AdminDateWidget, AdminSplitDateTime
 from django.urls import reverse
 from bootstrap_datepicker_plus.widgets import *
-
+from .forms import *
 
 def home(request):
     template = loader.get_template('wwdb/home.html')
     context = {}
     return HttpResponse(template.render(context, request))
+
+"""
+CASTS
+Classes related to create, update, delete, view Cast model
+"""
 
 class CastList(ListView):
     model = Cast
@@ -22,9 +26,24 @@ class CastDetail(DetailView):
     model = Cast
     template_name="wwdb/castdetail.html"
 
-class StartCast(CreateView):
+class CastEdit(UpdateView):
     model = Cast
-    template_name="wwdb/startcast.html"
+    template_name="wwdb/castedit.html"
+    fields=['operatorid','startdate','deploymenttypeid','winchid','notes']
+
+class CastDelete(DeleteView):
+    model = Cast
+    template_name="wwdb/castdelete.html"
+    success_url= reverse_lazy('home')
+
+"""
+CASTS
+Classes related to starting and ending a cast, viewing and updating after ending a cast, Cast model
+"""
+
+class CastStart(CreateView):
+    model = Cast
+    template_name="wwdb/caststart.html"
     fields=['operatorid','startdate','deploymenttypeid','winchid','notes']
  
 #datetimepicker using bootstrap4
@@ -39,27 +58,22 @@ class StartCast(CreateView):
 #        form.fields['startdate'].widget = AdminDateWidget(attrs={'type': 'date'})
 #        form.fields['starttime'].widget = AdminDateWidget(attrs={'type': 'time'})
 #        return form
-    
-    def __str__(sef):
-        return str(self.operatorid)
 
-#return pk for get_success_url
     def form_valid(self, form):
         item = form.save()
         self.pk = item.pk
-        return super(StartCast, self).form_valid(form)
+        return super(CastStart, self).form_valid(form)
 
-#direct to endcast url on submittion of form
     def get_success_url(self):
-       return reverse('endcast', kwargs={'pk': self.pk})
+       return reverse('castend', kwargs={'pk': self.pk})
 
-class EndCastDetail(DetailView):
+class CastEndDetail(DetailView):
     model = Cast
-    template_name="wwdb/endcastdetail.html"
+    template_name="wwdb/castenddetail.html"
                
-class EndCast(UpdateView):
+class CastEnd(UpdateView):
     model = Cast
-    template_name="wwdb/endcast.html"
+    template_name="wwdb/castend.html"
     fields=['operatorid','enddate','notes']
 
 
@@ -69,51 +83,155 @@ class EndCast(UpdateView):
         form.fields['enddate'].widget = DateTimePickerInput()
         return form
 
-#datetimepicker using admin widget
-#    def get_form(self, form_class=None):
-#        form = super(EndCast, self).get_form(form_class)
-#        form.fields['enddate'].widget = AdminDateWidget(attrs={'type': 'date'})
-#        return form
-
     def form_valid(self, form):
         item = form.save()
         self.pk = item.pk
-        return super(EndCast, self).form_valid(form)
+        return super(CastEnd, self).form_valid(form)
 
     def get_success_url(self):
-       return reverse('endcastdetail', kwargs={'pk': self.pk})
+       return reverse('castenddetail', kwargs={'pk': self.pk})
 
-class EditCast(UpdateView):
-    model = Cast
-    template_name="wwdb/editcast.html"
-    fields=['operatorid','startdate','deploymenttypeid','winchid','notes']
+"""
+datetimepicker using admin widget
+    def get_form(self, form_class=None):
+        form = super(EndCast, self).get_form(form_class)
+        form.fields['enddate'].widget = AdminDateWidget(attrs={'type': 'date'})
+        return form
+"""
 
-class DeleteCast(DeleteView):
-    model = Cast
-    template_name="wwdb/deletecast.html"
-    success_url= reverse_lazy('home')
+"""
+WIRES
+Classes related to create, update, view Wire model
+"""
 
-class UserSettings(ListView):
-    model = Winchoperator
-    template_name="wwdb/usersettings.html"
+class WireList(ListView):
+    model = Wire
+    template_name="wwdb/wirelist.html"
 
-class UserDetail(DetailView):
-    model = Winchoperator
-    template_name="wwdb/userdetail.html"
+class WireDetail(DetailView):
+    model = Wire
+    template_name="wwdb/wiredetail.html"
 
-class AddUser(CreateView):
-    model = Winchoperator
-    template_name="wwdb/adduser.html"
+class WireEdit(UpdateView):
+    model = Wire
+    template_name="wwdb/wireedit.html"
+    fields=['wireropeid','manufacturerid','nsfid','dateacquired','notes','status']
+    
+    def get_form(self):
+        form = super().get_form()
+        form.fields['dateacquired'].widget = DateTimePickerInput()
+        return form
+
+class WireAdd(CreateView):
+    model = Wire
+    template_name="wwdb/wireadd.html"
+    fields=['wireropeid','manufacturerid','nsfid','dateacquired','notes','length','status']
+
+"""
+WINCHES
+Classes related to create, update, view Winch model
+"""
+
+class WinchList(ListView):
+    model = Winch
+    template_name="wwdb/winchlist.html"
+
+class WinchDetail(DetailView):
+    model = Winch
+    template_name="wwdb/winchdetail.html"
+
+class WinchEdit(UpdateView):
+    model = Winch
+    template_name="wwdb/winchedit.html"
+    fields=['locationid','ship','institution','manufacturer']
+
+class WinchAdd(CreateView):
+    model = Winch
+    template_name="wwdb/winchadd.html"
+    fields=['locationid','ship','institution','manufacturer']
+
+"""
+WINCH OPERATORS
+Classes related to create, update, view WinchOperators model
+"""
+
+class OperatorList(ListView):
+    model = WinchOperator
+    template_name="wwdb/operatorlist.html"
+
+class OperatorDetail(DetailView):
+    model = WinchOperator
+    template_name="wwdb/operatordetail.html"
+
+class OperatorEdit(UpdateView):
+    model = WinchOperator
+    template_name="wwdb/operatoredit.html"
     fields=['username','firstname','lastname','status']
 
+class OperatorAdd(CreateView):
+    model = WinchOperator
+    template_name="wwdb/operatoradd.html"
+    fields=['username','firstname','lastname','status']
 
-def wirelist(request):
-    wire_list = Wire.objects.filter(status = '1').order_by('-id')[:5]
-    template = loader.get_template('wwdb/wirelist.html')
-    context = {
-        'wire_list': wire_list,
-    }
-    return HttpResponse(template.render(context, request))
+"""
+DEPLOYMENTS 
+Classes related to create, update, view DeploymentType model
+"""
+
+class DeploymentList(ListView):
+    model = DeploymentType
+    template_name="wwdb/deploymentlist.html"
+
+class DeploymentDetail(DetailView):
+    model = DeploymentType
+    template_name="wwdb/deploymentdetail.html"
+
+class DeploymentEdit(UpdateView):
+    model = DeploymentType
+    template_name="wwdb/deploymentedit.html"
+    fields=['equipment','notes']
+
+class DeploymentAdd(CreateView):
+    model = DeploymentType
+    template_name="wwdb/deploymentadd.html"
+    fields=['equipment','notes']
+
+"""
+CUTBACKRETERMINATION
+Classes related to create, update, view CutbackRetermination model
+"""
+
+class CutbackReterminationList(ListView):
+    model = CutbackRetermination
+    template_name="wwdb/cutbackreterminationlist.html"
+
+class CutbackReterminationDetail(DetailView):
+    model = CutbackRetermination
+    template_name="wwdb/cutbackreterminationdetail.html"
+
+class CutbackReterminationEdit(UpdateView):
+    model = CutbackRetermination
+    template_name="wwdb/cutbackreterminationedit.html"
+    fields=['equipment','notes']
+
+class CutbackReterminationAdd(CreateView):
+    model = CutbackRetermination
+    template_name="wwdb/cutbackreterminationadd.html"
+    fields=['dryendtag','wetendtag', 'lengthremoved','wireid','date','notes','terminationid']
+
+"""
+WINCHOPERATORS DEPLOYMENTS WINCHES
+Update status of operators, deployments, and winches so all relevant to cruise are bool True
+"""
+
+class StatusView(TemplateView):
+    template_name = 'wwdb/status.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(StatusView, self).get_context_data(**kwargs)
+
+        context['form'] = StatusForm()
+        return context
 
 """
 def index(request):

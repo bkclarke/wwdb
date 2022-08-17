@@ -1,0 +1,16 @@
+﻿<!--template/cutbackreterminationlist.html-->
+{% extends "wwdb/base.html" %}
+{% block content %}
+{% for cutbackretermination in cutbackretermination_list %}
+<div class="cutbackretermination-entry">
+    <p><a href="{% url 'cutbackreterminationdetail' cutbackretermination.pk %}">{{cutbackretermination.id}}</a></p>
+    <p>{{cutbackretermination.length}}</p>
+    <ul>
+        {% for wire in cutbackretermination.wire_set.all %}
+            <p>{{ wire.nsfid }}</p>
+        {% endfor %}
+    </ul>
+</div>
+{% endfor %}
+<a href="{% url 'cutbackreterminationadd' %}"> Add a Cutback or Retermination</a>
+{% endblock content %}

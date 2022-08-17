@@ -1,0 +1,12 @@
+﻿<!--templates/deployemntlist.html-->
+{% extends "wwdb/base.html" %}
+
+{% block content %}
+{% for deployment in deploymenttype_list %}
+<div class="deployemnttype-entry">
+    <h2><a href="{% url 'deploymentdetail' deployment.pk %}">{{deployment.equipment}}</a></h2>
+    <p>{{deployment.notes}}</p>
+</div>
+{% endfor %}
+<a href="{% url 'deploymentadd' %}"> Add a Deployment</a>
+{% endblock content %}

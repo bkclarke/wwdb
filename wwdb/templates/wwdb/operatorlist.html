@@ -1,0 +1,11 @@
+﻿<!--templates/operatorlist.html-->
+{% extends "wwdb/base.html" %}
+
+{% block content %}
+{% for operator in winchoperator_list %}
+<div class="operator-entry">
+    <h2><a href="{% url 'operatordetail' operator.pk %}">{{operator.id}}</a></h2>
+</div>
+{% endfor %}
+<a href="{% url 'operatoradd' %}"> Add an Operator</a>
+{% endblock content %}

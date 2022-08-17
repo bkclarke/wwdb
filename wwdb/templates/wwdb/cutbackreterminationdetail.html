@@ -1,0 +1,15 @@
+﻿<!--templates/cutbackreterminationdetail.html-->
+{% extends "wwdb/base.html" %}
+
+{% block content %}
+<div class="cutbackretermination-entry">
+    <h2>{{cutbackretermination.dryendtag}}</h2>
+    <p>{{cutbackretermination.wetendtag}}</p>
+    <p>{{cutbackretermination.lenghtremoved}}</p>
+    <p>{{cutbackretermination.wireid}}</p>
+    <p>{{cutbackretermination.date}}</p>
+    <p>{{cutbackretermination.notes}}</p>
+    <p>{{cutbackretermination.terminationid}}</p>
+</div>
+<a href="{% url 'cutbackreterminationedit' cutbackretermination.pk %}"> Edit Cutback or Retermination</a>
+{% endblock content %}

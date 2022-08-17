@@ -1,4 +1,4 @@
-﻿<!--templates/userdetail.html-->
+﻿<!--templates/operatordetail.html-->
 {% extends "wwdb/base.html" %}
 
 {% block content %}
@@ -8,4 +8,5 @@
     <p>{{winchoperator.firstname}}</p>
     <p>{{winchoperator.lastname}}</p>
 </div>
+<a href="{% url 'operatoredit' winchoperator.pk %}"> Edit Operator</a>
 {% endblock content %}

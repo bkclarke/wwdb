@@ -47,8 +47,6 @@ class Cast(models.Model):
     operatorid = models.ForeignKey('Winchoperator', models.DO_NOTHING, db_column='OperatorId', null=True)  # Field name made lowercase.
     startdate = models.DateTimeField(db_column='StartDate', null=True)  # Field name made lowercase.
     enddate = models.DateTimeField(db_column='EndDate', blank=True, null=True)  # Field name made lowercase.
-#    starttime = models.TimeField(db_column='StartTime', null=True)  # Field name made lowercase.
-#    endtime = models.TimeField(db_column='EndTime', blank=True, null=True)  # Field name made lowercase.
     deploymenttypeid = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True)  # Field name made lowercase.
     wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True)  # Field name made lowercase.
     winchid = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', null=True)  # Field name made lowercase.
@@ -61,13 +59,10 @@ class Cast(models.Model):
         db_table = 'Cast'
         verbose_name_plural = "Cast"
 
-    def __str__(self):
-        return self.operatorid
-
     def get_absolute_url(self):
-        return reverse('castlist', kwargs={'pk':self.pk})
+        return reverse('castdetail', kwargs={'pk':self.pk})
 
-class Cutbacksretermination(models.Model):
+class CutbackRetermination(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True)  # Field name made lowercase.
     wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True)  # Field name made lowercase.
@@ -80,11 +75,11 @@ class Cutbacksretermination(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'CutbacksRetermination'
-        verbose_name_plural = "CutbacksRetermination"
+        db_table = 'CutbackRetermination'
+        verbose_name_plural = "CutbackRetermination"
 
 
-class Deploymenttype(models.Model):
+class DeploymentType(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     equipment = models.TextField(db_column='Equipment', blank=True, null=True)  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
@@ -93,6 +88,9 @@ class Deploymenttype(models.Model):
         managed = True
         db_table = 'DeploymentType'
         verbose_name_plural = "DeploymentType"
+
+    def get_absolute_url(self):
+        return reverse('deploymentdetail', kwargs={'pk':self.pk})
 
 
 class Drum(models.Model):
@@ -192,8 +190,11 @@ class Winch(models.Model):
         db_table = 'Winch'
         verbose_name_plural = "Winch"
 
+    def get_absolute_url(self):
+        return reverse('winchdetail', kwargs={'pk':self.pk})
 
-class Winchoperator(models.Model):
+
+class WinchOperator(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase. This field type is a guess.
     status = models.BooleanField(db_column='Status', blank=True, null=True)  # Field name made lowercase.
     firstname = models.TextField(db_column='FirstName', blank=True, null=True)  # Field name made lowercase.
@@ -205,6 +206,9 @@ class Winchoperator(models.Model):
         managed = True
         db_table = 'WinchOperator'
         verbose_name_plural = "WinchOperator"
+
+    def get_absolute_url(self):
+        return reverse('operatordetail', kwargs={'pk':self.pk})
 
 class WireRopeData(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -234,6 +238,9 @@ class Wire(models.Model):
         managed = True
         db_table = 'Wire'
         verbose_name_plural = "Wire"
+
+    def get_absolute_url(self):
+        return reverse('wiredetail', kwargs={'pk':self.pk})
 
 class Wiredrum(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.

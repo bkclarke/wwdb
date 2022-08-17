@@ -1,0 +1,15 @@
+﻿<!--templates/wireadd.html-->
+{% extends "wwdb/base.html" %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{{ form.media }}
+
+{% block content %}
+<h1>Add a Wire</h1>
+<form action="" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" value="save">
+</form>
+{% endblock content %}

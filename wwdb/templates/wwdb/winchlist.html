@@ -1,0 +1,11 @@
+﻿<!--template/winchlist.html-->
+{% extends "wwdb/base.html" %}
+
+{% block content %}
+{% for winch in winch_list %}
+<div class="winch-entry">
+    <h2><a href="{% url 'winchdetail' winch.pk %}">{{winch.id}}</a></h2>
+</div>
+{% endfor %}
+<a href="{% url 'winchadd' %}"> Add a Winch</a>
+{% endblock content %}

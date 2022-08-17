@@ -1,4 +1,4 @@
-﻿<!--template/endcastsuccess.html-->
+﻿<!--template/castenddetail.html-->
 {% extends "wwdb/base.html" %}
 
 {% block content %}
@@ -17,5 +17,5 @@
         <p>{{cast.maxpayout}}</p>
     </div>
 
-<a href="{% url 'editcast' cast.pk %}"> Update Cast</a>
+<a href="{% url 'castedit' cast.pk %}"> Edit Cast</a>
 {% endblock content %}
