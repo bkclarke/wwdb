@@ -5,11 +5,10 @@ from .views import *
 
 
 urlpatterns = [
-    path('home/', views.home, name='home'),
     path('castlist/', CastList.as_view(), name='castlist'),
     path('cast/<int:pk>/', CastDetail.as_view(), name='castdetail'),
     path('cast/<int:pk>/castenddetail', CastEndDetail.as_view(), name='castenddetail'),
-    path('caststart/', CastStart.as_view(), name='caststart'),
+    path('home/', CastStart.as_view(), name='caststart'),
     path('cast/<int:pk>/edit/', CastEdit.as_view(), name='castedit'),
     path('cast/<int:pk>/delete/', CastDelete.as_view(), name='castdelete'),
     path('cast/<int:pk>/castend/', CastEnd.as_view(), name='castend'),
