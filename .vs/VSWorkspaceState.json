@@ -1,11 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\static\\css",
     "\\wwdb",
-    "\\wwdb\\templates",
-    "\\wwdb_proj\\__pycache__"
+    "\\wwdb\\templates"
   ],
-  "SelectedNode": "\\wwdb\\views.py",
+  "SelectedNode": "\\wwdb\\forms.py",
   "PreviewInSolutionExplorer": false
 }

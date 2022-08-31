@@ -2,6 +2,17 @@ from django import forms
 from django.forms import ModelForm
 from .models import *
 
+"""
+class FolderForm(forms.ModelForm):
+    class Meta:
+       model = Folder
+       fields = ['name', 'parent']
+
+    def __init__(self, *args, **kwargs):
+       user = kwargs.pop('user')
+       super(FolderForm, self).__init__(*args, **kwargs)
+       self.fields['parent'].queryset = Folder.objects.filter(user=user)
+
 class StatusForm(forms.ModelForm):
     class Meta:
         model = WinchOperator
@@ -12,7 +23,7 @@ class StatusForm(forms.ModelForm):
                     attrs={"class": "form-check-input", "id": "flexSwitchCheckChecked"})
         }
 
-"""
+
 class DateInput(forms.DateInput):
     input_type = 'time'
 

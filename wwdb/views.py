@@ -1,5 +1,5 @@
 from django import template
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.template import loader
 from .models import *
 from django.views.generic import *
@@ -66,6 +66,7 @@ class CastStart(CreateView):
 
     def get_success_url(self):
        return reverse('castend', kwargs={'pk': self.pk})
+
 
 class CastEndDetail(DetailView):
     model = Cast
