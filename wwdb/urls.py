@@ -21,7 +21,7 @@ urlpatterns = [
     path('winch/<int:pk>/edit/', WinchEdit.as_view(), name='winchedit'),
     path('winchadd/', WinchAdd.as_view(), name='winchadd'),
     path('operatorlist/', OperatorList.as_view(), name='operatorlist'),
-    path('operator/<int:pk>/winchdetail', OperatorDetail.as_view(), name='operatordetail'),
+    path('operator/<int:pk>/operatordetail', OperatorDetail.as_view(), name='operatordetail'),
     path('operator/<int:pk>/edit/', OperatorEdit.as_view(), name='operatoredit'),
     path('operatoradd/', OperatorAdd.as_view(), name='operatoradd'),
     path('deploymentlist/', DeploymentList.as_view(), name='deploymentlist'),
@@ -32,5 +32,6 @@ urlpatterns = [
     path('cutbackretermination/<int:pk>/deploymentdetail', CutbackReterminationDetail.as_view(), name='cutbackreterminationdetail'),
     path('cutbackretermination/<int:pk>/edit/', CutbackReterminationEdit.as_view(), name='cutbackreterminationedit'),
     path('cutbackreterminationadd/', CutbackReterminationAdd.as_view(), name='cutbackreterminationadd'),
-    path('status/', StatusView.as_view(), name='status'),
+    path('cruiseconfigurehome/', views.cruiseconfigurehome, name='cruiseconfigurehome'),
+
 ]

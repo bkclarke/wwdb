@@ -1,0 +1,41 @@
+﻿<!--template/cruiseconfigurehome.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+
+<html>
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h1>Precruise Configuration</h1>
+    <p>Winch operators and deployments types must be preconfigured for the submission form the winch operator will use to log casts.</p>
+    <h2>Active Operators</h2>
+    <p>Only operators for this cruise should have <i>status: </i>True. To change status, select operator username and edit on following page.</p>
+    <ul>
+        {% for operator in operators %}
+        <div class="operator-entry">
+            <a href="{% url 'operatoredit' operator.pk %}">{{operator.username}}</a>
+            <p><i>Status: </i>{{operator.status}}</p>
+        </div>
+        {% endfor %}
+    </ul>
+    <P>
+        <a href="{% url 'operatoradd' %}">Add Operator</a>
+    </P>
+    <h2>Active Deployments</h2>
+    <p>Only deployments for this cruise should have <i>status: </i>True. To change status, select deployment and edit on following page.</p>
+    <ul>
+        {% for deployment in deployments %}
+        <div class="deployment-entry">
+            <a href="{% url 'deploymentedit' deployment.pk %}">{{deployment.name}}</a>
+            <p>{{deployment.equipment}} | {{deployment.notes}}<br><i>Status: </i>{{deployment.status}}</p>
+        </div>
+        {% endfor %}
+    </ul>
+    <P>
+        <a href="{% url 'deploymentadd' %}">Add Deployment</a>
+    </P>
+</div>
+{% endblock %}
+
+</html>

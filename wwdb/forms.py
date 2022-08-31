@@ -23,7 +23,6 @@ class StatusForm(forms.ModelForm):
                     attrs={"class": "form-check-input", "id": "flexSwitchCheckChecked"})
         }
 
-
 class DateInput(forms.DateInput):
     input_type = 'time'
 

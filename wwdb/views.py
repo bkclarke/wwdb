@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.urls import reverse
 from bootstrap_datepicker_plus.widgets import *
 from .forms import *
+from django.shortcuts import render 
 
 def home(request):
     template = loader.get_template('wwdb/home.html')
@@ -35,6 +36,21 @@ class CastDelete(DeleteView):
     model = Cast
     template_name="wwdb/castdelete.html"
     success_url= reverse_lazy('home')
+
+"""
+PRECRUISE CONFIGURATION
+Classes related to starting a cruise including updating WinchOperators and DeploymentType models
+"""
+
+def cruiseconfigurehome(request):
+    operators = WinchOperator.objects.all()
+    deployments = DeploymentType.objects.all()
+    context = {
+        'operators': operators,
+        'deployments': deployments,
+       }
+
+    return render(request, 'wwdb/cruiseconfigurehome.html', context=context)
 
 """
 CASTS
@@ -190,12 +206,12 @@ class DeploymentDetail(DetailView):
 class DeploymentEdit(UpdateView):
     model = DeploymentType
     template_name="wwdb/deploymentedit.html"
-    fields=['equipment','notes']
+    fields=['name','equipment','notes','status']
 
 class DeploymentAdd(CreateView):
     model = DeploymentType
     template_name="wwdb/deploymentadd.html"
-    fields=['equipment','notes']
+    fields=['name','equipment','notes','status']
 
 """
 CUTBACKRETERMINATION
@@ -219,20 +235,6 @@ class CutbackReterminationAdd(CreateView):
     model = CutbackRetermination
     template_name="wwdb/cutbackreterminationadd.html"
     fields=['dryendtag','wetendtag', 'lengthremoved','wireid','date','notes','terminationid']
-
-"""
-WINCHOPERATORS DEPLOYMENTS WINCHES
-Update status of operators, deployments, and winches so all relevant to cruise are bool True
-"""
-
-class StatusView(TemplateView):
-    template_name = 'wwdb/status.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(StatusView, self).get_context_data(**kwargs)
-
-        context['form'] = StatusForm()
-        return context
 
 """
 def index(request):

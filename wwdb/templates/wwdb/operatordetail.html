@@ -4,9 +4,9 @@
 {% block content %}
 <div class="winchoperator-entry">
     <h1>{{winchoperator.username}}</h1>
-    <p>{{winchoperator.status}}</p>
-    <p>{{winchoperator.firstname}}</p>
-    <p>{{winchoperator.lastname}}</p>
+    <p>Status (active=True): {{winchoperator.status}}</p>
+    <p>First name: {{winchoperator.firstname}}</p>
+    <p>Last name: {{winchoperator.lastname}}</p>
 </div>
 <a href="{% url 'operatoredit' winchoperator.pk %}"> Edit Operator</a>
 {% endblock content %}

@@ -84,6 +84,7 @@ class CutbackRetermination(models.Model):
 
 class DeploymentType(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    status = models.BooleanField(db_column='Status', blank=True, null=True)  # Field name made lowercase.
     name = models.TextField(db_column='Name', blank=True, null=True)
     equipment = models.TextField(db_column='Equipment', blank=True, null=True)  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
