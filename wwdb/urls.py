@@ -33,5 +33,7 @@ urlpatterns = [
     path('cutbackretermination/<int:pk>/edit/', CutbackReterminationEdit.as_view(), name='cutbackreterminationedit'),
     path('cutbackreterminationadd/', CutbackReterminationAdd.as_view(), name='cutbackreterminationadd'),
     path('cruiseconfigurehome/', views.cruiseconfigurehome, name='cruiseconfigurehome'),
-
+    path('reporting/', views.reportinghome, name='reporting'),
+    path('safeworkingloadposting/', views.safeworkingloadposting, name='safeworkingloadposting'),
+    path('wireinventory/', views.wireinventory, name='wireinventory'),
 ]

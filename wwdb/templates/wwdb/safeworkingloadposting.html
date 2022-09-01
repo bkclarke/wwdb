@@ -1,0 +1,27 @@
+﻿<!--template/safeworkingloadposting.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+<html>
+{% block content %}
+<h1>Safe Working Limits</h1>
+<table class="table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>Winch</th>
+            <th>NSF-ID</th>
+            <th>Total Breaking Load</th>
+            <th>Length</th>
+        </tr>
+    </thead>
+    {% for wire in active_wire %}
+    <tr>
+        <td>{{wire.winchid}}</td>
+        <td>{{wire.nsfid}}</td>
+        <td>{{wire.totalbreakingload}}</td>
+        <td>{{wire.length}}</td>
+    </tr>
+    {% endfor %}
+</table>
+    {% endblock %}
+</html>

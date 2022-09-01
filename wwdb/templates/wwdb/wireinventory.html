@@ -1,0 +1,27 @@
+﻿<!--template/wireinventory.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+<html>
+{% block content %}
+<h1>Wire Inventory</h1>
+<table border="1" cellpadding="5" cellspacing="5">
+    <tr>
+        <th>NSF-ID</th>
+        <th>Wire Type</th>
+        <th>Total Breaking Load</th>
+        <th>Length</th>
+        <th>Status</th>
+    </tr>
+    {% for wire in wire_inventory %}
+    <tr>
+        <td>{{wire.nsfid}}</td>
+        <td>{{wire.wireropeid}}</td>
+        <td>{{wire.totalbreakingload}}</td>
+        <td>{{wire.length}}</td>
+        <td>{{wire.status}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+</html>

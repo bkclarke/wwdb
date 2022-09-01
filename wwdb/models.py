@@ -258,13 +258,14 @@ class WireRopeData(models.Model):
 class Wire(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     wireropeid = models.ForeignKey(WireRopeData, models.DO_NOTHING, db_column='WireRopeId', blank=True, null=True)  # Field name made lowercase.
+    winchid = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True)  # Field name made lowercase.
     manufacturerid = models.TextField(db_column='ManufacturerId', blank=True, null=True)  # Field name made lowercase.
     nsfid = models.TextField(db_column='NsfId', blank=True, null=True)  # Field name made lowercase.
     dateacquired = models.DateTimeField(db_column='DateAcquired', blank=True, null=True)  # Field name made lowercase.
     totalbreakingload = models.IntegerField(db_column='TotalBreakingLoad', blank=True, null=True)  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
     length = models.IntegerField(db_column='Length', blank=True, null=True)  # Field name made lowercase.
-    status = models.IntegerField(db_column='Status', blank=True, null=True)
+    status = models.BooleanField(db_column='Status', blank=True, null=True)
 
     class Meta:
         managed = True

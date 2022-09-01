@@ -53,6 +53,35 @@ def cruiseconfigurehome(request):
     return render(request, 'wwdb/cruiseconfigurehome.html', context=context)
 
 """
+WINCH WIRE REPORTING
+Classes related to winch and wire reporting 
+"""
+
+def reportinghome(request):
+    return render(request, 'wwdb/reporting.html')
+
+
+def safeworkingloadposting(request):
+    active_wire = Wire.objects.filter(status=True)
+    winches = Wire.objects.all().select_related()
+
+    context = {
+        'active_wire': active_wire,
+        'winches': winches,
+        }
+
+    return render(request, 'wwdb/safeworkingloadposting.html', context=context)
+
+def wireinventory(request):
+    wire_inventory = Wire.objects.all()
+
+    context = {
+        'wire_inventory': wire_inventory,
+        }
+
+    return render(request, 'wwdb/wireinventory.html', context=context)
+
+"""
 CASTS
 Classes related to starting and ending a cast, viewing and updating after ending a cast, Cast model
 """

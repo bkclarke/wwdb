@@ -1,0 +1,18 @@
+﻿<!--template/reporting.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+<html>
+{% block content %}
+<h1>Winch and Wire Reporting</h1>
+<P>
+    <a href="{% url 'safeworkingloadposting' %}">Safe working load posting</a>
+</P>
+<P>
+    <a href="{% url 'wireinventory' %}">Wire inventory</a>
+</P>
+<P>
+    <a href="{% url 'cutbackreterminationlist' %}">View, edit, submit cutbacks and reterminations</a>
+</P>
+{% endblock %}
+</html>

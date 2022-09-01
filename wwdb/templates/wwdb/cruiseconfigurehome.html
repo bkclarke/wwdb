@@ -8,30 +8,50 @@
 {% block content %}
 <div class="container mt-5 mb-5">
     <h1>Precruise Configuration</h1>
-    <p>Winch operators and deployments types must be preconfigured for the submission form the winch operator will use to log casts.</p>
-    <h2>Active Operators</h2>
-    <p>Only operators for this cruise should have <i>status: </i>True. To change status, select operator username and edit on following page.</p>
-    <ul>
+    <p>Winch operators and deployment must be preconfigured for the winch operator to log casts during a cruise.</p>
+    <h2>Operators</h2>
+    <p>Only operators for this cruise should have <i>status: True</i>. To change status, select the operators username and edit status on the following page.</p>
+    <table class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Username</th>
+                <th>First</th>
+                <th>Last</th>
+                <th>Status</th>
+            </tr>
+        </thead>
         {% for operator in operators %}
-        <div class="operator-entry">
-            <a href="{% url 'operatoredit' operator.pk %}">{{operator.username}}</a>
-            <p><i>Status: </i>{{operator.status}}</p>
-        </div>
+        <tr>
+            <td><a href="{% url 'operatoredit' operator.pk %}">{{operator.username}}</a></td>
+            <td>{{operator.firstname}}</td>
+            <td>{{operator.lastname}}</td>
+            <td>{{operator.status}}</td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
+    <br />
     <P>
         <a href="{% url 'operatoradd' %}">Add Operator</a>
     </P>
-    <h2>Active Deployments</h2>
-    <p>Only deployments for this cruise should have <i>status: </i>True. To change status, select deployment and edit on following page.</p>
-    <ul>
+    <h2>Deployments</h2>
+    <p>Only deployments for this cruise should have <i>status: True</i>. To change status, select the deployemnt and edit status on the following page.</p>
+    <table class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Deployment</th>
+                <th>Notes</th>
+                <th>Status</th>
+            </tr>
+        </thead>
         {% for deployment in deployments %}
-        <div class="deployment-entry">
-            <a href="{% url 'deploymentedit' deployment.pk %}">{{deployment.name}}</a>
-            <p>{{deployment.equipment}} | {{deployment.notes}}<br><i>Status: </i>{{deployment.status}}</p>
-        </div>
+        <tr>
+           <td><a href="{% url 'deploymentedit' deployment.pk %}">{{deployment.name}}</a></td>
+            <td>{{deployment.notes}}</td>
+            <td>{{deployment.status}}</td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
+    <br />
     <P>
         <a href="{% url 'deploymentadd' %}">Add Deployment</a>
     </P>
