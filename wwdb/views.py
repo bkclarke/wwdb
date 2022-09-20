@@ -1,5 +1,5 @@
 from django import template
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import loader
 from .models import *
 from django.views.generic import *
@@ -111,6 +111,7 @@ class CastStart(CreateView):
 
     def get_success_url(self):
        return reverse('castend', kwargs={'pk': self.pk})
+
 
 
 class CastEndDetail(DetailView):
@@ -327,6 +328,44 @@ def endcast(request, id):
  
 def castcomplete(request):
     return HttpResponse("Cast Complete")
+
+def startcasttest(request):
+   form = StartCastForm()
+   return render(request,
+            'wwdb/caststarttest.html',
+            {'form': form})
+
+def castendtest(request, id):
+    cast = Cast.objects.get(id=id)
+
+    if request.method == 'POST':
+        form = StartCastForm(request.POST, instance=cast)
+        if form.is_valid():
+            form.save()
+            return redirect('wwdb/endcasttest', cast.id)
+    else:
+        form = StartCastForm(instance=cast)
+
+    return render(request,
+                'endcasttest.html',
+                {'form': form})
+
+def startcasttest(request, pk):
+    if request.method == "POST":
+        form = startcastform(request.POST)
+        if form.is_valid():
+            form.instance.cast_id = pk
+            form.save()
+            return redirect('wwdb/hometest', pk=pk)
+    else:
+        form = startcastform()
+        #if 'submitted' in request.GET:
+        #    submitted = True
+        #    castid = Cast.objects.get(pk=id)
+    return Render(request, '/wwdb/endcast')
+
+    return render(request, 'wwdb/caststarttest.html', {'form':form, 'submitted':submitted, 'id':id})
+
 """
 
 
