@@ -265,6 +265,21 @@ class CutbackReterminationAdd(CreateView):
     model = CutbackRetermination
     template_name="wwdb/cutbackreterminationadd.html"
     fields=['dryendtag','wetendtag', 'lengthremoved','wireid','date','notes','terminationid']
+    
+"""
+REPORTING
+Custom reports
+"""
+
+def InstalledWiresReport(request):
+    winchlist = Winch.objects.filter(active = True)
+    
+    
+    return render(request, 'reports/installedwiresreport.html',
+    {'WinchList': winchlist})
+    
+     
+
 
 """
 def index(request):

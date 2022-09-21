@@ -36,4 +36,5 @@ urlpatterns = [
     path('reporting/', views.reportinghome, name='reporting'),
     path('safeworkingloadposting/', views.safeworkingloadposting, name='safeworkingloadposting'),
     path('wireinventory/', views.wireinventory, name='wireinventory'),
+    path('reports/installedwiresreport', views.InstalledWiresReport, name='installed-wires-report'),
 ]

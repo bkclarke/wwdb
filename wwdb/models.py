@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 class Calibration(models.Model):
@@ -109,6 +110,7 @@ class Drum(models.Model):
     material = models.TextField(db_column='Material', blank=True, null=True)  # Field name made lowercase.
     wiretype = models.TextField(db_column='WireType', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
     locationid = models.ForeignKey('Location', models.DO_NOTHING, db_column='LocationId', blank=True, null=True)  # Field name made lowercase.
+    #wire = models.ManyToManyField(Wire, through='WireDrum')
 
     class Meta:
         managed = True
@@ -174,15 +176,21 @@ class Lubrication(models.Model):
     def __str__(self):
         return str(self.date)
 
-class Safeworkinglimit(models.Model):
+class FactorOfSafety(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True)  # Field name made lowercase.
-    factorofsafety = models.IntegerField(db_column='FactorofSafety', blank=True, null=True)  # Field name made lowercase.
+    wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, related_name='factorofsafety')  # Field name made lowercase.
+    factorofsafety = models.FloatField(db_column='FactorofSafety', blank=False, null=False, default=5.0)  # Field name made lowercase.
+    datetime = models.DateTimeField(db_column='DateTime', blank=True, null=True)  # Field name made lowercase.
+    enteredby = models.ForeignKey(User, models.DO_NOTHING, db_column='EnteredBy', blank=True, null=True)  # Field name made lowercase.
+    notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = True
-        db_table = 'SafeWorkingLimit'
-        verbose_name_plural = "SafeWorkingLimit"
+        db_table = 'FactorOfSafety'
+        verbose_name_plural = "FactorOfSafety"
+        
+    def __str__(self):
+        return str(self.factorofsafety)
 
 
 class Termination(models.Model):
@@ -205,6 +213,8 @@ class Winch(models.Model):
     ship = models.TextField(db_column='Ship', blank=True, null=True)  # Field name made lowercase.
     institution = models.TextField(db_column='Institution', blank=True, null=True)  # Field name made lowercase.
     manufacturer = models.TextField(db_column='Manufacturer', blank=True, null=True)  # Field name made lowercase.
+    active = models.BooleanField(db_column='Active', blank=False, null=False, default=True)
+    drums = models.ManyToManyField(Drum, through='WinchDrum', related_name='winches')
     wiretrainschematicjframe = models.TextField(db_column='WireTrainSchematicJFrame', blank=True, null=True)  # Field name made lowercase.
     wiretrainschematicaframe = models.TextField(db_column='WireTrainSchematicAFrame', blank=True, null=True)  # Field name made lowercase.
 
@@ -218,6 +228,22 @@ class Winch(models.Model):
 
     def __str__(self):
         return str(self.name)
+        
+class WinchDrum(models.Model):
+    # id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    datetime = models.DateTimeField(db_column='DateTime', blank=True, null=True)  # Field name made lowercase.
+    enteredby = models.ForeignKey(User, models.DO_NOTHING, db_column='EnteredBy', blank=True, null=True)  # Field name made lowercase.
+    winchid = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True)  # Field name made lowercase.
+    drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True)  # Field name made lowercase.
+    notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
+    
+    class Meta:
+        managed = True
+        db_table = 'WinchDrum'
+        verbose_name_plural = "WinchDrum"
+        
+    def __str__(self):
+        return str(self.winchid) + '-' + str(self.drumid)
 
 class WinchOperator(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase. This field type is a guess.
@@ -266,6 +292,7 @@ class Wire(models.Model):
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
     length = models.IntegerField(db_column='Length', blank=True, null=True)  # Field name made lowercase.
     status = models.BooleanField(db_column='Status', blank=True, null=True)
+    drums = models.ManyToManyField(Drum, through='WireDrum', related_name='loaded_wires')
 
     class Meta:
         managed = True
@@ -284,6 +311,7 @@ class Wiredrum(models.Model):
     wireid = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True)  # Field name made lowercase.
     date = models.DateField(db_column='Date', blank=True, null=True)  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
+    
 
     class Meta:
         managed = True
