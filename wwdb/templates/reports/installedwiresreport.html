@@ -1,0 +1,35 @@
+﻿<!--template/castlist.html-->
+{% extends "wwdb/base.html" %}
+
+{% block content %}
+<style>
+table, tr, th, td {border: 1px solid black}
+</style>
+<div>
+    <h3>Installed Wires Report</h3>
+	<div>
+	   <table>
+	      <tr>
+		     <th>Winch</th>
+			 <th>Wire</th>
+			 <th>FoS</th>
+		     
+		     
+		  </tr>
+		  {% for winch in WinchList %}
+			    
+			 
+			    <tr>
+				  <td>{{ winch.name }}</td>
+				  <td>{{ winch.drums.last.loaded_wires.last }}</br>{{ winch.drums.last.loaded_wires.last.length }} m</td>
+				  <td>{{ winch.drums.last.loaded_wires.last.factorofsafety.last }}</td>
+				</tr>
+			 
+			 
+			 {% endfor %}
+	   </table>
+	</div>
+
+</div>
+
+{% endblock content %}
