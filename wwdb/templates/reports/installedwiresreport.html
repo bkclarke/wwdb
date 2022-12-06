@@ -9,27 +9,33 @@ table, tr, th, td {border: 1px solid black}
     <h3>Installed Wires Report</h3>
 	<div>
 	   <table>
-	      <tr>
-		     <th>Winch</th>
-			 <th>Wire</th>
-			 <th>FoS</th>
-		     
-		     
-		  </tr>
+		   <tr>
+		   	<th>Winch</th>
+		   	<th>NSF ID</th>
+		   	<th>Length</th>
+		   	<th>FoS</th>
+			<th>NBL</th>
+			<th>SWL</th>
+		   </tr>
 		  {% for winch in WinchList %}
 			    
 			 
-			    <tr>
-				  <td>{{ winch.name }}</td>
-				  <td>{{ winch.drums.last.loaded_wires.last }}</br>{{ winch.drums.last.loaded_wires.last.length }} m</td>
-				  <td>{{ winch.drums.last.loaded_wires.last.factorofsafety.last }}</td>
-				</tr>
+		   <tr>
+		   	<td>{{ winch.name }}</td>
+		   	<td>{{ winch.drums.last.loaded_wires.last }}</td>
+		   	<td>{{ winch.drums.last.loaded_wires.last.length }} m</td>
+		   	<td>{{ winch.drums.last.loaded_wires.last.factorofsafety.last }}</td>
+		   	<td></td>
+		   	<td></td>
+		   </tr>
 			 
 			 
 			 {% endfor %}
 	   </table>
 	</div>
-
 </div>
+<P>
+	<a href="{% url 'reporting' %}">Back to reporting</a>
+</P>
 
 {% endblock content %}

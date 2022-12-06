@@ -5,13 +5,14 @@ from .views import *
 
 
 urlpatterns = [
+    path('home/', views.home, name='home'),
     path('castlist/', CastList.as_view(), name='castlist'),
-    path('cast/<int:pk>/', CastDetail.as_view(), name='castdetail'),
-    path('cast/<int:pk>/castenddetail', CastEndDetail.as_view(), name='castenddetail'),
-    path('home/', CastStart.as_view(), name='caststart'),
-    path('cast/<int:pk>/edit/', CastEdit.as_view(), name='castedit'),
-    path('cast/<int:pk>/delete/', CastDelete.as_view(), name='castdelete'),
-    path('cast/<int:pk>/castend/', CastEnd.as_view(), name='castend'),
+    path('cast/<int:pk>/', views.castdetail, name='castdetail'),
+    path('cast/<id>/castenddetail', views.castenddetail, name='castenddetail'),
+    path('cast/', views.caststart, name='caststart'),
+    path('cast/<int:id>/edit/', views.castedit, name='castedit'),
+    path('cast/<int:id>/delete/', CastDelete.as_view(), name='castdelete'),
+    path('cast/<id>/castend/', views.castend, name='castend'),
     path('wirelist/', WireList.as_view(), name='wirelist'),
     path('wire/<int:pk>/wiredetail', WireDetail.as_view(), name='wiredetail'),
     path('wire/<int:pk>/edit/', WireEdit.as_view(), name='wireedit'),
@@ -33,8 +34,8 @@ urlpatterns = [
     path('cutbackretermination/<int:pk>/edit/', CutbackReterminationEdit.as_view(), name='cutbackreterminationedit'),
     path('cutbackreterminationadd/', CutbackReterminationAdd.as_view(), name='cutbackreterminationadd'),
     path('cruiseconfigurehome/', views.cruiseconfigurehome, name='cruiseconfigurehome'),
-    path('reporting/', views.reportinghome, name='reporting'),
-    path('safeworkingloadposting/', views.safeworkingloadposting, name='safeworkingloadposting'),
-    path('wireinventory/', views.wireinventory, name='wireinventory'),
-    path('reports/installedwiresreport', views.InstalledWiresReport, name='installed-wires-report'),
+    path('reports/reporting/', views.reportinghome, name='reporting'),
+    path('reports/safeworkingload/', views.safeworkingload, name='safeworkingload'),
+    path('reports/wireinventory/', views.wireinventory, name='wireinventory'),
+    path('reports/postings/', views.postingshome, name='postings'),
 ]

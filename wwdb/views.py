@@ -5,9 +5,9 @@ from .models import *
 from django.views.generic import *
 from django.urls import reverse_lazy
 from django.urls import reverse
-from bootstrap_datepicker_plus.widgets import *
+from bootstrap_datepicker_plus import *
 from .forms import *
-from django.shortcuts import render 
+from django.shortcuts import render, get_object_or_404
 
 def home(request):
     template = loader.get_template('wwdb/home.html')
@@ -23,19 +23,70 @@ class CastList(ListView):
     model = Cast
     template_name="wwdb/castlist.html"
 
-class CastDetail(DetailView):
-    model = Cast
-    template_name="wwdb/castdetail.html"
+def castedit(request, id):
+    context ={}
+    obj = get_object_or_404(Cast, id = id)
+    form = EditCastForm(request.POST or None, instance = obj)
+ 
+    if form.is_valid():
+        form.save()
+        castid=Cast.objects.get(id = id)
+        return HttpResponseRedirect("/wwdb/cast/%i/edit" % castid.pk)
+ 
+    context["form"] = form
+    return render(request, "wwdb/castedit.html", context)
 
-class CastEdit(UpdateView):
-    model = Cast
-    template_name="wwdb/castedit.html"
-    fields=['startoperatorid','endoperatorid','startdate','deploymenttypeid','winchid','notes']
+def castdetail(request, id):
+    context ={}
+    context["cast"] = Cast.objects.get(id = id)     
+    return render(request, "wwdb/castdetail.html", context)
 
 class CastDelete(DeleteView):
     model = Cast
     template_name="wwdb/castdelete.html"
     success_url= reverse_lazy('home')
+
+"""
+CASTS
+Classes related to starting and ending a cast, viewing and updating after ending a cast, Cast model
+"""
+
+def caststart(request):
+    context ={}
+    form = StartCastForm(request.POST or None)
+     
+    if request.method == "POST":
+        form = StartCastForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            castid=Cast.objects.last()
+            return HttpResponseRedirect("%i/castend" % castid.pk)
+    else:
+        form = StartCastForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/caststart.html', {'form':form, 'submitted':submitted, 'id':id})
+ 
+    context['form']= form
+    return render(request, "wwdb/caststart.html", context)
+
+def castenddetail(request, id):
+    context ={}
+    context["cast"] = Cast.objects.get(id = id)
+    return render(request, "wwdb/castenddetail.html", context)
+               
+def castend(request, id):
+    context ={}
+    obj = get_object_or_404(Cast, id = id)
+    form = EndCastForm(request.POST or None, instance = obj)
+
+    if form.is_valid():
+        form.save()
+        castid=Cast.objects.last()
+        return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
+ 
+    context["form"] = form
+    return render(request, "wwdb/castend.html", context)
 
 """
 PRECRUISE CONFIGURATION
@@ -58,10 +109,23 @@ Classes related to winch and wire reporting
 """
 
 def reportinghome(request):
-    return render(request, 'wwdb/reporting.html')
+    return render(request, 'reports/reporting.html')
+
+"""
+Postings
+"""
+def postingshome(request):
+    return render(request, 'reports/postings.html')
+
+"""
+Movements
+"""
 
 
-def safeworkingloadposting(request):
+"""
+Maintenance
+"""
+def safeworkingload(request):
     active_wire = Wire.objects.filter(status=True)
     winches = Wire.objects.all().select_related()
 
@@ -70,7 +134,7 @@ def safeworkingloadposting(request):
         'winches': winches,
         }
 
-    return render(request, 'wwdb/safeworkingloadposting.html', context=context)
+    return render(request, 'reports/safeworkingload.html', context=context)
 
 def wireinventory(request):
     wire_inventory = Wire.objects.all()
@@ -79,72 +143,7 @@ def wireinventory(request):
         'wire_inventory': wire_inventory,
         }
 
-    return render(request, 'wwdb/wireinventory.html', context=context)
-
-"""
-CASTS
-Classes related to starting and ending a cast, viewing and updating after ending a cast, Cast model
-"""
-
-class CastStart(CreateView):
-    model = Cast
-    template_name="wwdb/caststart.html"
-    fields=['startoperatorid','startdate','deploymenttypeid','winchid','notes']
- 
-#datetimepicker using bootstrap4
-    def get_form(self):
-        form = super().get_form()
-        form.fields['startdate'].widget = DateTimePickerInput()
-        return form
-
-#datetimepicker using admin widget
-#    def get_form(self, form_class=None):
-#        form = super(StartCast, self).get_form(form_class)
-#        form.fields['startdate'].widget = AdminDateWidget(attrs={'type': 'date'})
-#        form.fields['starttime'].widget = AdminDateWidget(attrs={'type': 'time'})
-#        return form
-
-    def form_valid(self, form):
-        item = form.save()
-        self.pk = item.pk
-        return super(CastStart, self).form_valid(form)
-
-    def get_success_url(self):
-       return reverse('castend', kwargs={'pk': self.pk})
-
-
-
-class CastEndDetail(DetailView):
-    model = Cast
-    template_name="wwdb/castenddetail.html"
-               
-class CastEnd(UpdateView):
-    model = Cast
-    template_name="wwdb/castend.html"
-    fields=['endoperatorid','enddate','notes']
-
-
-#datetimepicker using bootstrap4
-    def get_form(self):
-        form = super().get_form()
-        form.fields['enddate'].widget = DateTimePickerInput()
-        return form
-
-    def form_valid(self, form):
-        item = form.save()
-        self.pk = item.pk
-        return super(CastEnd, self).form_valid(form)
-
-    def get_success_url(self):
-       return reverse('castenddetail', kwargs={'pk': self.pk})
-
-"""
-datetimepicker using admin widget
-    def get_form(self, form_class=None):
-        form = super(EndCast, self).get_form(form_class)
-        form.fields['enddate'].widget = AdminDateWidget(attrs={'type': 'date'})
-        return form
-"""
+    return render(request, 'reports/wireinventory.html', context=context)
 
 """
 WIRES
@@ -264,123 +263,18 @@ class CutbackReterminationEdit(UpdateView):
 class CutbackReterminationAdd(CreateView):
     model = CutbackRetermination
     template_name="wwdb/cutbackreterminationadd.html"
-    fields=['dryendtag','wetendtag', 'lengthremoved','wireid','date','notes','terminationid']
+    fields=['dryendtag','wetendtag', 'lengthremoved','wireid','date','notes']
     
 """
-REPORTING
-Custom reports
+datetimepicker using admin widget
+    def get_form(self, form_class=None):
+        form = super(EndCast, self).get_form(form_class)
+        form.fields['enddate'].widget = AdminDateWidget(attrs={'type': 'date'})
+        return form
+
+#datetimepicker using bootstrap4
+    def get_form(self):
+        form = super().get_form()
+        form.fields['enddate'].widget = DateTimePickerInput()
+        return form
 """
-
-def InstalledWiresReport(request):
-    winchlist = Winch.objects.filter(active = True)
-    
-    
-    return render(request, 'reports/installedwiresreport.html',
-    {'WinchList': winchlist})
-    
-     
-
-
-"""
-def index(request):
-    return HttpResponse("Welcome to WWDB")
-
-
-def wire(request, wire_id):
-    wire = Wire.objects.get(id=wire_id)
-    template = loader.get_template('wwdb/wire.html')
-    context = {
-        'wire': wire,
-    }
-    return HttpResponse(template.render(context, request))
-
-def wiretest(request, wire_id):
-    wire = Wire.objects.get(id=wire_id)
-    template = loader.get_template('wwdb/wiretest.html')
-    context = {
-        'wire': wire,
-    }
-    return HttpResponse(template.render(context, request))
-
-def startcast(request):
-    submitted = False
-    form = startcastform
-    id = Cast.objects.get(primary_key)
-    if request.method == "POST":
-        form = startcastform(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/wwdb/endcast')
-    else:
-        form = startcastform 
-        if 'submitted' in request.GET:
-            submitted = True
-    return render(request, 'wwdb/startcast.html', {'form':form, 'submitted':submitted, 'id':id})
-
-def endcast(request):
-    submitted = False
-    form = endcastform
-    if request.method == "POST":
-        form = endcastform(request.POST)
-        if form.is_valid():
-            form.update()
-            return HttpResponseRedirect('/wwdb/castcomplete')
-   else:
-        form = endcastform 
-        if 'submitted' in request.GET:
-            submitted = True
-    return render(request, 'wwdb/endcast.html', {'form':form, 'submitted':submitted})
-
-
-def endcast(request, id):
-    idlast=Cast.objects.last()
-    instance = get_object_or_404(Cast, id=idlast)
-    form = endcastform(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        return redirect('wwdb/castcomplete')
-    return render(request, 'wwdb/endcast.html', {'form': form}) 
- 
-def castcomplete(request):
-    return HttpResponse("Cast Complete")
-
-def startcasttest(request):
-   form = StartCastForm()
-   return render(request,
-            'wwdb/caststarttest.html',
-            {'form': form})
-
-def castendtest(request, id):
-    cast = Cast.objects.get(id=id)
-
-    if request.method == 'POST':
-        form = StartCastForm(request.POST, instance=cast)
-        if form.is_valid():
-            form.save()
-            return redirect('wwdb/endcasttest', cast.id)
-    else:
-        form = StartCastForm(instance=cast)
-
-    return render(request,
-                'endcasttest.html',
-                {'form': form})
-
-def startcasttest(request, pk):
-    if request.method == "POST":
-        form = startcastform(request.POST)
-        if form.is_valid():
-            form.instance.cast_id = pk
-            form.save()
-            return redirect('wwdb/hometest', pk=pk)
-    else:
-        form = startcastform()
-        #if 'submitted' in request.GET:
-        #    submitted = True
-        #    castid = Cast.objects.get(pk=id)
-    return Render(request, '/wwdb/endcast')
-
-    return render(request, 'wwdb/caststarttest.html', {'form':form, 'submitted':submitted, 'id':id})
-
-"""
-
-

@@ -5,58 +5,81 @@
 <head>
     <title>WWDB</title>
     {% load static %}
-    <link rel="stylesheet" href={% static 'css/bootstrap.min.css' %}>
-    <link rel="stylesheet" href={% static 'css/bootstrap.css' %}>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" crossorigin="anonymous" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"></script>
+    <link rel="stylesheet" type="text/css" href={% static 'css/bootstrap.min.css' %}>
+    <link rel="stylesheet" type="text/css" href={% static 'css/bootstrap.css' %}>
+    <link rel="stylesheet" type="text/css" href={% static 'css/wwdb.css' %}>
+    <script type="text/javascript" src={% static 'admin/js/vendor/jquery/jquery.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/bootstrap.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/wwdb.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/popper.js' %} crossorigin="anonymous"></script>
     {{form.media}}
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-light fixed-top " style="background-color: #e3f2fd;">
-            <a class="navbar-brand">URI Winch Wire DataBase</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'caststart' %}">Start a Cast</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'castlist' %}">View Casts</a>
-                    </li>
-                </ul>
+        <nav class="navbar fixed-top navbar-expand-sm navbar-light">
+            <div class="menu-container">
+                <div class="menu-left">
+                    <a class="navbar-brand">URI Winch Wire DataBase</a>
+                </div>
+                <div class="menu-right">
+                    <div class="navbar-nav">
+                        <div class="top-button-container"> 
+                            <button type="button" class="btn btn-startcast">
+                                <a class="nav-link" href="{% url 'caststart' %}">Start Cast</a>
+                            </button>
+                        </div>
+                        <button type="button" class="btn btn-startcast">
+                            <a class="nav-link" href="{% url 'castlist' %}">View Casts</a>
+                        </button>
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
     <div class="container mt-5 mb-5">
         {% block content %}
         {% endblock content %}
-    </br>
-    </br>
+        </br>
+        </br>
     </div>
-    <nav class="navbar navbar-light fixed-bottom" style="background-color: #e3f2fd;">
-        <div class="navbar-nav mr-auto mt-0 mb-0">
-            <h6 class="nav-item active">
-                <a class="nav-link" href="{% url 'cruiseconfigurehome' %}">Precruise Configuration</a>
-            </h6>
-            <!--<h6 class="nav-item active">
-               <a class="nav-link" href="{% url 'reporting' %}">Winch Wire Reporting</a>
-           </h6>-->
+
+<nav class="navbar fixed-bottom navbar-expand-sm navbar-light">
+    <div class="menu-container">
+        <div class="menu-left">
+            <ul class="navbar-nav">
+                <li class="nav-item-bottom">
+                    <a class="nav-link" href="{% url 'cruiseconfigurehome' %}">Precruise Configuration</a>
+                </li>
+                <li class="nav-item-bottom">
+                    <a class="nav-link" href="{% url 'reporting' %}">Reporting</a>
+                </li>
+                <li class="nav-item-bottom">
+                    <a class="nav-link" href="{% url 'postings' %}">Postings</a>
+                </li>
+                <li class="nav-item-bottom">
+                    <a class="nav-link" href="{% url 'wireinventory' %}">Wire inventory</a>
+                </li>
+            </ul>
         </div>
-        {% if user.is_authenticated %}
-        <span>Hi {{user.username}}!</span>
-        <span><a href="{% url 'logout' %}">Log out</a></span>
-        {% else %}
-        <span>You are not logged in.</span>
-        <span><a href="{% url 'login' %}">Log in</a></span>
-        <span><a href="{% url 'signup' %}">Sign up</a></span>
-        {% endif %}
+        <div class="menu-right">
+            <ul class="navbar-nav login-control">
+                <div class="nav-item-bottom">
+                    </li>
+                    {% if user.is_authenticated %}
+                    <span>Hi {{user.username}}!</span>
+                    <span><a href="{% url 'logout' %}">Log out</a></span>
+                    {% else %}
+                    <span>You are not logged in.</span></br>
+                    <span><a href="{% url 'login' %}">Log in</a></span>
+                    <span><a href="{% url 'signup' %}">Sign up</a></span>
+                    {% endif %}
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </div>
 </nav>
-    </body>
-    </html>
+</body>
+</html>
 
 

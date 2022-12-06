@@ -1,11 +1,15 @@
 {
   "ExpandedNodes": [
     "",
+    "\\accounts",
+    "\\static\\admin",
     "\\static\\css",
     "\\wwdb",
     "\\wwdb\\templates",
-    "\\wwdb\\templates\\wwdb"
+    "\\wwdb\\templates\\registration",
+    "\\wwdb\\templates\\wwdb",
+    "\\wwdb_proj"
   ],
-  "SelectedNode": "\\wwdb\\views.py",
+  "SelectedNode": "\\wwdb\\templates\\registration\\signup.html",
   "PreviewInSolutionExplorer": false
 }

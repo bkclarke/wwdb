@@ -1,0 +1,103 @@
+.login-control {
+    display: block;
+    float: right;
+}
+
+.top-button-container {
+    border = pink;
+    padding: 0.0rem 1.0 rem 0.0 rem 1.0rem;
+}
+
+.btn-startcast, .btn-group-sm > .btn {
+    color: #fff;
+    background-color: #A63446;
+    border-color: #A63446;
+    padding: 0.1rem 0.1rem;
+    font-size: 1rem;
+    line-height: 1.0;
+    border-radius: 0.2rem;
+}
+
+.nav-item-top {
+    font-size: 1.0rem;
+    font-weight: 400;
+}
+
+.nav-item-bottom {
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+.navbar-bottom {
+    -ms-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    color: rgba(0, 0, 0, 0.9);
+}
+
+.navbar {
+    background-color: #0C6291;
+}
+
+.navbar-light .navbar-brand {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.navbar-light .navbar-brand:hover, .navbar-light .navbar-brand:focus {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.navbar-light .navbar-nav .nav-link:hover, .navbar-light .navbar-nav .nav-link:focus {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.navbar-light .navbar-nav .nav-link.disabled {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.navbar-light .navbar-nav .show > .nav-link,
+.navbar-light .navbar-nav .active > .nav-link,
+.navbar-light .navbar-nav .nav-link.show,
+.navbar-light .navbar-nav .nav-link.active {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.navbar-light .navbar-toggler {
+  color: rgba(0, 0, 0, 0.5);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.navbar-light .navbar-text {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.navbar-light .navbar-text a {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.navbar-light .navbar-text a:hover, .navbar-light .navbar-text a:focus {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.menu-container {
+    width: 100%;
+}
+
+.menu-left {
+    width: 80%;
+    float: left;
+}
+
+.menu-right {
+    width: 20%;
+    margin-left: 80%;
+}
