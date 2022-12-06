@@ -68,6 +68,7 @@ def caststart(request):
             return render(request, 'wwdb/caststart.html', {'form':form, 'submitted':submitted, 'id':id})
  
     context['form']= form
+
     return render(request, "wwdb/caststart.html", context)
 
 def castenddetail(request, id):

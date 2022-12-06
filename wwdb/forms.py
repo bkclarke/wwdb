@@ -1,21 +1,23 @@
 from django import forms
 from django.forms import ModelForm
 from .models import *
-
+from bootstrap_datepicker_plus.widgets import DateTimePickerInput
 
 class StartCastForm(ModelForm):
   
     class Meta:
         model = Cast
-        widgets = {'startdate': forms.DateInput(attrs={'id': 'datetimepicker12'})}
 
         fields = [
-            "startoperatorid",
-            "startdate",
-            "deploymenttypeid",
-            "winchid",
-            "notes",
+            'startoperatorid',
+            'startdate',
+            'deploymenttypeid',
+            'winchid',
+            'notes',
         ]
+
+        widgets = {'startdate': DateTimePickerInput()}
+
 
 class EndCastForm(ModelForm):
   
@@ -23,10 +25,12 @@ class EndCastForm(ModelForm):
         model = Cast
   
         fields = [
-            "endoperatorid",
-            "enddate",
-            "notes",
+            'endoperatorid',
+            'enddate',
+            'notes',
         ]
+
+        widgets = {'enddate': DateTimePickerInput()}
 
 class EditCastForm(ModelForm):
   
@@ -37,7 +41,11 @@ class EditCastForm(ModelForm):
             'startoperatorid',
             'endoperatorid',
             'startdate',
+            'enddate',
             'deploymenttypeid',
             'winchid',
             'notes'
         ]
+
+        widgets = {'startdate': DateTimePickerInput(), 
+                   'enddate': DateTimePickerInput()}

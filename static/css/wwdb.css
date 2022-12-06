@@ -6,6 +6,7 @@
 .top-button-container {
     border = pink;
     padding: 0.0rem 1.0 rem 0.0 rem 1.0rem;
+    margin-right: 1rem;
 }
 
 .btn-startcast, .btn-group-sm > .btn {
