@@ -5,10 +5,18 @@
 <html>
 {% block content %}
 <h1>Winch and Wire Reporting</h1>
-<P>
-    <h3>Maintenance</h3>
-    <h4>Lubrication</br>Pull test</br>calibration</h4>
-    <a href="{% url 'cutbackreterminationadd' %}">Cutback or retermination</a>
-</P>
+    </br>
+    </br>
+<h2>Movements</h2>
+<p>change wire on drum</p>
+<p>change drum location</p>
+    </br>
+    </br>
+<h2>Maintenance</h2>
+<p>link pages to list, with an a link to entry for, and links to edit entries</p>
+<p><a href="{% url 'cutbackreterminationadd' %}">Cutback or retermination</a></p>
+<p>Log lubrication</p>
+<p>Log calibration</p>
+<p>Log pulltest</p>
 {% endblock %}
 </html>

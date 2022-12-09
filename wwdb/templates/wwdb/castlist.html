@@ -3,24 +3,56 @@
 
 {% block content %}
 <div class="container p-5">
-    <table class="table table-striped">
+    {% if cast_flag %}
+    <h2>Flagged for review</h2>
+    <table class="table table-danger table-sm">
         <thead class="thead-light">
             <tr>
                 <th style="width: 30%">Start time</th>
                 <th style="width: 15%">Winch</th>
-                <th style="width: 35%">Deployment type</th>
-                <th style="width: 20%">Start operator</th>
+                <th style="width: 30%">Deployment type</th>
+                <th style="width: 15%">Start operator</th>
+                <th style="width: 10%">FOS</th>
             </tr>
         </thead>
-        {% for cast in cast_list %}
+        {% for cast in cast_flag %}
         <tr>
             <td><a href="{% url 'castedit' cast.pk %}">{{cast.startdate}}</a></td>
             <td>{{cast.winchid}}</td>
             <td>{{cast.deploymenttypeid}}</td>
             <td>{{cast.startoperatorid}}</td>
+            <td>{{cast.factorofsafety}}</td>
         </tr>
         {% endfor %}
     </table>
-    <p> To edit or delete a cast, select the start time and edit/delete in the following page.</p>
+    {% else %}
+        <p>There are no flagged casts</p>
+    {% endif %}
+    <br />
+    {% if cast_noflag %}
+    <h2>Completed casts</h2>
+    <table class="table table-striped table-sm">
+        <thead class="thead-light">
+            <tr>
+                <th style="width: 30%">Start time</th>
+                <th style="width: 15%">Winch</th>
+                <th style="width: 30%">Deployment type</th>
+                <th style="width: 15%">Start operator</th>
+                <th style="width: 10%">FOS</th>
+            </tr>
+        </thead>
+        {% for cast in cast_noflag %}
+        <tr>
+            <td><a href="{% url 'castedit' cast.pk %}">{{cast.startdate}}</a></td>
+            <td>{{cast.winchid}}</td>
+            <td>{{cast.deploymenttypeid}}</td>
+            <td>{{cast.startoperatorid}}</td>
+            <td>{{cast.factorofsafety}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>There are no completed casts</p>
+    {% endif %}
 </div>
-{% endblock content %}
+    {% endblock content %}

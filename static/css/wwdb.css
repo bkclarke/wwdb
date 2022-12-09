@@ -82,7 +82,7 @@
 }
 
 .navbar-light .navbar-text a {
-  color: rgba(0, 0, 0, 0.9);
+    color: rgba(0, 0, 0, 0.9);
 }
 
 .navbar-light .navbar-text a:hover, .navbar-light .navbar-text a:focus {
@@ -101,4 +101,8 @@
 .menu-right {
     width: 20%;
     margin-left: 80%;
+}
+
+@page {
+    size: auto;
 }

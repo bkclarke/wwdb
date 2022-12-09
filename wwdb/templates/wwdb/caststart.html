@@ -1,5 +1,5 @@
 ﻿<!--templates/caststart.html-->
-{% extends "wwdb/base.html" %}
+{% extends "wwdb/basedisabled.html" %}
 {% load bootstrap4 %}
 {% bootstrap_css %}
 {% bootstrap_javascript jquery='full' %}
@@ -14,13 +14,4 @@
         <input type="submit" value="save">
     </form>
 </div>
-<!--
-<script type="text/javascript">
-    $(function () {
-        $('#datetimepicker12').datetimepicker({
-            inline: true,
-            sideBySide: true,
-        });
-    });
-</script>-->
 {% endblock content %}

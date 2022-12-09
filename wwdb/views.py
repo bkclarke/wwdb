@@ -23,6 +23,17 @@ class CastList(ListView):
     model = Cast
     template_name="wwdb/castlist.html"
 
+def castlist(request):
+    cast_noflag = Cast.objects.filter(flagforreview=False or None)
+    cast_flag = Cast.objects.filter(flagforreview=True)
+
+    context = {
+        'cast_noflag': cast_noflag,
+        'cast_flag': cast_flag,
+       }
+
+    return render(request, 'wwdb/castlist.html', context=context)
+
 def castedit(request, id):
     context ={}
     obj = get_object_or_404(Cast, id = id)
@@ -54,7 +65,6 @@ Classes related to starting and ending a cast, viewing and updating after ending
 def caststart(request):
     context ={}
     form = StartCastForm(request.POST or None)
-     
     if request.method == "POST":
         form = StartCastForm(request.POST, request.FILES)
         if form.is_valid():
@@ -97,12 +107,38 @@ Classes related to starting a cruise including updating WinchOperators and Deplo
 def cruiseconfigurehome(request):
     operators = WinchOperator.objects.all()
     deployments = DeploymentType.objects.all()
+    active_wire = Wire.objects.filter(status=True)
+    winches = Winch.objects.all()
+
     context = {
         'operators': operators,
         'deployments': deployments,
+        'active_wire': active_wire,
+        'winches': winches,
        }
 
+
     return render(request, 'wwdb/cruiseconfigurehome.html', context=context)
+
+def wireeditfactorofsafety(request, id):
+    context ={}
+    obj = get_object_or_404(Wire, id = id)
+
+    if request.method == 'POST':
+        form = EditFactorofSafetyForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            wireid=Wire.objects.get(id=id)
+            return HttpResponseRedirect("/wwdb/cruiseconfigurehome")
+    else:
+        form = EditFactorofSafetyForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/wire/%i/editfactorofsafety" % wireid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/wireeditfactorofsafety.html", context)
+
 
 """
 WINCH WIRE REPORTING
@@ -115,8 +151,20 @@ def reportinghome(request):
 """
 Postings
 """
-def postingshome(request):
-    return render(request, 'reports/postings.html')
+
+def safeworkingtensions(request):
+    active_wire = Wire.objects.filter(status=True)
+    winches = Wire.objects.all().select_related()
+    breaktest = Breaktest.objects.order_by('wireid','-testdate')
+
+
+    context = {
+        'active_wire': active_wire,
+        'winches': winches,
+        'breaktest': breaktest,
+        }
+
+    return render(request, 'reports/safeworkingtensions.html', context=context)
 
 """
 Movements
@@ -126,22 +174,15 @@ Movements
 """
 Maintenance
 """
-def safeworkingload(request):
-    active_wire = Wire.objects.filter(status=True)
-    winches = Wire.objects.all().select_related()
 
-    context = {
-        'active_wire': active_wire,
-        'winches': winches,
-        }
-
-    return render(request, 'reports/safeworkingload.html', context=context)
 
 def wireinventory(request):
-    wire_inventory = Wire.objects.all()
+    wires_in_use = Wire.objects.filter(status=True)
+    wires_in_storage = Wire.objects.filter(status=False)
 
     context = {
-        'wire_inventory': wire_inventory,
+        'wires_in_use': wires_in_use,
+        'wires_in_storage': wires_in_storage, 
         }
 
     return render(request, 'reports/wireinventory.html', context=context)
@@ -162,7 +203,7 @@ class WireDetail(DetailView):
 class WireEdit(UpdateView):
     model = Wire
     template_name="wwdb/wireedit.html"
-    fields=['wireropeid','manufacturerid','nsfid','dateacquired','notes','status']
+    fields=['wireropeid','manufacturerid','nsfid','dateacquired','notes','status','factorofsafety']
     
     def get_form(self):
         form = super().get_form()
@@ -192,6 +233,25 @@ class WinchEdit(UpdateView):
     template_name="wwdb/winchedit.html"
     fields=['locationid','ship','institution','manufacturer']
 
+def wincheditstatus(request, id):
+    context ={}
+    obj = get_object_or_404(Winch, id = id)
+
+    if request.method == 'POST':
+        form = EditWinchStatusForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            winchid=Winch.objects.get(id=id)
+            return HttpResponseRedirect("/wwdb/cruiseconfigurehome")
+    else:
+        form = EditWinchStatusForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/winch/%i/editstatus" % winchid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/wincheditstatus.html", context)
+
 class WinchAdd(CreateView):
     model = Winch
     template_name="wwdb/winchadd.html"
@@ -215,6 +275,26 @@ class OperatorEdit(UpdateView):
     template_name="wwdb/operatoredit.html"
     fields=['username','firstname','lastname','status']
 
+
+def operatoreditstatus(request, id):
+    context ={}
+    obj = get_object_or_404(WinchOperator, id = id)
+
+    if request.method == 'POST':
+        form = EditOperatorStatusForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            operatorid=WinchOperator.objects.get(id=id)
+            return HttpResponseRedirect("/wwdb/cruiseconfigurehome")
+    else:
+        form = EditOperatorStatusForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/operator/%i/editstatus" % operatorid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/operatoreditstatus.html", context)
+
 class OperatorAdd(CreateView):
     model = WinchOperator
     template_name="wwdb/operatoradd.html"
@@ -237,6 +317,25 @@ class DeploymentEdit(UpdateView):
     model = DeploymentType
     template_name="wwdb/deploymentedit.html"
     fields=['name','equipment','notes','status']
+
+def deploymenteditstatus(request, id):
+    context ={}
+    obj = get_object_or_404(DeploymentType, id = id)
+
+    if request.method == 'POST':
+        form = EditDeploymentStatusForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            deploymentid=DeploymentType.objects.get(id=id)
+            return HttpResponseRedirect("/wwdb/cruiseconfigurehome")
+    else:
+        form = EditDeploymentStatusForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/deployment/%i/editstatus" % deploymenttypeid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/deploymenteditstatus.html", context)
 
 class DeploymentAdd(CreateView):
     model = DeploymentType
