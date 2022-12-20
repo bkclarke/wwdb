@@ -1,0 +1,39 @@
+﻿<!--template/wireinventory.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+<html>
+{% block content %}
+<h2>Cutbacks and Reterminations</h2>
+</br>
+<button type="button" class="btn btn-configure">
+    <a class="nav-link" href="{% url 'cutbackreterminationadd' %}">Add Cutback or retermination</a>
+</button>
+</br>
+</br>
+<table class="table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>Date</th>
+            <th>Wire</th>
+            <th>Wet end tab</th>
+            <th>Dry end tag</th>
+            <th>Length removed</th>
+            <th>Length</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    {% for cutbackretermination in cutbacks_reterminations %}
+    <tr>
+        <td><a href="{% url 'cutbackreterminationedit' cutbackretermination.pk %}">{{cutbackretermination.date}}</a></td>
+        <td>{{cutbackretermination.wireid}}</td>
+        <td>{{cutbackretermination.wetendtag}}</td>
+        <td>{{cutbackretermination.dryendtag}}</td>
+        <td>{{cutbackretermination.lengthremoved}}</td>
+        <td>{{cutbackretermination.length}}</td>
+        <td>{{cutbackretermination.notes}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+</html>

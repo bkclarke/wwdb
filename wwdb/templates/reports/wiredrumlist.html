@@ -1,0 +1,36 @@
+﻿<!--template/wiredrumlist.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+<html>
+{% block content %}
+<h2>Wires on drums log</h2>
+</br>
+<!--
+<button type="button" class="btn btn-configure">
+    <a class="nav-link" href="{% url 'cutbackreterminationadd' %}">Add Cutback or retermination</a>
+</button>-->
+</br>
+</br>
+<table class="table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>Date</th>
+            <th>Wire</th>
+            <th>Drum</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    {% for wiredrum in wire_drum %}
+    <tr>
+        <td>{{wiredrum.date}}</td>
+        <td>{{wiredrum.wireid}}</td>
+        <td>{{wiredrum.drumid}}</td>
+        <td>{{wiredrum.notes}}</td>
+    </tr>
+    {% endfor %}
+</table>
+<!--
+<p><a href="{% url 'cutbackreterminationadd' %}">Add Cutback or retermination</a></p>-->
+{% endblock %}
+</html>

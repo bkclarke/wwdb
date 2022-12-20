@@ -148,6 +148,47 @@ Classes related to winch and wire reporting
 def reportinghome(request):
     return render(request, 'reports/reporting.html')
 
+#def wiredrumadd(request):
+
+"""
+class CutbackReterminationAdd(CreateView):
+    model = CutbackRetermination
+    template_name="wwdb/cutbackreterminationadd.html"
+    fields=['dryendtag','wetendtag', 'lengthremoved','wireid','date','notes']
+"""
+
+def wiredrumlist(request):
+    wire_drum = Wiredrum.objects.order_by('-date')
+
+    context = {
+        'wire_drum': wire_drum, 
+        }
+
+    return render(request, 'reports/wiredrumlist.html', context=context)
+
+
+#def wiredrumedit(request):
+
+def wiredrumedit(request, id):
+    context ={}
+    obj = get_object_or_404(Wiredrum, id = id)
+
+    if request.method == 'POST':
+        form = EditWireDrumForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            wiredrum=Wiredrum.objects.get(id=id)
+            return HttpResponseRedirect('/wwdb/reports/wiredrumlist')
+    else:
+        form = EditWireDrumForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/wiredrum/%i/edit' % wiredrumid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/wiredrumedit.html", context)
+
+
 """
 Postings
 """
@@ -318,6 +359,7 @@ class DeploymentEdit(UpdateView):
     template_name="wwdb/deploymentedit.html"
     fields=['name','equipment','notes','status']
 
+
 def deploymenteditstatus(request, id):
     context ={}
     obj = get_object_or_404(DeploymentType, id = id)
@@ -347,34 +389,42 @@ CUTBACKRETERMINATION
 Classes related to create, update, view CutbackRetermination model
 """
 
-class CutbackReterminationList(ListView):
-    model = CutbackRetermination
-    template_name="wwdb/cutbackreterminationlist.html"
+def cutbackreterminationlist(request):
+    cutbacks_reterminations = CutbackRetermination.objects.order_by('-date')
+
+    context = {
+        'cutbacks_reterminations': cutbacks_reterminations, 
+        }
+
+    return render(request, 'reports/cutbackreterminationlist.html', context=context)
+
+def cutbackreterminationedit(request, id):
+    context ={}
+    obj = get_object_or_404(CutbackRetermination, id = id)
+
+    if request.method == 'POST':
+        form = EditCutbackReterminationForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            cutbackretermination=CutbackRetermination.objects.get(id=id)
+            return HttpResponseRedirect('/wwdb/reports/cutbackreterminationlist')
+    else:
+        form = EditCutbackReterminationForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/cutbackretermination/%i/edit" % cutbackreterminationid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/cutbackreterminationedit.html", context)
+
 
 class CutbackReterminationDetail(DetailView):
     model = CutbackRetermination
     template_name="wwdb/cutbackreterminationdetail.html"
 
-class CutbackReterminationEdit(UpdateView):
-    model = CutbackRetermination
-    template_name="wwdb/cutbackreterminationedit.html"
-    fields=['equipment','notes']
+
 
 class CutbackReterminationAdd(CreateView):
     model = CutbackRetermination
     template_name="wwdb/cutbackreterminationadd.html"
     fields=['dryendtag','wetendtag', 'lengthremoved','wireid','date','notes']
-    
-"""
-datetimepicker using admin widget
-    def get_form(self, form_class=None):
-        form = super(EndCast, self).get_form(form_class)
-        form.fields['enddate'].widget = AdminDateWidget(attrs={'type': 'date'})
-        return form
-
-#datetimepicker using bootstrap4
-    def get_form(self):
-        form = super().get_form()
-        form.fields['enddate'].widget = DateTimePickerInput()
-        return form
-"""

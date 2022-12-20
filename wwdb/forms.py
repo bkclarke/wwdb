@@ -89,3 +89,28 @@ class EditDeploymentStatusForm(ModelForm):
         fields = [
             'status',
         ]
+
+class EditCutbackReterminationForm(ModelForm):
+  
+    class Meta:
+        model = CutbackRetermination
+  
+        fields = [
+            'date',
+            'wireid',
+            'wetendtag',
+            'dryendtag',
+            'lengthremoved',
+            'length',
+            'notes',
+        ]
+
+
+class EditWireDrumForm(ModelForm):
+  
+    class Meta:
+        model = Wiredrum
+  
+        fields = [
+            'date',
+        ]
