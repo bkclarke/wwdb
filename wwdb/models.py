@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+import pyodbc 
+import pandas as pd
 
 
 class Breaktest(models.Model):
@@ -66,6 +68,7 @@ class Cast(models.Model):
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
     maxtension = models.IntegerField(db_column='MaxTension', blank=True, null=True, verbose_name='Max tension')  # Field name made lowercase.
     maxpayout = models.IntegerField(db_column='MaxPayout', blank=True, null=True, verbose_name='Max payout')  # Field name made lowercase.
+    payoutmaxtension = models.IntegerField(db_column='PayoutMaxTension', blank=True, null=True, verbose_name='Tension at max payout')  # Field name made lowercase.
     factorofsafety = models.FloatField(db_column='FactorofSafety', blank=True, null=True, verbose_name='Factor of safety')  # Field name made lowercase.
     flagforreview = models.BooleanField(db_column='Flagforreview', blank=True, null=True, verbose_name='Flag for review')  # Field name made lowercase.
 
@@ -80,6 +83,23 @@ class Cast(models.Model):
     def __str__(self):
         return str(self.startdate)
 
+    def endcastcal(self):
+        conn = pyodbc.connect('Driver={SQL Server};'
+                                'Server=192.168.2.5, 1433;'
+                                'Database=WinchDb;'
+                                'Trusted_Connection=no;'
+			            'UID=remoteadmin;'
+			            'PWD=eris.2003;')
+
+        startcal=str(self.startdate)
+        endcal=str(self.enddate)
+
+        df=pd.read_sql_query("SELECT * FROM winch1 WHERE DateTime BETWEEN '" + startcal + "' AND '" + endcal + "'", conn)
+
+        self.maxtension=df['Tension'].max()
+        self.maxpayout=df['Payout'].max()
+        self.payoutmaxtension=df.loc[df['Tension'].max(),'Payout']
+
 class CutbackRetermination(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag value (m)')  # Field name made lowercase.
@@ -87,7 +107,7 @@ class CutbackRetermination(models.Model):
     lengthremoved = models.IntegerField(db_column='LengthRemoved', blank=True, null=True, verbose_name='Length removed (m)')  # Field name made lowercase.
     wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date and time')  # Field name made lowercase.
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date')  # Field name made lowercase.
     length = models.TextField(db_column='Length', blank=True, null=True, verbose_name='Length')  # Field name made lowercase. This field type is a guess.
 
     class Meta:
@@ -322,7 +342,7 @@ class Wiredrum(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum')  # Field name made lowercase.
     wireid = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date and time')  # Field name made lowercase.
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date')  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
     
 

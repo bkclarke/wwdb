@@ -37,11 +37,12 @@ urlpatterns = [
     path('reports/cutbackreterminationlist/', views.cutbackreterminationlist, name='cutbackreterminationlist'),
     path('cutbackretermination/<int:pk>/deploymentdetail', CutbackReterminationDetail.as_view(), name='cutbackreterminationdetail'),
     path('cutbackretermination/<int:id>/edit/', views.cutbackreterminationedit, name='cutbackreterminationedit'),
-    path('cutbackreterminationadd/', CutbackReterminationAdd.as_view(), name='cutbackreterminationadd'),
+    path('cutbackreterminationadd/', views.cutbackreterminationadd, name='cutbackreterminationadd'),
     path('cruiseconfigurehome/', views.cruiseconfigurehome, name='cruiseconfigurehome'),
     path('reports/reporting/', views.reportinghome, name='reporting'),
     path('reports/safeworkingtensions/', views.safeworkingtensions, name='safeworkingtensions'),
     path('reports/wireinventory/', views.wireinventory, name='wireinventory'),
     path('reports/wiredrumlist/', views.wiredrumlist, name='wiredrumlist'),
     path('wiredrum/<int:id>/edit/', views.wiredrumedit, name='wiredrumedit'),
+    path('wiredrumadd/', views.wiredrumadd, name='wiredrumadd'),
 ]

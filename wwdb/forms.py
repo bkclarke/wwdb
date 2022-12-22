@@ -1,10 +1,10 @@
 from django import forms
 from django.forms import ModelForm
 from .models import *
-from bootstrap_datepicker_plus.widgets import DateTimePickerInput
+from bootstrap_datepicker_plus.widgets import DatePickerInput, DateTimePickerInput
 
 class StartCastForm(ModelForm):
-    flagforreview = forms.BooleanField()
+    flagforreview = forms.BooleanField(required=False)
 
     class Meta:
         model = Cast
@@ -20,7 +20,7 @@ class StartCastForm(ModelForm):
         widgets = {'startdate': DateTimePickerInput()}
 
 class EndCastForm(ModelForm):
-    flagforreview = forms.BooleanField()
+    flagforreview = forms.BooleanField(required=False)
   
     class Meta:
         model = Cast
@@ -35,7 +35,7 @@ class EndCastForm(ModelForm):
         widgets = {'enddate': DateTimePickerInput()}
 
 class EditCastForm(ModelForm):
-    flagforreview = forms.BooleanField()
+    flagforreview = forms.BooleanField(required=False)
   
     class Meta:
         model = Cast
@@ -90,6 +90,24 @@ class EditDeploymentStatusForm(ModelForm):
             'status',
         ]
 
+class AddCutbackReterminationForm(ModelForm):
+
+    class Meta:
+        model = CutbackRetermination
+        fields = [
+            'date',
+            'wireid',
+            'wetendtag',
+            'dryendtag',
+            'lengthremoved',
+            'notes',
+        ]
+
+        widgets = {'date': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    )}
+
 class EditCutbackReterminationForm(ModelForm):
   
     class Meta:
@@ -101,9 +119,13 @@ class EditCutbackReterminationForm(ModelForm):
             'wetendtag',
             'dryendtag',
             'lengthremoved',
-            'length',
             'notes',
         ]
+
+        widgets = {'date': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    )}
 
 
 class EditWireDrumForm(ModelForm):
@@ -114,3 +136,19 @@ class EditWireDrumForm(ModelForm):
         fields = [
             'date',
         ]
+
+class WireDrumAddForm(ModelForm):
+
+    class Meta:
+        model = Wiredrum
+        fields = [
+            'wireid',
+            'drumid',
+            'date',
+            'notes',
+        ]
+
+        widgets = {'date': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    )}

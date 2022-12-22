@@ -33,7 +33,7 @@ def castlist(request):
        }
 
     return render(request, 'wwdb/castlist.html', context=context)
-
+"""
 def castedit(request, id):
     context ={}
     obj = get_object_or_404(Cast, id = id)
@@ -44,6 +44,26 @@ def castedit(request, id):
         castid=Cast.objects.get(id = id)
         return HttpResponseRedirect("/wwdb/cast/%i/edit" % castid.pk)
  
+    context["form"] = form
+    return render(request, "wwdb/castedit.html", context)
+"""
+
+def castedit(request, id):
+    context ={}
+    obj = get_object_or_404(Cast, id = id)
+
+    if request.method == 'POST':
+        form = EditCastForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            cast=Cast.objects.get(id=id)
+            return HttpResponseRedirect('/wwdb/castlist')
+    else:
+        form = EditCastForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/cast/%i/edit' % castid.pk)
+
     context["form"] = form
     return render(request, "wwdb/castedit.html", context)
 
@@ -94,6 +114,8 @@ def castend(request, id):
     if form.is_valid():
         form.save()
         castid=Cast.objects.last()
+        castid.endcastcal()
+        castid.save()
         return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
  
     context["form"] = form
@@ -116,7 +138,6 @@ def cruiseconfigurehome(request):
         'active_wire': active_wire,
         'winches': winches,
        }
-
 
     return render(request, 'wwdb/cruiseconfigurehome.html', context=context)
 
@@ -150,13 +171,6 @@ def reportinghome(request):
 
 #def wiredrumadd(request):
 
-"""
-class CutbackReterminationAdd(CreateView):
-    model = CutbackRetermination
-    template_name="wwdb/cutbackreterminationadd.html"
-    fields=['dryendtag','wetendtag', 'lengthremoved','wireid','date','notes']
-"""
-
 def wiredrumlist(request):
     wire_drum = Wiredrum.objects.order_by('-date')
 
@@ -165,9 +179,6 @@ def wiredrumlist(request):
         }
 
     return render(request, 'reports/wiredrumlist.html', context=context)
-
-
-#def wiredrumedit(request):
 
 def wiredrumedit(request, id):
     context ={}
@@ -187,6 +198,24 @@ def wiredrumedit(request, id):
 
     context["form"] = form
     return render(request, "wwdb/wiredrumedit.html", context)
+
+def wiredrumadd(request):
+    context ={}
+    form = WireDrumAddForm(request.POST or None)
+    if request.method == "POST":
+        form = WireDrumAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/reports/wiredrumlist')
+    else:
+        form = WireDrumAddForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/wiredrumadd.html', {'form':form, 'submitted':submitted, 'id':id})
+ 
+    context['form']= form
+
+    return render(request, "wwdb/wiredrumadd.html", context)
 
 
 """
@@ -422,9 +451,26 @@ class CutbackReterminationDetail(DetailView):
     model = CutbackRetermination
     template_name="wwdb/cutbackreterminationdetail.html"
 
-
-
 class CutbackReterminationAdd(CreateView):
     model = CutbackRetermination
     template_name="wwdb/cutbackreterminationadd.html"
     fields=['dryendtag','wetendtag', 'lengthremoved','wireid','date','notes']
+
+def cutbackreterminationadd(request):
+    context ={}
+    form = AddCutbackReterminationForm(request.POST or None)
+    if request.method == "POST":
+        form = AddCutbackReterminationForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/reports/cutbackreterminationlist")
+    else:
+        form = AddCutbackReterminationForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/cutbackreterminationadd.html', {'form':form, 'submitted':submitted, 'id':id})
+
+    context['form']= form
+
+    return render(request, 'wwdb/cutbackreterminationadd.html', context)
+
