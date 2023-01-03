@@ -4,63 +4,36 @@
 
 <html>
 {% block content %}
-<h2>Wires in use</h2>
+<h2>Wire Inventory</h2>
 <table id="" class="display table table-striped">
     <thead class="thead-light">
         <tr>
             <th>NSF-ID</th>
             <th>Wire Type</th>
             <th>Manufacturer id</th>
-            <th>Date Acquired</th>
             <th>Length</th>
-            <th>Winch</th>
-            <th>Notes</th>
             <th>Nominal Breaking Load</th>
+            <th>Tested Breaking Load</th>
+            <th>Absolute Breaking Load</th>
             <th>Drum</th>
+            <th>Location</th>
         </tr>
     </thead>
-    {% for wire in wires_in_use %}
+    {% for wire in wires %}
     <tr>
         <td><a href="{% url 'wireedit' wire.pk %}">{{wire.nsfid}}</a></td>
         <td>{{wire.wireropeid}}</td>
         <td>{{wire.manufacturerid}}</td>
-        <td>{{wire.dateacquired}}</td>
         <td>{{wire.length}}</td>
-        <td>{{wire.winchid}}</td>
-        <td>{{wire.notes}}</td>
-        <td>{{wire.nbl}}</td>
-        <td>{{wire.drum}}</td>
+        <td>{{wire.nominal_breaking_load}}</td>
+        <td>{{wire.tested_breaking_load}}</td>
+        <td>{{wire.absolute_breaking_load}}</td>
+        <td>{{wire.active_drum}}</td>
+        <td>{{wire.active_drum_location}}</td>
     </tr>
     {% endfor %}
 </table>
 </br>
 </br>
-<h2>Wires in storage</h2>
-<table id="" class="display table table-striped">
-    <thead class="thead-light">
-        <tr>
-            <th>NSF-ID</th>
-            <th>Wire Type</th>
-            <th>Manufacturer id</th>
-            <th>Date Acquired</th>
-            <th>Length</th>
-            <th>Notes</th>
-            <th>Nominal Breaking Load</th>
-            <th>Drum</th>
-        </tr>
-    </thead>
-    {% for wire in wires_in_storage %}
-    <tr>
-        <td><a href="{% url 'wireedit' wire.pk %}">{{wire.nsfid}}</a></td>
-        <td>{{wire.wireropeid}}</td>
-        <td>{{wire.manufacturerid}}</td>
-        <td>{{wire.dateacquired}}</td>
-        <td>{{wire.length}}</td>
-        <td>{{wire.notes}}</td>
-        <td>{{wire.nbl}}</td>
-        <td>{{wire.drum}}</td>
-    </tr>
-    {% endfor %}
-</table>
 {% endblock %}
 </html>

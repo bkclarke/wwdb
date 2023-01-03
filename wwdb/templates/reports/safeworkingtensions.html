@@ -10,39 +10,23 @@
         <tr>
             <th>Winch</th>
             <th>NSF-ID</th>
-            <th>Total Breaking Load</th>
             <th>Length</th>
             <th>Factor of Safety</th>
             <th>ABL</th>
+            <th>SWT</th>
         </tr>
     </thead>
     {% for wire in active_wire %}
     <tr>
         <td>{{wire.winchid}}</td>
         <td>{{wire.nsfid}}</td>
-        <td>{{wire.totalbreakingload}}</td>
         <td>{{wire.length}}</td>
         <td>{{wire.factorofsafety}}</td>
-        <td>{{wire.abl}}</td>
+        <td>{{wire.absolute_breaking_load}}</td>
+        <td>{{wire.winchid}}</td>
     </tr>
     {% endfor %}
 </table>
-<table class="table table-striped">
-    <thead class="thead-light">
-        <tr>
-            <th>Wireid</th>
-            <th>Test date</th>
-            <th>Tested breaking load</th>
-            <th>Latest TBL</th>
-        </tr>
-    </thead>
-    {% for break in breaktest %}
-    <tr>
-        <td>{{break.wireid}}</td>
-        <td>{{break.testdate}}</td>
-        <td>{{break.testedbreakingload}}</td>
-    </tr>
-    {% endfor %}
 <p>Date posted: <span id="datetime"></span></p>
 
 <script>

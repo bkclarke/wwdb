@@ -24,8 +24,8 @@ class CastList(ListView):
     template_name="wwdb/castlist.html"
 
 def castlist(request):
-    cast_noflag = Cast.objects.filter(flagforreview=False or None)
-    cast_flag = Cast.objects.filter(flagforreview=True)
+    cast_noflag = Cast.objects.filter(flagforreview=False, maxpayout__isnull=False, payoutmaxtension__isnull=False, maxtension__isnull=False)
+    cast_flag = Cast.objects.filter(flagforreview=True)|Cast.objects.filter(maxpayout__isnull=True)|Cast.objects.filter(payoutmaxtension__isnull=True)|Cast.objects.filter(maxtension__isnull=True)
 
     context = {
         'cast_noflag': cast_noflag,
@@ -33,20 +33,6 @@ def castlist(request):
        }
 
     return render(request, 'wwdb/castlist.html', context=context)
-"""
-def castedit(request, id):
-    context ={}
-    obj = get_object_or_404(Cast, id = id)
-    form = EditCastForm(request.POST or None, instance = obj)
- 
-    if form.is_valid():
-        form.save()
-        castid=Cast.objects.get(id = id)
-        return HttpResponseRedirect("/wwdb/cast/%i/edit" % castid.pk)
- 
-    context["form"] = form
-    return render(request, "wwdb/castedit.html", context)
-"""
 
 def castedit(request, id):
     context ={}
@@ -110,16 +96,26 @@ def castend(request, id):
     context ={}
     obj = get_object_or_404(Cast, id = id)
     form = EndCastForm(request.POST or None, instance = obj)
-
-    if form.is_valid():
-        form.save()
-        castid=Cast.objects.last()
-        castid.endcastcal()
-        castid.save()
-        return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
+    try:
+        if form.is_valid():
+            form.save()
+            castid=Cast.objects.last()
+            castid.endcastcal()
+            castid.save()
+            return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
  
-    context["form"] = form
-    return render(request, "wwdb/castend.html", context)
+        context["form"] = form
+        return render(request, "wwdb/castend.html", context)
+
+    except:
+        if form.is_valid():
+            form.save()
+            castid=Cast.objects.last()
+            return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
+ 
+        context["form"] = form
+        return render(request, "wwdb/castend.html", context)
+
 
 """
 PRECRUISE CONFIGURATION
@@ -225,13 +221,10 @@ Postings
 def safeworkingtensions(request):
     active_wire = Wire.objects.filter(status=True)
     winches = Wire.objects.all().select_related()
-    breaktest = Breaktest.objects.order_by('wireid','-testdate')
-
 
     context = {
         'active_wire': active_wire,
         'winches': winches,
-        'breaktest': breaktest,
         }
 
     return render(request, 'reports/safeworkingtensions.html', context=context)
@@ -249,10 +242,12 @@ Maintenance
 def wireinventory(request):
     wires_in_use = Wire.objects.filter(status=True)
     wires_in_storage = Wire.objects.filter(status=False)
-
+    wires = Wire.objects.all()
+    
     context = {
         'wires_in_use': wires_in_use,
         'wires_in_storage': wires_in_storage, 
+        'wires' : wires,
         }
 
     return render(request, 'reports/wireinventory.html', context=context)

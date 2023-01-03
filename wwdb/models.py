@@ -1,14 +1,16 @@
 from django.db import models
+from django.db.models.query_utils import select_related_descend
 from django.urls import reverse
 from django.contrib.auth.models import User
 import pyodbc 
 import pandas as pd
+from django.db.models import Avg, Count, Min, Sum, Max
 
 
 class Breaktest(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  # Field name made lowercase.
-    testdate = models.DateTimeField(db_column='TestDate', blank=True, null=True, verbose_name='Test date')  # Field name made lowercase.
+    wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire', related_name='wire_break_test')  # Field name made lowercase.
+    date = models.DateTimeField(db_column='Date', blank=True, null=True, verbose_name='Date')  # Field name made lowercase.
     testedbreakingload = models.IntegerField(db_column='TestedBreakingLoad', blank=True, null=True, verbose_name='Tested breaking load')  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
 
@@ -18,7 +20,7 @@ class Breaktest(models.Model):
         verbose_name_plural = "BreakTest"
 
     def __str__(self):
-        return str(self.testdate)
+        return str(self.date)
 
 class Calibration(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -105,10 +107,10 @@ class CutbackRetermination(models.Model):
     dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag value (m)')  # Field name made lowercase.
     wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag value (m)')  # Field name made lowercase.
     lengthremoved = models.IntegerField(db_column='LengthRemoved', blank=True, null=True, verbose_name='Length removed (m)')  # Field name made lowercase.
-    wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  # Field name made lowercase.
+    wireid = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, related_name='wire_cutback_retermination', verbose_name='Wire')  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
     date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date')  # Field name made lowercase.
-    length = models.TextField(db_column='Length', blank=True, null=True, verbose_name='Length')  # Field name made lowercase. This field type is a guess.
+    #length = models.TextField(db_column='Length', blank=True, null=True, verbose_name='Length')  # Field name made lowercase. This field type is a guess.
 
     class Meta:
         managed = True
@@ -117,6 +119,13 @@ class CutbackRetermination(models.Model):
 
     def __str__(self):
         return str(self.date)
+
+    @property
+    def length(self):
+        dryendlength=self.dryendtag
+        wetendlength=self.wetendtag
+        length=wetendlength-dryendlength
+        return length
 
 
 class DeploymentType(models.Model):
@@ -137,6 +146,18 @@ class DeploymentType(models.Model):
     def __str__(self):
         return str(self.name)
 
+class Location(models.Model):
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    location = models.TextField(db_column='Location', blank=True, null=True, verbose_name='Location')  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'Location'
+        verbose_name_plural = "Location"
+
+    def __str__(self):
+        return str(self.location)
+
 class Drum(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     internalid = models.TextField(db_column='InternalId', blank=True, null=True, verbose_name='Internal id')  # Field name made lowercase.
@@ -144,6 +165,7 @@ class Drum(models.Model):
     color = models.TextField(db_column='Color', blank=True, null=True, verbose_name='Color')  # Field name made lowercase.
     size = models.TextField(db_column='Size', blank=True, null=True, verbose_name='Size')  # Field name made lowercase.
     weight = models.TextField(db_column='Weight', blank=True, null=True, verbose_name='Weight')  # Field name made lowercase.
+    location = models.ManyToManyField(Location, through='DrumLocation', related_name='active_location', verbose_name='Location')
     material = models.TextField(db_column='Material', blank=True, null=True, verbose_name='Material')  # Field name made lowercase.
     wiretype = models.TextField(db_column='WireType', blank=True, null=True, verbose_name='Wire type')  # Field name made lowercase. This field type is a guess.
 
@@ -154,6 +176,16 @@ class Drum(models.Model):
 
     def __str__(self):
         return str(self.internalid)
+
+    @property
+    def active_drum_location(self):
+        d=self.drumlocation_set.order_by('-date').first()
+        return d
+
+    @property
+    def active_location(self):
+        d=self.active_drum_location.locationid
+        return d
 
 class Dynomometer(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -183,17 +215,7 @@ class Frame(models.Model):
         return str(self.name)
 
 
-class Location(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    location = models.TextField(db_column='Location', blank=True, null=True, verbose_name='Location')  # Field name made lowercase.
 
-    class Meta:
-        managed = True
-        db_table = 'Location'
-        verbose_name_plural = "Location"
-
-    def __str__(self):
-        return str(self.location)
 
 class Lubrication(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -251,13 +273,13 @@ class Winch(models.Model):
         
 class DrumLocation(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    datetime = models.DateTimeField(db_column='DateTime', blank=True, null=True, verbose_name='Date and time')  # Field name made lowercase.
+    date= models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date')  # Field name made lowercase.
     enteredby = models.ForeignKey(User, models.DO_NOTHING, db_column='EnteredBy', blank=True, null=True, verbose_name='Entered by')  # Field name made lowercase.
     drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum')  # Field name made lowercase.
     winchid = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  # Field name made lowercase.
     locationid = models.ForeignKey(Location, models.DO_NOTHING, db_column='LocationId', blank=True, null=True, verbose_name='Location')  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  # Field name made lowercase.
-    
+
     class Meta:
         managed = True
         db_table = 'DrumLocation'
@@ -321,6 +343,7 @@ class Wire(models.Model):
         db_table = 'Wire'
         verbose_name_plural = "Wire"
 
+
     def get_absolute_url(self):
         return reverse('wiredetail', kwargs={'pk':self.pk})
 
@@ -328,15 +351,66 @@ class Wire(models.Model):
         return str(self.nsfid)
 
     @property
-    def nbl(self):
-        wireropeidref=Wire.wireropeid.get_object(self)
-        nbl=wireropeidref.nominalbreakingload
-        return nbl
+    def active_wire_drum(self):
+        d=self.wiredrum_set.order_by('-date').first()
+        return d
 
     @property
-    def drum(self):
-        d=self.drums.get()
+    def active_drum(self):
+        d=self.active_wire_drum.drumid
         return d
+
+    @property
+    def active_drum_location(self):
+        d=self.active_drum.active_location
+        return d
+
+    @property 
+    def active_wire_cutback(self):
+        c=self.wire_cutback_retermination.order_by('date').first()
+        return c    
+
+    @property 
+    def active_length(self):
+        dryend=self.active_wire_cutback.dryendtag
+        wetend=self.active_wire_cutback.wetendtag
+        length=wetend-dryend
+        return length
+
+    @property
+    def active_break_test(self):
+        b=self.wire_break_test.order_by('date').first()
+        return b
+
+    @property
+    def tested_breaking_load(self):
+        f=self.active_break_test.testedbreakingload
+        return f
+
+    @property
+    def nominal_breaking_load(self):
+        w=Wire.wireropeid.get_object(self)
+        n=w.nominalbreakingload
+        return n
+
+    @property 
+    def absolute_breaking_load(self):
+        wire=Wire.wireropeid.get_object(self)
+        nominal=wire.nominalbreakingload
+        tested=self.active_break_test.testedbreakingload
+        if nominal > tested:
+            return tested
+        else:
+            return nominal
+
+    @property 
+    def safe_working_tension(self):
+        s=self.factorofsafety
+        a=self.absolute_breaking_load
+        i=int(a)
+        swl=i*s 
+        return swl
+
 
 class Wiredrum(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -353,5 +427,4 @@ class Wiredrum(models.Model):
 
     def __str__(self):
         return str(self.drumid)
-
 
