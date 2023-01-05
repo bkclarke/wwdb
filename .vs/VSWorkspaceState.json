@@ -1,13 +1,12 @@
 {
   "ExpandedNodes": [
     "",
-    "\\static",
-    "\\static\\css",
     "\\wwdb",
+    "\\wwdb\\migrations",
     "\\wwdb\\templates",
     "\\wwdb\\templates\\reports",
     "\\wwdb\\templates\\wwdb"
   ],
-  "SelectedNode": "\\wwdb\\models.py",
+  "SelectedNode": "\\wwdb\\templates\\wwdb\\deploymentedit.html",
   "PreviewInSolutionExplorer": false
 }

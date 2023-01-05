@@ -5,25 +5,23 @@
 <html>
 {% block content %}
 <h1>Safe Working Tensions</h1>
-<table class="table table-striped">
+<table class="table-safeworkingtensions table-striped">
     <thead class="thead-light">
         <tr>
             <th>Winch</th>
             <th>NSF-ID</th>
             <th>Length</th>
             <th>Factor of Safety</th>
-            <th>ABL</th>
-            <th>SWT</th>
+            <th>Safe Working Tension</th>
         </tr>
     </thead>
     {% for wire in active_wire %}
     <tr>
-        <td>{{wire.winchid}}</td>
+        <td height=: 100 font-size: 100>{{wire.winch}}</td>
         <td>{{wire.nsfid}}</td>
-        <td>{{wire.length}}</td>
+        <td>{{wire.active_length}}</td>
         <td>{{wire.factorofsafety}}</td>
-        <td>{{wire.absolute_breaking_load}}</td>
-        <td>{{wire.winchid}}</td>
+        <td>{{wire.safe_working_tension}}</td>
     </tr>
     {% endfor %}
 </table>

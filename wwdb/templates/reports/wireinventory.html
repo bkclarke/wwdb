@@ -22,9 +22,9 @@
     {% for wire in wires %}
     <tr>
         <td><a href="{% url 'wireedit' wire.pk %}">{{wire.nsfid}}</a></td>
-        <td>{{wire.wireropeid}}</td>
+        <td>{{wire.wirerope}}</td>
         <td>{{wire.manufacturerid}}</td>
-        <td>{{wire.length}}</td>
+        <td>{{wire.active_length}}</td>
         <td>{{wire.nominal_breaking_load}}</td>
         <td>{{wire.tested_breaking_load}}</td>
         <td>{{wire.absolute_breaking_load}}</td>

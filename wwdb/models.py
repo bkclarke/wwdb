@@ -326,8 +326,8 @@ class WireRopeData(models.Model):
 
 class Wire(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    wireropeid = models.ForeignKey(WireRopeData, models.DO_NOTHING, db_column='WireRopeId', blank=True, null=True, verbose_name='Wire rope data id')  # Field name made lowercase.
-    winchid = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  # Field name made lowercase.
+    wirerope = models.ForeignKey(WireRopeData, models.DO_NOTHING, db_column='WireRopeId', blank=True, null=True, verbose_name='Wire rope data id')  # Field name made lowercase.
+    winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  # Field name made lowercase.
     manufacturerid = models.TextField(db_column='ManufacturerId', blank=True, null=True, verbose_name='Manufacturer id')  # Field name made lowercase.
     nsfid = models.TextField(db_column='NsfId', blank=True, null=True, verbose_name='NSF id')  # Field name made lowercase.
     dateacquired = models.DateTimeField(db_column='DateAcquired', blank=True, null=True, verbose_name='Date Acquired')  # Field name made lowercase.
@@ -352,7 +352,7 @@ class Wire(models.Model):
 
     @property
     def active_wire_drum(self):
-        d=self.wiredrum_set.order_by('-date').first()
+        d=self.wiredrum_set.order_by('date').last()
         return d
 
     @property
@@ -367,11 +367,13 @@ class Wire(models.Model):
 
     @property 
     def active_wire_cutback(self):
-        c=self.wire_cutback_retermination.order_by('date').first()
+        c=self.wire_cutback_retermination.order_by('date').last()
         return c    
 
     @property 
     def active_length(self):
+        if not self.active_wire_cutback:
+            return None
         dryend=self.active_wire_cutback.dryendtag
         wetend=self.active_wire_cutback.wetendtag
         length=wetend-dryend
@@ -379,23 +381,25 @@ class Wire(models.Model):
 
     @property
     def active_break_test(self):
-        b=self.wire_break_test.order_by('date').first()
+        b=self.wire_break_test.order_by('date').last()
         return b
 
     @property
     def tested_breaking_load(self):
+        if not self.active_break_test:
+            return None
         f=self.active_break_test.testedbreakingload
         return f
 
     @property
     def nominal_breaking_load(self):
-        w=Wire.wireropeid.get_object(self)
+        w=Wire.wirerope.get_object(self)
         n=w.nominalbreakingload
         return n
 
     @property 
     def absolute_breaking_load(self):
-        wire=Wire.wireropeid.get_object(self)
+        wire=Wire.wirerope.get_object(self)
         nominal=wire.nominalbreakingload
         tested=self.active_break_test.testedbreakingload
         if nominal > tested:
@@ -405,10 +409,15 @@ class Wire(models.Model):
 
     @property 
     def safe_working_tension(self):
-        s=self.factorofsafety
-        a=self.absolute_breaking_load
-        i=int(a)
-        swl=i*s 
+        if not self.factorofsafety:
+            return None
+        if not self.factorofsafety.factorofsafety:
+            return None
+        if not self.absolute_breaking_load:
+            return None
+        s=self.factorofsafety.factorofsafety
+        i=self.absolute_breaking_load
+        swl=i/s 
         return swl
 
 

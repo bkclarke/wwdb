@@ -117,3 +117,32 @@
 @page {
     size: auto;
 }
+
+.table-safeworkingtensions {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+}
+
+.table-safeworkingtensions th {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    height: 50px;
+    font-size: 24px;
+}
+
+.table-safeworkingtensions td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    height: 120px;
+    font-size: 32px;
+}
+
+
+
+.table-safeworkingtensions thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+}

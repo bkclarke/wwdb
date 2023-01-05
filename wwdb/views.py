@@ -219,12 +219,10 @@ Postings
 """
 
 def safeworkingtensions(request):
-    active_wire = Wire.objects.filter(status=True)
-    winches = Wire.objects.all().select_related()
+    active_wire = Wire.objects.filter(status=True).order_by('-winch')
 
     context = {
         'active_wire': active_wire,
-        'winches': winches,
         }
 
     return render(request, 'reports/safeworkingtensions.html', context=context)
