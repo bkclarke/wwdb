@@ -2,11 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\wwdb",
-    "\\wwdb\\migrations",
     "\\wwdb\\templates",
-    "\\wwdb\\templates\\reports",
-    "\\wwdb\\templates\\wwdb"
+    "\\wwdb\\templates\\wwdb",
+    "\\wwdb_proj"
   ],
-  "SelectedNode": "\\wwdb\\templates\\wwdb\\deploymentedit.html",
+  "SelectedNode": "\\wwdb_proj\\settings.py",
   "PreviewInSolutionExplorer": false
 }

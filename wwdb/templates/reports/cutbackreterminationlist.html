@@ -16,7 +16,7 @@
         <tr>
             <th>Date</th>
             <th>Wire</th>
-            <th>Wet end tab</th>
+            <th>Wet end tag</th>
             <th>Dry end tag</th>
             <th>Length removed</th>
             <th>Length</th>
@@ -26,9 +26,9 @@
     {% for cutbackretermination in cutbacks_reterminations %}
     <tr>
         <td><a href="{% url 'cutbackreterminationedit' cutbackretermination.pk %}">{{cutbackretermination.date}}</a></td>
-        <td>{{cutbackretermination.wireid}}</td>
+        <td>{{cutbackretermination.wire}}</td>
         <td>{{cutbackretermination.wetendtag}}</td>
-        <td>{{cutbackretermination.dryendtag}}</td>
+        <td>{{cutbackretermination.wire_dry_end_tag}}</td>
         <td>{{cutbackretermination.lengthremoved}}</td>
         <td>{{cutbackretermination.length}}</td>
         <td>{{cutbackretermination.notes}}</td>

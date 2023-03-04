@@ -1,12 +1,14 @@
 ﻿<!--templates/operatoradd.html-->
 {% extends "wwdb/base.html" %}
+{% load bootstrap4 %}
+{{ form.media }}
 
 {% block content %}
 <h1>Add an Operator</h1>
 <p><i>Username</i> must be the following format:<br />first letter first name followed by full last name, all lowercase<br />ex: bclarke</p>
 <form action="" method="post">
     {% csrf_token %}
-    {{form.as_p}}
+    {% bootstrap_form form %}
     <input type="submit" value="add">
 </form>
 {% endblock content %}

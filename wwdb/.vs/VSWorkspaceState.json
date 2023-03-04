@@ -1,11 +1,6 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\migrations\\__pycache__",
-    "\\templates",
-    "\\templates\\reports",
-    "\\templates\\wwdb"
+    ""
   ],
-  "SelectedNode": "\\templates\\reports\\safeworkingload.html",
   "PreviewInSolutionExplorer": false
 }

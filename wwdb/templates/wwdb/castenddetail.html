@@ -6,16 +6,22 @@
     <h1>Cast ended successfully</h1>
 </header>
 <div class="cast-entry">
-    <p>Start cast operator: {{cast.startoperatorid}}</p>
-    <p>End cast opertor: {{cast.endoperatorid}}</p>
+    <p>Cruise number: {{cast.cruisenumber}}</p>
+    <p>Start cast operator: {{cast.startoperator}}</p>
+    <p>End cast opertor: {{cast.endoperator}}</p>
     <p>Start date: {{cast.startdate}}</p>
     <p>End date: {{cast.enddate}}</p>
-    <p>Deployment type: {{cast.deploymenttypeid}}</p>
-    <p>Winch: {{cast.winchid}}</p>
+    <p>Deployment type: {{cast.deploymenttype}}</p>
+    <p>Winch: {{cast.winch}}</p>
     <p>Notes: {{cast.notes}}</p>
     <p>Max tension: {{cast.maxtension}}</p>
     <p>Max payout: {{cast.maxpayout}}</p>
     <p>Payout at maxtension: {{cast.payoutmaxtension}}</p>
+    <p>Time at maxtension: {{cast.timemaxtension}}</p>
+    <p>Dry end tag: {{cast.dryendtag}}</p>
+    <p>Wet end tag: {{cast.wetendtag}}</p>
+    <p>Meter at maxtension: {{cast.metermaxtension}}</p>
+
 </div>
 
 {% endblock content %}

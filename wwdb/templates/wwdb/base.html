@@ -8,19 +8,32 @@
     <link rel="stylesheet" type="text/css" href={% static 'css/bootstrap.min.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/bootstrap.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/datatables.css' %}>
+    <link rel="stylesheet" type="text/css" href={% static 'css/buttons.datatables.min.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/wwdb.css' %}>
     <script type="text/javascript" src={% static 'admin/js/vendor/jquery/jquery.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/Chart.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/bootstrap.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/popper.js' %} crossorigin="anonymous"></script>
-    <script type="text/javascript" src={% static 'js/jquery.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/datatables.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/dataTables.buttons.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/jszip.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/pdfmake.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/vfs_fonts.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/buttons.html5.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/buttons.print.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/highcharts.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/exporting.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/wwdb.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('table.display').DataTable();
+            $('table.display').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'csv', 'print'
+                ]
+            });
         });
     </script>
-
     {{form.media}}
 </head>
 <body>
@@ -37,9 +50,6 @@
                                 <a class="nav-link" href="{% url 'caststart' %}">Start Cast</a>
                             </button>
                         </div>
-                        <button type="button" class="btn btn-startcast">
-                            <a class="nav-link" href="{% url 'castlist' %}">View Casts</a>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -60,10 +70,16 @@
                     <a class="nav-link" href="{% url 'cruiseconfigurehome' %}">Precruise Configuration</a>
                 </li>
                 <li class="nav-item-bottom">
-                    <a class="nav-link" href="{% url 'reporting' %}">Reporting</a>
+                    <a class="nav-link" href="{% url 'cruisereport' %}">Cruise Report</a>
+                </li>
+                <li class="nav-item-bottom">
+                    <a class="nav-link" href="{% url 'reporting' %}">Maintenance</a>
                 </li>
                 <li class="nav-item-bottom">
                     <a class="nav-link" href="{% url 'wireinventory' %}">Wire Inventory</a>
+                </li>
+                <li class="nav-item-bottom">
+                    <a class="nav-link" href="{% url 'castlist' %}">View Casts</a>
                 </li>
             </ul>
         </div>

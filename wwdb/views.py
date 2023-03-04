@@ -8,6 +8,12 @@ from django.urls import reverse
 from bootstrap_datepicker_plus import *
 from .forms import *
 from django.shortcuts import render, get_object_or_404
+import pandas as pd
+from django.db.models import Count
+import pyodbc 
+from django.db.models import Avg, Count, Min, Sum, Max
+import logging
+logger = logging.getLogger(__name__)
 
 def home(request):
     template = loader.get_template('wwdb/home.html')
@@ -36,22 +42,65 @@ def castlist(request):
 
 def castedit(request, id):
     context ={}
-    obj = get_object_or_404(Cast, id = id)
-
+    obj = Cast.objects.get(id=id)
+    #try:
     if request.method == 'POST':
         form = EditCastForm(request.POST, instance = obj)
         if form.is_valid():
+            obj.endcastcal()
             form.save()
-            cast=Cast.objects.get(id=id)
             return HttpResponseRedirect('/wwdb/castlist')
     else:
         form = EditCastForm(instance = obj)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/wwdb/cast/%i/edit' % castid.pk)
+            return HttpResponseRedirect('/wwdb/cast/%i/edit' % cast.pk)
 
     context["form"] = form
     return render(request, "wwdb/castedit.html", context)
+    """except:
+        if request.method == 'POST':
+            form = EditCastForm(request.POST, instance = obj)
+            if form.is_valid():
+                form.save()
+                cast=Cast.objects.get(id=id)
+                return HttpResponseRedirect('/wwdb/castlist')
+        else:
+            form = EditCastForm(instance = obj)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect('/wwdb/cast/%i/edit' % castid.pk)
+
+        context["form"] = form
+        return render(request, "wwdb/castedit.html", context)"""
+
+def castend(request, id):
+    context ={}
+    obj = get_object_or_404(Cast, id = id)
+    #try:
+    if request.method == 'POST':
+        form = EndCastForm(request.POST or None, instance = obj)
+        if form.is_valid():
+            form.save()
+            castid=Cast.objects.last()
+            #castid.endcastcal()
+            castid.save()
+            return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
+        else:
+            form = EndCastForm(instance=obj)
+    context["form"] = form
+    context["cast"] = obj
+    return render(request, 'template/castend.html', context)
+
+
+    """except:
+        if form.is_valid():
+            form.save()
+            castid=Cast.objects.last()
+            return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
+ 
+        context["form"] = form
+        return render(request, "wwdb/castend.html", context)"""
 
 def castdetail(request, id):
     context ={}
@@ -127,12 +176,14 @@ def cruiseconfigurehome(request):
     deployments = DeploymentType.objects.all()
     active_wire = Wire.objects.filter(status=True)
     winches = Winch.objects.all()
+    cruise = Cruise.objects.all()
 
     context = {
         'operators': operators,
         'deployments': deployments,
         'active_wire': active_wire,
         'winches': winches,
+        'cruise' : cruise,
        }
 
     return render(request, 'wwdb/cruiseconfigurehome.html', context=context)
@@ -164,6 +215,60 @@ Classes related to winch and wire reporting
 
 def reportinghome(request):
     return render(request, 'reports/reporting.html')
+
+def highchart(request):
+    return render(request, 'wwdb/highchart.html')
+
+"""
+def highchart(request, id):
+
+    obj = get_object_or_404(Cast, id = id)
+
+    conn = pyodbc.connect('Driver={SQL Server};'
+                            'Server=192.168.2.5, 1433;'
+                            'Database=WinchDb;'
+                            'Trusted_Connection=no;'
+			        'UID=remoteadmin;'
+			        'PWD=eris.2003;')
+
+    winch=(obj.winch.name)
+    startcal=str(obj.startdate)
+    endcal=str(obj.enddate)
+
+    df=pd.read_sql_query("SELECT * FROM " + winch + " WHERE DateTime BETWEEN '" + startcal + "' AND '" + endcal + "'", conn)
+
+    tension=df['Tension']
+    datetime=df['DateTime']
+    context = {
+        'tension': tension,
+        'datetime': datetime,
+        }
+
+    return render(request, 'wwdb/highchart.html', context=context)
+"""
+
+def cruisereport(request):
+    cruise_id=Cruise.objects.filter(status=True).first()
+    cruise = Cruise.objects.filter(status=True)
+    operators = WinchOperator.objects.filter(status=True)
+    active_wire = Wire.objects.filter(status=True)
+    winches = Winch.objects.filter(status=True)
+    casts = Cast.objects.filter(cruisenumber=cruise_id)
+
+    deployments = DeploymentType.objects.filter(cast__in=casts)
+    deployments = DeploymentType.objects.filter(cast__in=casts).annotate(num_casts=Count('id'))
+
+    context = {
+        'operators': operators,
+        'deployments': deployments,
+        'active_wire': active_wire,
+        'winches': winches,
+        'cruise' : cruise,
+        'casts' : casts,
+       }
+
+    return render(request, 'reports/cruisereport.html', context=context)
+
 
 #def wiredrumadd(request):
 
@@ -266,7 +371,7 @@ class WireDetail(DetailView):
 class WireEdit(UpdateView):
     model = Wire
     template_name="wwdb/wireedit.html"
-    fields=['wireropeid','manufacturerid','nsfid','dateacquired','notes','status','factorofsafety']
+    fields=['wirerope','manufacturerid','nsfid','dateacquired','notes','status','factorofsafety']
     
     def get_form(self):
         form = super().get_form()
@@ -363,6 +468,24 @@ class OperatorAdd(CreateView):
     template_name="wwdb/operatoradd.html"
     fields=['username','firstname','lastname','status']
 
+def operatoradd(request):
+    context ={}
+    form = AddOperatorForm(request.POST or None)
+    if request.method == "POST":
+        form = AddOperatorForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/cruiseconfigurehome")
+    else:
+        form = AddOperatorForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/operatoradd.html', {'form':form, 'submitted':submitted, 'id':id})
+
+    context['form']= form
+
+    return render(request, 'wwdb/deploymentadd.html', context)
+
 """
 DEPLOYMENTS 
 Classes related to create, update, view DeploymentType model
@@ -401,10 +524,23 @@ def deploymenteditstatus(request, id):
     context["form"] = form
     return render(request, "wwdb/deploymenteditstatus.html", context)
 
-class DeploymentAdd(CreateView):
-    model = DeploymentType
-    template_name="wwdb/deploymentadd.html"
-    fields=['name','equipment','notes','status']
+def deploymentadd(request):
+    context ={}
+    form = AddDeploymentForm(request.POST or None)
+    if request.method == "POST":
+        form = AddDeploymentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/cruiseconfigurehome")
+    else:
+        form = AddDeploymentForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/deploymentadd.html', {'form':form, 'submitted':submitted, 'id':id})
+
+    context['form']= form
+
+    return render(request, 'wwdb/deploymentadd.html', context)
 
 """
 CUTBACKRETERMINATION
@@ -467,3 +603,99 @@ def cutbackreterminationadd(request):
 
     return render(request, 'wwdb/cutbackreterminationadd.html', context)
 
+"""
+DRUM
+Classes related to create, update, view Drum model
+"""
+
+def drumlist(request):
+    drum_list = Drum.objects.order_by('internalid')
+
+    context = {
+        'drum_list': drum_list, 
+        }
+
+    return render(request, 'reports/drumlist.html', context=context)
+
+def drumedit(request, id):
+    context ={}
+    obj = get_object_or_404(Drum, id = id)
+
+    if request.method == 'POST':
+        form = EditDrumForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            drum=Drum.objects.get(id=id)
+            return HttpResponseRedirect('/wwdb/reports/drumlist')
+    else:
+        form = EditDrumForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/drum/%i/edit" % drumid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/drumedit.html", context)
+
+class DrumDetail(DetailView):
+    model = Drum
+    template_name="wwdb/drumdetail.html"
+
+def drumadd(request):
+    context ={}
+    form = AddDrumForm(request.POST or None)
+    if request.method == "POST":
+        form = AddDrumForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/reports/drumlist")
+    else:
+        form = AddDrumForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/drumadd.html', {'form':form, 'submitted':submitted, 'id':id})
+
+    context['form']= form
+
+    return render(request, 'wwdb/drumadd.html', context)
+
+"""
+Cruises
+Classes related to create, update, view Cruise model
+"""
+
+def cruiseeditstatus(request, id):
+    context ={}
+    obj = get_object_or_404(Cruise, id = id)
+
+    if request.method == 'POST':
+        form = EditCruiseForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            cruiseid=Cruise.objects.get(id=id)
+            return HttpResponseRedirect("/wwdb/cruiseconfigurehome")
+    else:
+        form = EditCruiseForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/cruise/%i/editstatus" % cruiseid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/cruiseeditstatus.html", context)
+
+def cruiseadd(request):
+    context ={}
+    form = CruiseAddForm(request.POST or None)
+    if request.method == "POST":
+        form = CruiseAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/cruiseconfigurehome")
+    else:
+        form = CruiseAddForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/cruiseadd.html', {'form':form, 'submitted':submitted, 'id':id})
+
+    context['form']= form
+
+    return render(request, 'wwdb/cruiseadd.html', context)

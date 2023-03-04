@@ -1,0 +1,14 @@
+﻿<!--templates/cruiseadd.html-->
+{% extends "wwdb/base.html" %}
+{% load bootstrap4 %}
+{{ form.media }}
+
+{% block content %}
+<h1>Add a Cruise</h1>
+<p><i>Cruise number</i> must be the following format:<br />ENXXX_CHsci<br />ex: EN695_Sosik</p>
+<form action="" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" value="add">
+</form>
+{% endblock content %}

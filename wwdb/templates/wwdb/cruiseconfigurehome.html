@@ -12,6 +12,27 @@
         <li>Winch operators and deployment must be preconfigured for the winch operator to log casts during a cruise </li>
         <li>Check to make sure factors of safety are correct for cruise prior to printing safe working tensions posting</li>
     </ul>
+    <h2>Cruise number</h2>
+    <p>Only the acive cruise should have a value of <i>status: True</i>. To change status, select the cruise number and edit status on the following page.</p>
+    <table id="" class="display table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Cruise number</th>
+                <th>Startdate</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        {% for cruise in cruise %}
+        <tr>
+            <td><a href="{% url 'cruiseeditstatus' cruise.pk %}">{{cruise.number}}</a></td>
+            <td>{{cruise.startdate}}</td>
+            <td>{{cruise.status}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <P>
+        <a href="{% url 'cruiseadd' %}">Add Cruise</a>
+    </P>
     <h2>Operators</h2>
     <p>Only operators for this cruise should have <i>status: True</i>. To change status, select the operators username and edit status on the following page.</p>
     <table id="" class="display table table-striped">
@@ -92,7 +113,7 @@
         </thead>
         {% for wire in active_wire %}
         <tr>
-            <td>{{wire.winchid}}</td>
+            <td>{{wire.winch}}</td>
             <td><a href="{% url 'wireeditfactorofsafety' wire.pk %}">{{wire.factorofsafety}}</a></td>
         </tr>
         {% endfor %}

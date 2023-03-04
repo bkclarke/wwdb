@@ -1,0 +1,79 @@
+﻿<!--template/cruisereport.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+<html>
+{% block content %}
+<div class="container p-5">
+    <h2>Deployments Summary</h2>
+    <table id="" class=" display table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Deployment</th>
+                <th>Equipment</th>
+                <th>Number of casts</th>
+            </tr>
+        </thead>
+        {% for deployment in deployments %}
+        <tr>
+            <td>{{deployment.name}}</td>
+            <td>{{deployment.equipment}}</td>
+            <td>{{deployment.num_casts}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br />
+    <h2>Winch and Wire</h2>
+    <table id="" class=" display table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Winch</th>
+                <th>NSF-ID</th>
+                <th>Length</th>
+                <th>Factor of Safety</th>
+                <th>Safe Working Tension</th>
+            </tr>
+        </thead>
+        {% for wire in active_wire %}
+        <tr>
+            <td>{{wire.winch}}</td>
+            <td>{{wire.nsfid}}</td>
+            <td>{{wire.active_length}}</td>
+            <td>{{wire.factorofsafety}}</td>
+            <td>{{wire.safe_working_tension}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br />
+    <h2>Casts</h2>
+    <table id="" class="display table table-sm">
+        <thead class="thead-light">
+            <tr>
+                <th>Start time</th>
+                <th>Cruise number</th>
+                <th>Winch</th>
+                <th>Deployment type</th>
+                <th>Start operator</th>
+                <th>End operator</th>
+                <th>Max tension</th>
+                <th>Max payout</th>
+                <th>Payout at max tension</th>
+            </tr>
+        </thead>
+        {% for cast in casts %}
+        <tr>
+            <td>{{cast.startdate}}</td>
+            <td>{{cast.cruisenumber}}</td>
+            <td>{{cast.winch}}</td>
+            <td>{{cast.deploymenttype}}</td>
+            <td>{{cast.startoperator}}</td>
+            <td>{{cast.endoperator}}</td>
+            <td>{{cast.maxtension}}</td>
+            <td>{{cast.maxpayout}}</td>
+            <td>{{cast.payoutmaxtension}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+    {% endblock content %}
+</html>

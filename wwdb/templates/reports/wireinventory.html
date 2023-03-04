@@ -5,12 +5,14 @@
 <html>
 {% block content %}
 <h2>Wire Inventory</h2>
-<table id="" class="display table table-striped">
+<table id="tableexport" class="display table table-striped">
     <thead class="thead-light">
         <tr>
             <th>NSF-ID</th>
             <th>Wire Type</th>
             <th>Manufacturer id</th>
+            <th>Dry End Tag</th>
+            <th>Wet End Tag</th>
             <th>Length</th>
             <th>Nominal Breaking Load</th>
             <th>Tested Breaking Load</th>
@@ -21,9 +23,11 @@
     </thead>
     {% for wire in wires %}
     <tr>
-        <td><a href="{% url 'wireedit' wire.pk %}">{{wire.nsfid}}</a></td>
+        <td>{{wire.nsfid}}</td>
         <td>{{wire.wirerope}}</td>
         <td>{{wire.manufacturerid}}</td>
+        <td>{{wire.dryendtag}}</td>
+        <td>{{wire.active_wetendtag}}</td>
         <td>{{wire.active_length}}</td>
         <td>{{wire.nominal_breaking_load}}</td>
         <td>{{wire.tested_breaking_load}}</td>
@@ -37,3 +41,5 @@
 </br>
 {% endblock %}
 </html>
+
+

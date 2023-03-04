@@ -25,8 +25,8 @@
     {% for wiredrum in wire_drum %}
     <tr>
         <td><a href="{% url 'wiredrumedit' wiredrum.pk %}">{{wiredrum.date}}</a></td>
-        <td>{{wiredrum.wireid}}</td>
-        <td>{{wiredrum.drumid}}</td>
+        <td>{{wiredrum.wire}}</td>
+        <td>{{wiredrum.drum}}</td>
         <td>{{wiredrum.notes}}</td>
     </tr>
     {% endfor %}

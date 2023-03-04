@@ -3,16 +3,18 @@ from django.forms import ModelForm
 from .models import *
 from bootstrap_datepicker_plus.widgets import DatePickerInput, DateTimePickerInput
 
+
 class StartCastForm(ModelForm):
     flagforreview = forms.BooleanField(required=False)
 
     class Meta:
         model = Cast
         fields = [
-            'startoperatorid',
+            'cruisenumber',
+            'startoperator',
             'startdate',
-            'deploymenttypeid',
-            'winchid',
+            'deploymenttype',
+            'winch',
             'notes',
             'flagforreview',
         ]
@@ -26,13 +28,43 @@ class EndCastForm(ModelForm):
         model = Cast
   
         fields = [
-            'endoperatorid',
+            'endoperator',
+            'startdate',
             'enddate',
             'notes',
             'flagforreview',
         ]
 
-        widgets = {'enddate': DateTimePickerInput()}
+        widgets = {'startdate': DateTimePickerInput(), 
+                   'enddate': DateTimePickerInput()}
+        """
+    def is_valid(self):
+        valid = super().is_valid()
+
+        # Double Check
+        # 1: if no data was posted, cleaned_data won't exist - empty form submit
+        # 2: if valid: all required fields (start + end) are valid // is not None
+        if hasattr(self, 'cleaned_data') and valid:
+
+            start_date = cleaned_data.get('startdate')
+            end_date = cleaned_data.get('enddate')
+            if end_date < start_date:
+                self.add_error('enddate', 'End date must be greater than start date')
+                valid = False
+
+        return valid
+          """
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('startdate')
+        end_date = cleaned_data.get('enddate') 
+        if end_date and start_date and end_date < start_date:
+            raise ValidationError("End date must be greater than start date")
+        return cleaned_data
+
+
+      
 
 class EditCastForm(ModelForm):
     flagforreview = forms.BooleanField(required=False)
@@ -41,12 +73,12 @@ class EditCastForm(ModelForm):
         model = Cast
   
         fields = [
-            'startoperatorid',
-            'endoperatorid',
+            'startoperator',
+            'endoperator',
             'startdate',
             'enddate',
-            'deploymenttypeid',
-            'winchid',
+            'deploymenttype',
+            'winch',
             'notes',
             'flagforreview',
         ]
@@ -90,15 +122,41 @@ class EditDeploymentStatusForm(ModelForm):
             'status',
         ]
 
+class AddDeploymentForm(ModelForm):
+
+    class Meta:
+        model = DeploymentType
+        fields = [
+            'name',
+            'equipment',
+            'notes',
+            'status',
+        ]
+
+class EditCruiseForm(ModelForm):
+  
+    class Meta:
+        model = Cruise
+  
+        fields = [
+            'number',
+            'startdate',
+            'status',
+        ]
+ 
+        widgets = {'startdate': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    )}
+
 class AddCutbackReterminationForm(ModelForm):
 
     class Meta:
         model = CutbackRetermination
         fields = [
             'date',
-            'wireid',
+            'wire',
             'wetendtag',
-            'dryendtag',
             'lengthremoved',
             'notes',
         ]
@@ -115,9 +173,8 @@ class EditCutbackReterminationForm(ModelForm):
   
         fields = [
             'date',
-            'wireid',
+            'wire',
             'wetendtag',
-            'dryendtag',
             'lengthremoved',
             'notes',
         ]
@@ -135,15 +192,23 @@ class EditWireDrumForm(ModelForm):
   
         fields = [
             'date',
+            'drum',
+            'wire',
+            'notes',
         ]
+
+        widgets = {'date': DatePickerInput(
+                options={
+                "format": "YYYY-MM-DD"}
+                )}
 
 class WireDrumAddForm(ModelForm):
 
     class Meta:
         model = Wiredrum
         fields = [
-            'wireid',
-            'drumid',
+            'wire',
+            'drum',
             'date',
             'notes',
         ]
@@ -152,3 +217,58 @@ class WireDrumAddForm(ModelForm):
                     options={
                     "format": "YYYY-MM-DD"}
                     )}
+
+class AddDrumForm(ModelForm):
+
+    class Meta:
+        model = Drum
+        fields = [
+            'internalid',
+            'color',
+            'size',
+            'weight',
+            'location',
+            'material',
+            'wiretype',
+        ]
+
+class EditDrumForm(ModelForm):
+  
+    class Meta:
+        model = Drum
+  
+        fields = [
+            'internalid',
+            'color',
+            'size',
+            'weight',
+            'location',
+            'material',
+            'wiretype',
+        ]
+
+class CruiseAddForm(ModelForm):
+
+    class Meta:
+        model = Cruise
+        fields = [
+            'number',
+            'startdate',
+            'status',
+        ]
+
+        widgets = {'startdate': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    )}
+
+class AddOperatorForm(ModelForm):
+
+    class Meta:
+        model = WinchOperator
+        fields = [
+            'firstname',
+            'lastname',
+            'username',
+            'status',
+        ]
