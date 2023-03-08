@@ -2,6 +2,8 @@ from django import forms
 from django.forms import ModelForm
 from .models import *
 from bootstrap_datepicker_plus.widgets import DatePickerInput, DateTimePickerInput
+from django.forms.widgets import HiddenInput
+from datetime import datetime
 
 
 class StartCastForm(ModelForm):
@@ -36,35 +38,25 @@ class EndCastForm(ModelForm):
         ]
 
         widgets = {'startdate': DateTimePickerInput(), 
-                   'enddate': DateTimePickerInput()}
-        """
+                    'enddate': DateTimePickerInput(),
+                    'startdate': forms.HiddenInput(),}
+
+        
     def is_valid(self):
         valid = super().is_valid()
 
-        # Double Check
-        # 1: if no data was posted, cleaned_data won't exist - empty form submit
-        # 2: if valid: all required fields (start + end) are valid // is not None
         if hasattr(self, 'cleaned_data') and valid:
 
-            start_date = cleaned_data.get('startdate')
-            end_date = cleaned_data.get('enddate')
-            if end_date < start_date:
+            start_date = self.cleaned_data.get('startdate')
+            end_date = self.cleaned_data.get('enddate')
+            if not end_date:
+                self.add_error('enddate', 'Please enter end date')
+                valid = False
+            elif end_date < start_date:
                 self.add_error('enddate', 'End date must be greater than start date')
                 valid = False
+        return valid     
 
-        return valid
-          """
-
-    def clean(self):
-        cleaned_data = super().clean()
-        start_date = cleaned_data.get('startdate')
-        end_date = cleaned_data.get('enddate') 
-        if end_date and start_date and end_date < start_date:
-            raise ValidationError("End date must be greater than start date")
-        return cleaned_data
-
-
-      
 
 class EditCastForm(ModelForm):
     flagforreview = forms.BooleanField(required=False)
@@ -272,3 +264,21 @@ class AddOperatorForm(ModelForm):
             'username',
             'status',
         ]
+
+class DrumLocationAddForm(ModelForm):
+
+    class Meta:
+        model = DrumLocation
+        fields = [
+            'date',
+            'enteredby',
+            'drumid',
+            'winch',
+            'location',
+            'notes',
+        ]
+
+        widgets = {'date': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    )}

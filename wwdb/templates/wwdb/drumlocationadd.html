@@ -1,12 +1,11 @@
-﻿<!--templates/castend.html-->
-{% extends "wwdb/basedisabled.html" %}
+﻿<!--templates/drumlocationadd.html-->
+{% extends "wwdb/base.html" %}
 {% load bootstrap4 %}
 {% bootstrap_css %}
-{% bootstrap_javascript jquery='full' %}
 {{ form.media }}
 
 {% block content %}
-<h1>End Cast</h1>
+<h1>Log a drum location change</h1>
 <form action="" method="post">
     {% csrf_token %}
     {% bootstrap_form form %}

@@ -1,0 +1,29 @@
+﻿<!--template/breaktestlist.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+<html>
+{% block content %}
+<h2>Breaktests</h2>
+</br>
+</br>
+<table id="" class="display table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>Date</th>
+            <th>Wire</th>
+            <th>Tested Breaking Load</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    {% for breaktest in break_test %}
+    <tr>
+        <td>{{breaktest.date}}</td>
+        <td>{{breaktest.wire}}</td>
+        <td>{{breaktest.testedbreakingload}}</td>
+        <td>{{breaktest.notes}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+</html>

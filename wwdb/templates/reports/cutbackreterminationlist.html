@@ -23,7 +23,7 @@
             <th>Notes</th>
         </tr>
     </thead>
-    {% for cutbackretermination in cutbacks_reterminations %}
+    {% for cutbackretermination in cutbacks_retermination %}
     <tr>
         <td><a href="{% url 'cutbackreterminationedit' cutbackretermination.pk %}">{{cutbackretermination.date}}</a></td>
         <td>{{cutbackretermination.wire}}</td>

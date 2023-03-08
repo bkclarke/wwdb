@@ -1,16 +1,21 @@
+from types import NoneType
 from django.db import models
 from django.db.models.query_utils import select_related_descend
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.db.models import Avg, Count, Min, Sum, Max
+from django.core.validators import MaxValueValidator
+from datetime import datetime, date
+from pandas.core.base import NoNewAttributesMixin
 import pyodbc 
 import pandas as pd
-from django.db.models import Avg, Count, Min, Sum, Max
+
 
 
 class Breaktest(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire', related_name='wire_break_test')  # Field name made lowercase.
-    date = models.DateTimeField(db_column='Date', blank=True, null=True, verbose_name='Date')  # Field name made lowercase.
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
     testedbreakingload = models.IntegerField(db_column='TestedBreakingLoad', blank=True, null=True, verbose_name='Tested breaking load')  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
 
@@ -41,7 +46,7 @@ class Calibration(models.Model):
 class CalibrationMeta(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date')  # Field name made lowercase.
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
     operator = models.ForeignKey('Winchoperator', models.DO_NOTHING, db_column='OperatorId', blank=True, null=True, verbose_name='Operator')  # Field name made lowercase.
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire id')  # Field name made lowercase.
     dynomometerid = models.ForeignKey('Dynomometer', models.DO_NOTHING, db_column='DynomometerId', blank=True, null=True, verbose_name='Dynomometer')  # Field name made lowercase.
@@ -62,8 +67,8 @@ class Cast(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     startoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='StartOperatorId', null=True, related_name='startoperatorid', verbose_name="Start operator", limit_choices_to={'status': True})  # Field name made lowercase.
     endoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='EndOperatorId', null=True, related_name='endoperatorid', verbose_name='End operator', limit_choices_to={'status': True})  # Field name made lowercase.
-    startdate = models.DateTimeField(db_column='StartDate', null=True, verbose_name='Start date and time')  # Field name made lowercase.
-    enddate = models.DateTimeField(db_column='EndDate', blank=True, null=True, verbose_name='End date and time')  # Field name made lowercase.
+    startdate = models.DateTimeField(db_column='StartDate', null=False, verbose_name='Start date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  # Field name made lowercase.
+    enddate = models.DateTimeField(db_column='EndDate', blank=True, null=True, verbose_name='End date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  # Field name made lowercase.
     deploymenttype = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True, verbose_name='Deployment type', limit_choices_to={'status': True})  # Field name made lowercase.
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  # Field name made lowercase.
     winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', null=True, verbose_name='Winch', limit_choices_to={'status': True})  # Field name made lowercase.
@@ -117,11 +122,13 @@ class Cast(models.Model):
         endcal=str(self.enddate)
         df=pd.read_sql_query("SELECT * FROM " + winch + " WHERE DateTime BETWEEN '" + startcal + "' AND '" + endcal + "'", conn)
 
+        print(df)
+
         castmaxtension=df['Tension'].max()
         castmaxpayout=df['Payout'].max()
         castpayoutmaxtension=df.loc[df['Tension'].max(),'Payout']
         casttimemaxtension=df.loc[df['Tension'].max(), 'DateTime']
-        
+
         wetend=int(self.wet_end_tag)
         dryend=int(self.dry_end_tag)
 
@@ -131,10 +138,10 @@ class Cast(models.Model):
             payout=castpayoutmaxtension
 
         if wetend>dryend:
-            length=int(wetend)+int(payout)
+            length=int(wetend)-int(payout)
             castmetermaxtension=length
         else:
-            length=int(wetend)-int(payout)
+            length=int(wetend)+int(payout)
             castmetermaxtension=length
 
         self.maxtension=castmaxtension
@@ -148,7 +155,7 @@ class Cast(models.Model):
 class Cruise(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     number = models.TextField(db_column='Number', blank=True, null=True, verbose_name='Cruise number')  # Field name made lowercase.
-    startdate = models.DateField(db_column='StartDate', blank=True, null=True, verbose_name='Start date')  # Field name made lowercase.
+    startdate = models.DateField(db_column='StartDate', blank=True, null=True, verbose_name='Start date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  # Field name made lowercase.
 
     class Meta:
@@ -165,7 +172,7 @@ class CutbackRetermination(models.Model):
     lengthremoved = models.IntegerField(db_column='LengthRemoved', blank=True, null=True, verbose_name='Length removed (m)')  # Field name made lowercase.
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, related_name='wire_cutback_retermination', verbose_name='Wire')  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date')  # Field name made lowercase.
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
 
     class Meta:
         managed = True
@@ -280,7 +287,7 @@ class Lubrication(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  # Field name made lowercase.
     lubetype = models.TextField(db_column='LubeType', blank=True, null=True, verbose_name='Lube type')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date and time')  # Field name made lowercase.
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
     lubelength = models.IntegerField(db_column='LubeLength', blank=True, null=True, verbose_name='Length lubed')  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
 
@@ -328,7 +335,7 @@ class Winch(models.Model):
         
 class DrumLocation(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    date= models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date')  # Field name made lowercase.
+    date= models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
     enteredby = models.ForeignKey(User, models.DO_NOTHING, db_column='EnteredBy', blank=True, null=True, verbose_name='Entered by')  # Field name made lowercase.
     drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum')  # Field name made lowercase.
     winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  # Field name made lowercase.
@@ -385,7 +392,7 @@ class Wire(models.Model):
     winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch', related_name='reverse_wire')  # Field name made lowercase.
     manufacturerid = models.TextField(db_column='ManufacturerId', blank=True, null=True, verbose_name='Manufacturer id')  # Field name made lowercase.
     nsfid = models.TextField(db_column='NsfId', blank=True, null=True, verbose_name='NSF id')  # Field name made lowercase.
-    dateacquired = models.DateTimeField(db_column='DateAcquired', blank=True, null=True, verbose_name='Date Acquired')  # Field name made lowercase.
+    dateacquired = models.DateTimeField(db_column='DateAcquired', blank=True, null=True, verbose_name='Date Acquired', validators=[MaxValueValidator(limit_value=datetime.today)])  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  # Field name made lowercase.
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')
     drums = models.ManyToManyField(Drum, through='WireDrum', related_name='loaded_wires', verbose_name='Drum')
@@ -493,7 +500,7 @@ class Wiredrum(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     drum = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum', related_name='reverse_drum')  # Field name made lowercase.
     wire = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date')  # Field name made lowercase.
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
     
 

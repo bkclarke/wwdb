@@ -5,14 +5,120 @@
 <html>
 {% block content %}
 <h1>Winch and Wire Reporting</h1>
-    </br>
-    </br>
-<h2>Movements</h2>
-<p><a href="{% url 'wiredrumlist' %}">wires on drums</a></p>
-<p><a href="{% url 'drumlist' %}">drums and locations</a></p>
-    </br>
-    </br>
-<h2>Maintenance</h2>
-<p><a href="{% url 'cutbackreterminationlist' %}">Cutbacks and reterminations</a></p>
+</br>
+</br>
+<h2>Cutbacks and reterminations</h2>
+</br>
+<button type="button" class="btn btn-configure">
+    <a class="nav-link" href="{% url 'cutbackreterminationadd' %}">Add Cutback or retermination</a>
+</button>
+</br>
+</br>
+<table id="" class="display table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>Date</th>
+            <th>Wire</th>
+            <th>Wet end tag</th>
+            <th>Dry end tag</th>
+            <th>Length removed</th>
+            <th>Length</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    {% for cutbackretermination in cutbacks_reterminations %}
+    <tr>
+        <td><a href="{% url 'cutbackreterminationedit' cutbackretermination.pk %}">{{cutbackretermination.date}}</a></td>
+        <td>{{cutbackretermination.wire}}</td>
+        <td>{{cutbackretermination.wetendtag}}</td>
+        <td>{{cutbackretermination.wire_dry_end_tag}}</td>
+        <td>{{cutbackretermination.lengthremoved}}</td>
+        <td>{{cutbackretermination.length}}</td>
+        <td>{{cutbackretermination.notes}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</br>
+</br>
+<h2>Breaktests</h2>
+</br>
+</br>
+<table id="" class="display table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>Date</th>
+            <th>Wire</th>
+            <th>Tested Breaking Load</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    {% for breaktest in break_test %}
+    <tr>
+        <td>{{breaktest.date}}</td>
+        <td>{{breaktest.wire}}</td>
+        <td>{{breaktest.testedbreakingload}}</td>
+        <td>{{breaktest.notes}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</br>
+</br>
+<h2>Wires on drums log</h2>
+</br>
+<button type="button" class="btn btn-configure">
+    <a class="nav-link" href="{% url 'wiredrumadd' %}">Log wire on drum change</a>
+</button>
+</br>
+</br>
+<table id="" class="display table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>Date</th>
+            <th>Wire</th>
+            <th>Drum</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    {% for wiredrum in wire_drum %}
+    <tr>
+        <td><a href="{% url 'wiredrumedit' wiredrum.pk %}">{{wiredrum.date}}</a></td>
+        <td>{{wiredrum.wire}}</td>
+        <td>{{wiredrum.drum}}</td>
+        <td>{{wiredrum.notes}}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+</br>
+</br>
+<h2>Drum location log</h2>
+</br>
+<button type="button" class="btn btn-configure">
+    <a class="nav-link" href="{% url 'drumlocationadd' %}">Log wire on drum change</a>
+</button>
+</br>
+</br>
+<table id="" class="display table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>Date</th>
+            <th>Entered by</th>
+            <th>Drum</th>
+            <th>Winch</th>
+            <th>Location</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    {% for drumlocation in drum_location %}
+    <tr>
+        <td>{{drumlocation.date}}</td>
+        <td>{{drumlocation.enteredby}}</td>
+        <td>{{drumlocation.drumid}}</td>
+        <td>{{drumlocation.winch}}</td>
+        <td>{{drumlocation.location}}</td>
+        <td>{{drumlocation.notes}}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
 </html>

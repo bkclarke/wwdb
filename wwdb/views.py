@@ -13,6 +13,7 @@ from django.db.models import Count
 import pyodbc 
 from django.db.models import Avg, Count, Min, Sum, Max
 import logging
+
 logger = logging.getLogger(__name__)
 
 def home(request):
@@ -23,98 +24,6 @@ def home(request):
 """
 CASTS
 Classes related to create, update, delete, view Cast model
-"""
-
-class CastList(ListView):
-    model = Cast
-    template_name="wwdb/castlist.html"
-
-def castlist(request):
-    cast_noflag = Cast.objects.filter(flagforreview=False, maxpayout__isnull=False, payoutmaxtension__isnull=False, maxtension__isnull=False)
-    cast_flag = Cast.objects.filter(flagforreview=True)|Cast.objects.filter(maxpayout__isnull=True)|Cast.objects.filter(payoutmaxtension__isnull=True)|Cast.objects.filter(maxtension__isnull=True)
-
-    context = {
-        'cast_noflag': cast_noflag,
-        'cast_flag': cast_flag,
-       }
-
-    return render(request, 'wwdb/castlist.html', context=context)
-
-def castedit(request, id):
-    context ={}
-    obj = Cast.objects.get(id=id)
-    #try:
-    if request.method == 'POST':
-        form = EditCastForm(request.POST, instance = obj)
-        if form.is_valid():
-            obj.endcastcal()
-            form.save()
-            return HttpResponseRedirect('/wwdb/castlist')
-    else:
-        form = EditCastForm(instance = obj)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/wwdb/cast/%i/edit' % cast.pk)
-
-    context["form"] = form
-    return render(request, "wwdb/castedit.html", context)
-    """except:
-        if request.method == 'POST':
-            form = EditCastForm(request.POST, instance = obj)
-            if form.is_valid():
-                form.save()
-                cast=Cast.objects.get(id=id)
-                return HttpResponseRedirect('/wwdb/castlist')
-        else:
-            form = EditCastForm(instance = obj)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect('/wwdb/cast/%i/edit' % castid.pk)
-
-        context["form"] = form
-        return render(request, "wwdb/castedit.html", context)"""
-
-def castend(request, id):
-    context ={}
-    obj = get_object_or_404(Cast, id = id)
-    #try:
-    if request.method == 'POST':
-        form = EndCastForm(request.POST or None, instance = obj)
-        if form.is_valid():
-            form.save()
-            castid=Cast.objects.last()
-            #castid.endcastcal()
-            castid.save()
-            return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
-        else:
-            form = EndCastForm(instance=obj)
-    context["form"] = form
-    context["cast"] = obj
-    return render(request, 'template/castend.html', context)
-
-
-    """except:
-        if form.is_valid():
-            form.save()
-            castid=Cast.objects.last()
-            return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
- 
-        context["form"] = form
-        return render(request, "wwdb/castend.html", context)"""
-
-def castdetail(request, id):
-    context ={}
-    context["cast"] = Cast.objects.get(id = id)     
-    return render(request, "wwdb/castdetail.html", context)
-
-class CastDelete(DeleteView):
-    model = Cast
-    template_name="wwdb/castdelete.html"
-    success_url= reverse_lazy('home')
-
-"""
-CASTS
-Classes related to starting and ending a cast, viewing and updating after ending a cast, Cast model
 """
 
 def caststart(request):
@@ -131,40 +40,70 @@ def caststart(request):
         if 'submitted' in request.GET:
             submitted = True
             return render(request, 'wwdb/caststart.html', {'form':form, 'submitted':submitted, 'id':id})
- 
+
     context['form']= form
 
     return render(request, "wwdb/caststart.html", context)
+
+def castlist(request):
+    cast_noflag = Cast.objects.filter(flagforreview=False, maxpayout__isnull=False, payoutmaxtension__isnull=False, maxtension__isnull=False)
+    cast_flag = Cast.objects.filter(flagforreview=True)|Cast.objects.filter(maxpayout__isnull=True)|Cast.objects.filter(payoutmaxtension__isnull=True)|Cast.objects.filter(maxtension__isnull=True)
+
+    context = {
+        'cast_noflag': cast_noflag,
+        'cast_flag': cast_flag,
+       }
+
+    return render(request, 'wwdb/castlist.html', context=context)
+
+def castend(request, id):
+    context ={}
+    obj = get_object_or_404(Cast, id = id)
+    form = EndCastForm(request.POST or None, instance = obj)
+    if request.method == 'POST':
+        cast=Cast.objects.last()
+        if form.is_valid():
+            form.save()
+            cast.refresh_from_db()
+            cast.endcastcal()
+            cast.save()
+            return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % cast.pk)
+    context["form"] = form
+    return render(request, "wwdb/castend.html", context)
+
+def castedit(request, id):
+    context ={}
+    obj = Cast.objects.get(id=id)
+    if request.method == 'POST':
+        form = EditCastForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            obj.endcastcal()
+            obj.save()
+            return HttpResponseRedirect('/wwdb/castlist')
+    else:
+        form = EditCastForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/cast/%i/edit' % cast.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/castedit.html", context)
+
+def castdetail(request, id):
+    context ={}
+    context["cast"] = Cast.objects.get(id = id)     
+    return render(request, "wwdb/castdetail.html", context)
+
+class CastDelete(DeleteView):
+    model = Cast
+    template_name="wwdb/castdelete.html"
+    success_url= reverse_lazy('home')
 
 def castenddetail(request, id):
     context ={}
     context["cast"] = Cast.objects.get(id = id)
     return render(request, "wwdb/castenddetail.html", context)
-               
-def castend(request, id):
-    context ={}
-    obj = get_object_or_404(Cast, id = id)
-    form = EndCastForm(request.POST or None, instance = obj)
-    try:
-        if form.is_valid():
-            form.save()
-            castid=Cast.objects.last()
-            castid.endcastcal()
-            castid.save()
-            return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
- 
-        context["form"] = form
-        return render(request, "wwdb/castend.html", context)
-
-    except:
-        if form.is_valid():
-            form.save()
-            castid=Cast.objects.last()
-            return HttpResponseRedirect("/wwdb/cast/%i/castenddetail" % castid.pk)
- 
-        context["form"] = form
-        return render(request, "wwdb/castend.html", context)
-
 
 """
 PRECRUISE CONFIGURATION
@@ -214,7 +153,19 @@ Classes related to winch and wire reporting
 """
 
 def reportinghome(request):
-    return render(request, 'reports/reporting.html')
+    cutbacks_retermination = CutbackRetermination.objects.order_by('-date')
+    break_test = Breaktest.objects.order_by('-date')
+    wire_drum = Wiredrum.objects.order_by('-date')
+    drum_location = DrumLocation.objects.order_by('-date')
+
+    context = {
+        'cutbacks_reterminations': cutbacks_retermination, 
+        'break_test': break_test,
+        'wire_drum': wire_drum, 
+        'drum_location':drum_location,
+        }
+
+    return render(request, 'reports/reporting.html', context=context)
 
 def highchart(request):
     return render(request, 'wwdb/highchart.html')
@@ -319,6 +270,23 @@ def wiredrumadd(request):
     return render(request, "wwdb/wiredrumadd.html", context)
 
 
+def drumlocationadd(request):
+    context ={}
+    form = DrumLocationAddForm(request.POST or None)
+    if request.method == "POST":
+        form = DrumLocationAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/reports')
+    else:
+        form = DrumLocationAddForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/drumlocationadd.html', {'form':form, 'submitted':submitted, 'id':id})
+ 
+    context['form']= form
+
+    return render(request, "wwdb/drumlocationadd.html", context)
 """
 Postings
 """
@@ -342,18 +310,20 @@ Maintenance
 """
 
 
-def wireinventory(request):
+def inventories(request):
     wires_in_use = Wire.objects.filter(status=True)
     wires_in_storage = Wire.objects.filter(status=False)
     wires = Wire.objects.all()
+    drums=Drum.objects.all()
     
     context = {
         'wires_in_use': wires_in_use,
         'wires_in_storage': wires_in_storage, 
         'wires' : wires,
+        'drums' : drums,
         }
 
-    return render(request, 'reports/wireinventory.html', context=context)
+    return render(request, 'reports/inventories.html', context=context)
 
 """
 WIRES
@@ -541,6 +511,16 @@ def deploymentadd(request):
     context['form']= form
 
     return render(request, 'wwdb/deploymentadd.html', context)
+
+
+def breaktestlist(request):
+    break_test = Breaktest.objects.order_by('-date')
+
+    context = {
+        'break_test': break_test, 
+        }
+
+    return render(request, 'reports/breaktestlist.html', context=context)
 
 """
 CUTBACKRETERMINATION

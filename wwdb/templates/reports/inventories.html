@@ -39,6 +39,33 @@
 </table>
 </br>
 </br>
+<h2>Drum Inventory</h2>
+</br>
+</br>
+<table id="" class="display table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>Internal ID</th>
+            <th>Color</th>
+            <th>Size</th>
+            <th>Weight (lbs)</th>
+            <th>Location</th>
+            <th>Material</th>
+            <th>Wire type</th>
+        </tr>
+    </thead>
+    {% for drum in drums %}
+    <tr>
+        <td><a href="{% url 'drumedit' drum.pk %}">{{drum.internalid}}</a></td>
+        <td>{{drum.color}}</td>
+        <td>{{drum.size}}</td>
+        <td>{{drum.weight}}</td>
+        <td>{{drum.active_location}}</td>
+        <td>{{drum.material}}</td>
+        <td>{{drum.wiretype}}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
 </html>
 
