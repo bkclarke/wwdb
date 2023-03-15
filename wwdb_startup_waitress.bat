@@ -1,4 +1,4 @@
-cd C:\Users\bonny\github\wwdb
+cd C:\ServerApplications\wwdb
 
-C:\Users\bonny\anaconda3\envs\wwdb\Scripts\waitress-serve.exe --port=8080 wwdb_proj.wsgi:application
+C:\Users\ShipPc\anaconda3\Scripts\waitress-serve.exe --port=8082 wwdb_proj.wsgi:application
 

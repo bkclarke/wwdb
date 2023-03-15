@@ -7947,3 +7947,116 @@ KeyError: -17
 2023-03-08 00:08:26,853 INFO Watching for file changes with StatReloader
 2023-03-08 00:09:14,861 INFO C:\Users\bonny\github\wwdb\wwdb\views.py changed, reloading.
 2023-03-08 00:09:16,877 INFO Watching for file changes with StatReloader
+2023-03-08 17:52:26,221 INFO Watching for file changes with StatReloader
+2023-03-13 22:57:04,130 INFO Serving on http://0.0.0.0:8080
+2023-03-13 22:57:55,750 WARNING Task queue depth is 1
+2023-03-13 22:57:55,766 WARNING Task queue depth is 2
+2023-03-13 22:57:55,860 WARNING Not Found: /static/css/bootstrap.css
+2023-03-13 22:57:55,891 WARNING Task queue depth is 2
+2023-03-13 22:57:55,860 WARNING Not Found: /static/css/buttons.datatables.min.css
+2023-03-13 22:57:55,875 WARNING Not Found: /static/css/datatables.css
+2023-03-13 22:57:55,891 WARNING Task queue depth is 2
+2023-03-13 22:57:55,875 WARNING Not Found: /static/css/bootstrap.min.css
+2023-03-13 22:57:55,891 WARNING Not Found: /static/css/wwdb.css
+2023-03-13 22:57:55,907 WARNING Task queue depth is 2
+2023-03-13 22:57:55,922 WARNING Task queue depth is 2
+2023-03-13 22:57:55,922 WARNING Task queue depth is 3
+2023-03-13 22:57:55,954 WARNING Not Found: /static/js/bootstrap.min.js
+2023-03-13 22:57:55,969 WARNING Task queue depth is 2
+2023-03-13 22:57:55,954 WARNING Not Found: /static/js/popper.js
+2023-03-13 22:57:55,985 WARNING Task queue depth is 2
+2023-03-13 22:57:55,969 WARNING Not Found: /static/js/Chart.min.js
+2023-03-13 22:57:55,985 WARNING Not Found: /static/js/datatables.js
+2023-03-13 22:57:56,000 WARNING Task queue depth is 1
+2023-03-13 22:57:56,016 WARNING Task queue depth is 2
+2023-03-13 22:57:55,985 WARNING Not Found: /static/admin/js/vendor/jquery/jquery.min.js
+2023-03-13 22:57:56,032 WARNING Not Found: /static/js/dataTables.buttons.min.js
+2023-03-13 22:57:56,032 WARNING Not Found: /static/js/jszip.min.js
+2023-03-13 22:57:56,047 WARNING Task queue depth is 2
+2023-03-13 22:57:56,063 WARNING Task queue depth is 1
+2023-03-13 22:57:56,063 WARNING Task queue depth is 2
+2023-03-13 22:57:56,079 WARNING Not Found: /static/js/pdfmake.min.js
+2023-03-13 22:57:56,094 WARNING Task queue depth is 3
+2023-03-13 22:57:56,094 WARNING Not Found: /static/js/vfs_fonts.min.js
+2023-03-13 22:57:56,110 WARNING Task queue depth is 3
+2023-03-13 22:57:56,094 WARNING Not Found: /static/js/buttons.html5.min.js
+2023-03-13 22:57:56,110 WARNING Not Found: /static/js/buttons.print.min.js
+2023-03-13 22:57:56,125 WARNING Not Found: /static/js/exporting.js
+2023-03-13 22:57:56,157 WARNING Not Found: /static/js/highcharts.js
+2023-03-13 22:57:56,157 WARNING Not Found: /static/js/Chart.min.js
+2023-03-13 22:57:56,172 WARNING Not Found: /static/js/wwdb.js
+2023-03-13 22:57:56,204 WARNING Not Found: /static/js/bootstrap.min.js
+2023-03-13 22:57:56,219 WARNING Not Found: /static/js/popper.js
+2023-03-13 22:57:56,250 WARNING Not Found: /static/js/datatables.js
+2023-03-13 22:57:56,282 WARNING Not Found: /static/js/dataTables.buttons.min.js
+2023-03-13 22:57:56,297 WARNING Not Found: /static/js/jszip.min.js
+2023-03-13 22:57:56,329 WARNING Not Found: /static/js/pdfmake.min.js
+2023-03-13 22:57:56,344 WARNING Not Found: /static/js/vfs_fonts.min.js
+2023-03-13 22:57:56,375 WARNING Not Found: /static/js/buttons.html5.min.js
+2023-03-13 22:57:56,391 WARNING Not Found: /static/js/buttons.print.min.js
+2023-03-13 22:57:56,422 WARNING Not Found: /static/js/highcharts.js
+2023-03-13 22:57:56,438 WARNING Not Found: /static/js/exporting.js
+2023-03-13 22:57:56,469 WARNING Not Found: /static/js/wwdb.js
+2023-03-13 22:57:56,563 WARNING Not Found: /favicon.ico
+2023-03-13 23:10:34,951 WARNING Not Found: /favicon.ico
+2023-03-13 23:10:34,998 WARNING Not Found: /favicon.ico
+2023-03-14 12:22:07,977 WARNING Not Found: /favicon.ico
+2023-03-14 14:10:39,096 INFO Serving on http://0.0.0.0:8082
+2023-03-14 14:10:48,243 WARNING Not Found: /favicon.ico
+2023-03-14 14:20:32,717 WARNING Not Found: /favicon.ico
+2023-03-14 14:33:24,669 ERROR Internal Server Error: /wwdb/cast/440/castend/
+Traceback (most recent call last):
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\pandas\core\indexes\base.py", line 3803, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas\_libs\index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: nan
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\ServerApplications\wwdb\wwdb\views.py", line 68, in castend
+    cast.endcastcal()
+  File "C:\ServerApplications\wwdb\wwdb\models.py", line 129, in endcastcal
+    castpayoutmaxtension=df.loc[df['Tension'].max(),'Payout']
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\pandas\core\frame.py", line 3922, in _get_value
+    row = self.index.get_loc(index)
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    raise KeyError(key) from err
+KeyError: nan
+2023-03-14 15:54:56,753 ERROR Internal Server Error: /wwdb/cast/440/edit/
+Traceback (most recent call last):
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\pandas\core\indexes\base.py", line 3803, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas\_libs\index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: nan
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\ServerApplications\wwdb\wwdb\views.py", line 81, in castedit
+    obj.endcastcal()
+  File "C:\ServerApplications\wwdb\wwdb\models.py", line 129, in endcastcal
+    castpayoutmaxtension=df.loc[df['Tension'].max(),'Payout']
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\pandas\core\frame.py", line 3922, in _get_value
+    row = self.index.get_loc(index)
+  File "C:\Users\ShipPc\anaconda3\envs\wwdb\lib\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    raise KeyError(key) from err
+KeyError: nan
