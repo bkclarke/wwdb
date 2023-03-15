@@ -7947,3 +7947,204 @@ KeyError: -17
 2023-03-08 00:08:26,853 INFO Watching for file changes with StatReloader
 2023-03-08 00:09:14,861 INFO C:\Users\bonny\github\wwdb\wwdb\views.py changed, reloading.
 2023-03-08 00:09:16,877 INFO Watching for file changes with StatReloader
+2023-03-08 17:59:45,721 INFO Serving on http://0.0.0.0:8080
+2023-03-13 22:33:19,072 INFO Serving on http://0.0.0.0:8080
+2023-03-14 21:40:28,922 ERROR Internal Server Error: /wwdb/cast/440/castend/
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 391, in get_loc
+    return self._range.index(new_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: -48 is not in range
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\github\wwdb\wwdb\views.py", line 68, in castend
+    cast.endcastcal()
+  File "C:\Users\bonny\github\wwdb\wwdb\models.py", line 129, in endcastcal
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\frame.py", line 3922, in _get_value
+    row = self.index.get_loc(index)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 393, in get_loc
+    raise KeyError(key) from err
+KeyError: -48
+2023-03-14 21:42:37,529 INFO Watching for file changes with StatReloader
+2023-03-14 21:43:04,401 ERROR Internal Server Error: /wwdb/cast/441/castend/
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 391, in get_loc
+    return self._range.index(new_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: -49 is not in range
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\github\wwdb\wwdb\views.py", line 68, in castend
+    cast.endcastcal()
+  File "C:\Users\bonny\github\wwdb\wwdb\models.py", line 127, in endcastcal
+    castpayoutmaxtension=df.loc[df['Tension'].max(),'Payout']
+                         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\frame.py", line 3922, in _get_value
+    row = self.index.get_loc(index)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 393, in get_loc
+    raise KeyError(key) from err
+KeyError: -49
+2023-03-14 21:43:33,724 INFO C:\Users\bonny\github\wwdb\wwdb\models.py changed, reloading.
+2023-03-14 21:43:36,527 INFO Watching for file changes with StatReloader
+2023-03-14 21:43:37,796 ERROR Internal Server Error: /wwdb/cast/441/castend/
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 391, in get_loc
+    return self._range.index(new_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: -49 is not in range
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\github\wwdb\wwdb\views.py", line 68, in castend
+    cast.endcastcal()
+  File "C:\Users\bonny\github\wwdb\wwdb\models.py", line 128, in endcastcal
+    casttimemaxtension=df.loc[df['Tension'].max(), 'DateTime']
+                       ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\frame.py", line 3922, in _get_value
+    row = self.index.get_loc(index)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 393, in get_loc
+    raise KeyError(key) from err
+KeyError: -49
+2023-03-14 21:44:45,267 INFO C:\Users\bonny\github\wwdb\wwdb\models.py changed, reloading.
+2023-03-14 21:44:48,278 INFO Watching for file changes with StatReloader
+2023-03-14 21:44:49,152 ERROR Internal Server Error: /wwdb/cast/441/castend/
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 391, in get_loc
+    return self._range.index(new_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: -49 is not in range
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\github\wwdb\wwdb\views.py", line 68, in castend
+    cast.endcastcal()
+  File "C:\Users\bonny\github\wwdb\wwdb\models.py", line 132, in endcastcal
+    castpayoutmaxtension=df.loc[df['Tension'].max(),'Payout']
+                         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\frame.py", line 3922, in _get_value
+    row = self.index.get_loc(index)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 393, in get_loc
+    raise KeyError(key) from err
+KeyError: -49
+2023-03-14 21:45:14,590 ERROR Internal Server Error: /wwdb/cast/442/castend/
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 391, in get_loc
+    return self._range.index(new_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: -48 is not in range
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\github\wwdb\wwdb\views.py", line 68, in castend
+    cast.endcastcal()
+  File "C:\Users\bonny\github\wwdb\wwdb\models.py", line 132, in endcastcal
+    castpayoutmaxtension=df.loc[df['Tension'].max(),'Payout']
+                         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\frame.py", line 3922, in _get_value
+    row = self.index.get_loc(index)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 393, in get_loc
+    raise KeyError(key) from err
+KeyError: -48
+2023-03-14 21:48:24,859 INFO C:\Users\bonny\github\wwdb\wwdb\models.py changed, reloading.
+2023-03-14 21:48:27,416 INFO Watching for file changes with StatReloader
+2023-03-14 21:49:15,086 INFO C:\Users\bonny\github\wwdb\wwdb\models.py changed, reloading.
+2023-03-14 21:49:17,434 INFO Watching for file changes with StatReloader
+2023-03-14 21:49:36,747 INFO C:\Users\bonny\github\wwdb\wwdb\models.py changed, reloading.
+2023-03-14 21:49:38,790 INFO Watching for file changes with StatReloader
+2023-03-14 21:49:56,127 ERROR Internal Server Error: /wwdb/cast/443/castend/
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 391, in get_loc
+    return self._range.index(new_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: -49 is not in range
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\bonny\github\wwdb\wwdb\models.py", line 128, in endcastcal
+    castpayoutmaxtension=df.loc[df['Tension'].max(),'Payout']
+                         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\frame.py", line 3922, in _get_value
+    row = self.index.get_loc(index)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\pandas\core\indexes\range.py", line 393, in get_loc
+    raise KeyError(key) from err
+KeyError: -49
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\anaconda3\envs\wwdb\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bonny\github\wwdb\wwdb\views.py", line 68, in castend
+    cast.endcastcal()
+  File "C:\Users\bonny\github\wwdb\wwdb\models.py", line 155, in endcastcal
+    self.wetendtag=wetend
+                   ^^^^^^
+UnboundLocalError: cannot access local variable 'wetend' where it is not associated with a value
+2023-03-14 21:50:26,735 INFO C:\Users\bonny\github\wwdb\wwdb\models.py changed, reloading.
+2023-03-14 21:50:28,935 INFO Watching for file changes with StatReloader

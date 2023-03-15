@@ -110,47 +110,53 @@ class Cast(models.Model):
         return wetend
 
     def endcastcal(self):
-        conn = pyodbc.connect('Driver={SQL Server};'
-                                'Server=192.168.2.5, 1433;'
-                                'Database=WinchDb;'
-                                'Trusted_Connection=no;'
-			            'UID=remoteadmin;'
-			            'PWD=eris.2003;')
+        try:
+            conn = pyodbc.connect('Driver={SQL Server};'
+                                    'Server=192.168.2.5, 1433;'
+                                    'Database=WinchDb;'
+                                    'Trusted_Connection=no;'
+			                'UID=remoteadmin;'
+			                'PWD=eris.2003;')
 
-        winch=(self.winch.name)
-        startcal=str(self.startdate)
-        endcal=str(self.enddate)
-        df=pd.read_sql_query("SELECT * FROM " + winch + " WHERE DateTime BETWEEN '" + startcal + "' AND '" + endcal + "'", conn)
+            winch=(self.winch.name)
+            startcal=str(self.startdate)
+            endcal=str(self.enddate)
+            df=pd.read_sql_query("SELECT * FROM " + winch + " WHERE DateTime BETWEEN '" + startcal + "' AND '" + endcal + "'", conn)
 
-        print(df)
+            castmaxtension=df['Tension'].max()
+            castmaxpayout=df['Payout'].max()
+            castpayoutmaxtension=df.loc[df['Tension'].max(),'Payout']
+            casttimemaxtension=df.loc[df['Tension'].max(), 'DateTime']
 
-        castmaxtension=df['Tension'].max()
-        castmaxpayout=df['Payout'].max()
-        castpayoutmaxtension=df.loc[df['Tension'].max(),'Payout']
-        casttimemaxtension=df.loc[df['Tension'].max(), 'DateTime']
+            wetend=int(self.wet_end_tag)
+            dryend=int(self.dry_end_tag)
 
-        wetend=int(self.wet_end_tag)
-        dryend=int(self.dry_end_tag)
+            if castpayoutmaxtension<0:
+                payout=0
+            else:
+                payout=castpayoutmaxtension
 
-        if castpayoutmaxtension<0:
-            payout=0
-        else:
-            payout=castpayoutmaxtension
+            if wetend>dryend:
+                length=int(wetend)-int(payout)
+                castmetermaxtension=length
+            else:
+                length=int(wetend)+int(payout)
+                castmetermaxtension=length
 
-        if wetend>dryend:
-            length=int(wetend)-int(payout)
-            castmetermaxtension=length
-        else:
-            length=int(wetend)+int(payout)
-            castmetermaxtension=length
+            self.maxtension=castmaxtension
+            self.maxpayout=castmaxpayout
+            self.payoutmaxtension=castpayoutmaxtension
+            self.timemaxtension=casttimemaxtension
+            self.metermaxtension=castmetermaxtension
+            self.wetendtag=wetend
+            self.dryendtag=dryend
 
-        self.maxtension=castmaxtension
-        self.maxpayout=castmaxpayout
-        self.payoutmaxtension=castpayoutmaxtension
-        self.timemaxtension=casttimemaxtension
-        self.metermaxtension=castmetermaxtension
-        self.wetendtag=wetend
-        self.dryendtag=dryend
+        except:
+            wetend=int(self.wet_end_tag)
+            dryend=int(self.dry_end_tag)
+            self.wetendtag=wetend
+            self.dryendtag=dryend
+            return
 
 class Cruise(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
