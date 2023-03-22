@@ -51,7 +51,7 @@ urlpatterns = [
     path('drum/<int:id>/edit/', views.drumedit, name='drumedit'),
     path('drumadd/', views.drumadd, name='drumadd'),
     path('cruiseadd/', views.cruiseadd, name='cruiseadd'),
-    path('cruise/<int:id>/editstatus/', views.cruiseeditstatus, name='cruiseeditstatus'),
+    path('cruise/<int:id>/edit/', views.cruiseedit, name='cruiseedit'),
     path('reports/cruisereport/', views.cruisereport, name='cruisereport'),
     path('highchart/', views.highchart, name='highchart'),
 ]

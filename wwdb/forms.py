@@ -12,7 +12,6 @@ class StartCastForm(ModelForm):
     class Meta:
         model = Cast
         fields = [
-            'cruisenumber',
             'startoperator',
             'startdate',
             'deploymenttype',
@@ -133,10 +132,14 @@ class EditCruiseForm(ModelForm):
         fields = [
             'number',
             'startdate',
-            'status',
+            'enddate',
         ]
  
         widgets = {'startdate': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    ),
+                   'enddate': DatePickerInput(
                     options={
                     "format": "YYYY-MM-DD"}
                     )}

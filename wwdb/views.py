@@ -199,12 +199,13 @@ def highchart(request, id):
 """
 
 def cruisereport(request):
-    cruise_id=Cruise.objects.filter(status=True).first()
-    cruise = Cruise.objects.filter(status=True)
+    last_cruise=Cruise.objects.order_by('startdate').last()
+    startdate=last_cruise.startdate
+    enddate=last_cruise.enddate
     operators = WinchOperator.objects.filter(status=True)
     active_wire = Wire.objects.filter(status=True)
     winches = Winch.objects.filter(status=True)
-    casts = Cast.objects.filter(cruisenumber=cruise_id)
+    casts = Cast.objects.filter(startdate__range=[startdate,enddate])
 
     deployments = DeploymentType.objects.filter(cast__in=casts)
     deployments = DeploymentType.objects.filter(cast__in=casts).annotate(num_casts=Count('id'))
@@ -214,7 +215,6 @@ def cruisereport(request):
         'deployments': deployments,
         'active_wire': active_wire,
         'winches': winches,
-        'cruise' : cruise,
         'casts' : casts,
        }
 
@@ -241,7 +241,7 @@ def wiredrumedit(request, id):
         if form.is_valid():
             form.save()
             wiredrum=Wiredrum.objects.get(id=id)
-            return HttpResponseRedirect('/wwdb/reports/wiredrumlist')
+            return HttpResponseRedirect('/wwdb/reports/reporting')
     else:
         form = EditWireDrumForm(instance = obj)
         if form.is_valid():
@@ -545,7 +545,7 @@ def cutbackreterminationedit(request, id):
         if form.is_valid():
             form.save()
             cutbackretermination=CutbackRetermination.objects.get(id=id)
-            return HttpResponseRedirect('/wwdb/reports/cutbackreterminationlist')
+            return HttpResponseRedirect('/wwdb/reports/reporting')
     else:
         form = EditCutbackReterminationForm(instance = obj)
         if form.is_valid():
@@ -643,7 +643,7 @@ Cruises
 Classes related to create, update, view Cruise model
 """
 
-def cruiseeditstatus(request, id):
+def cruiseedit(request, id):
     context ={}
     obj = get_object_or_404(Cruise, id = id)
 
@@ -657,10 +657,10 @@ def cruiseeditstatus(request, id):
         form = EditCruiseForm(instance = obj)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("/wwdb/cruise/%i/editstatus" % cruiseid.pk)
+            return HttpResponseRedirect("/wwdb/cruise/%i/edit" % cruiseid.pk)
 
     context["form"] = form
-    return render(request, "wwdb/cruiseeditstatus.html", context)
+    return render(request, "wwdb/cruiseedit.html", context)
 
 def cruiseadd(request):
     context ={}

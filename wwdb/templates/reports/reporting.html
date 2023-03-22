@@ -65,11 +65,6 @@
 </br>
 <h2>Wires on drums log</h2>
 </br>
-<button type="button" class="btn btn-configure">
-    <a class="nav-link" href="{% url 'wiredrumadd' %}">Log wire on drum change</a>
-</button>
-</br>
-</br>
 <table id="" class="display table table-striped">
     <thead class="thead-light">
         <tr>
@@ -81,7 +76,7 @@
     </thead>
     {% for wiredrum in wire_drum %}
     <tr>
-        <td><a href="{% url 'wiredrumedit' wiredrum.pk %}">{{wiredrum.date}}</a></td>
+        <td>{{wiredrum.date}}</td>
         <td>{{wiredrum.wire}}</td>
         <td>{{wiredrum.drum}}</td>
         <td>{{wiredrum.notes}}</td>
@@ -92,11 +87,6 @@
 </br>
 </br>
 <h2>Drum location log</h2>
-</br>
-<button type="button" class="btn btn-configure">
-    <a class="nav-link" href="{% url 'drumlocationadd' %}">Log wire on drum change</a>
-</button>
-</br>
 </br>
 <table id="" class="display table table-striped">
     <thead class="thead-light">
