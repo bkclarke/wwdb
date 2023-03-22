@@ -10,7 +10,7 @@ from pandas.core.base import NoNewAttributesMixin
 import pyodbc 
 import pandas as pd
 
-
+#note
 
 class Breaktest(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
