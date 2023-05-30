@@ -1,4 +1,4 @@
-﻿<!--template/safeworkingtension.html-->
+<!--template/safeworkingtension.html-->
 <!DOCTYPE html>
 {% extends "wwdb/base.html" %}
 
@@ -19,9 +19,9 @@
     <tr>
         <td height=: 100 font-size: 100>{{wire.winch}}</td>
         <td>{{wire.nsfid}}</td>
-        <td>{{wire.active_length}}</td>
+        <td>{{wire.active_length|floatformat:0}}</td>
         <td>{{wire.factorofsafety}}</td>
-        <td>{{wire.safe_working_tension}}</td>
+        <td>{{wire.safe_working_tension|floatformat:0}}</td>
     </tr>
     {% endfor %}
 </table>

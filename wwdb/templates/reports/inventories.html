@@ -56,7 +56,7 @@
     </thead>
     {% for drum in drums %}
     <tr>
-        <td><a href="{% url 'drumedit' drum.pk %}">{{drum.internalid}}</a></td>
+        <td>{{drum.internalid}}</td>
         <td>{{drum.color}}</td>
         <td>{{drum.size}}</td>
         <td>{{drum.weight}}</td>

@@ -22,7 +22,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*',]
 
-CSRF_TRUSTED_ORIGINS = ['http://192.168.2.5:8081','http://192.168.1.90:8081']
+CSRF_TRUSTED_ORIGINS = ['http://192.168.2.5:8081','http://192.168.1.90:8081','http://localhost:8081']
 
 CSRF_COOKIE_SECURE = False
 

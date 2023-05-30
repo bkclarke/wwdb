@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href={% static 'css/bootstrap.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/datatables.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/buttons.datatables.min.css' %}>
+    <link rel="stylesheet" type="text/css" href={% static 'css/select.datatables.min.css' %}>
+    <link rel="stylesheet" type="text/css" href={% static 'css/dataTables.dateTime.min.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/wwdb.css' %}>
     <script type="text/javascript" src={% static 'admin/js/vendor/jquery/jquery.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/Chart.min.js' %} crossorigin="anonymous"></script>
@@ -16,12 +18,13 @@
     <script type="text/javascript" src={% static 'js/popper.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/datatables.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/dataTables.buttons.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/dataTables.select.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/jquery.dataTables.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/jszip.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/pdfmake.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/vfs_fonts.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/buttons.html5.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/buttons.print.min.js' %} crossorigin="anonymous"></script>
-    <script type="text/javascript" src={% static 'js/highcharts.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/exporting.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/wwdb.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript">
@@ -81,22 +84,6 @@
                 <li class="nav-item-bottom">
                     <a class="nav-link" href="{% url 'castlist' %}">View Casts</a>
                 </li>
-            </ul>
-        </div>
-        <div class="menu-right">
-            <ul class="navbar-nav login-control">
-                <div class="nav-item-bottom">
-                    </li>
-                    {% if user.is_authenticated %}
-                    <span>Hi {{user.username}}!</span>
-                    <span><a href="{% url 'logout' %}">Log out</a></span>
-                    {% else %}
-                    <span>You are not logged in.</span></br>
-                    <span><a href="{% url 'login' %}">Log in</a></span>
-                    <span><a href="{% url 'signup' %}">Sign up</a></span>
-                    {% endif %}
-                    </li>
-                </div>
             </ul>
         </div>
     </div>

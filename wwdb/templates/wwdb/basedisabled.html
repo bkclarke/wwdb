@@ -53,22 +53,6 @@
 
 <nav class="navbar fixed-bottom navbar-expand-sm navbar-light">
     <div class="menu-container">
-        <div class="menu-right">
-            <ul class="navbar-nav login-control">
-                <div class="nav-item-bottom">
-                    </li>
-                    {% if user.is_authenticated %}
-                    <span>Hi {{user.username}}!</span>
-                    <span><a href="{% url 'logout' %}">Log out</a></span>
-                    {% else %}
-                    <span>You are not logged in.</span></br>
-                    <span><a href="{% url 'login' %}">Log in</a></span>
-                    <span><a href="{% url 'signup' %}">Sign up</a></span>
-                    {% endif %}
-                    </li>
-                </div>
-            </ul>
-        </div>
     </div>
 </nav>
 </body>

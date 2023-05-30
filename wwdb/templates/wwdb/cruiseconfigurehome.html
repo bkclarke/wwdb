@@ -18,15 +18,15 @@
         <thead class="thead-light">
             <tr>
                 <th>Cruise number</th>
-                <th>Startdate</th>
-                <th>Status</th>
+                <th>Start date</th>
+                <th>End date</th>
             </tr>
         </thead>
         {% for cruise in cruise %}
         <tr>
-            <td><a href="{% url 'cruiseeditstatus' cruise.pk %}">{{cruise.number}}</a></td>
+            <td><a href="{% url 'cruiseedit' cruise.pk %}">{{cruise.number}}</a></td>
             <td>{{cruise.startdate}}</td>
-            <td>{{cruise.status}}</td>
+            <td>{{cruise.enddate}}</td>
         </tr>
         {% endfor %}
     </table>

@@ -10,7 +10,7 @@ from pandas.core.base import NoNewAttributesMixin
 import pyodbc 
 import pandas as pd
 
-
+#note
 
 class Breaktest(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
@@ -79,7 +79,6 @@ class Cast(models.Model):
     metermaxtension = models.IntegerField(db_column='MeterMaxTension', blank=True, null=True, verbose_name='Meter mark at max tension')  # Field name made lowercase.
     timemaxtension = models.DateTimeField(db_column='TimeMaxTension', blank=True, null=True, verbose_name='Time at max tension')  # Field name made lowercase.
     flagforreview = models.BooleanField(db_column='Flagforreview', blank=True, null=True, verbose_name='Flag for review')  # Field name made lowercase.
-    cruisenumber = models.ForeignKey('Cruise', models.DO_NOTHING, db_column='CruiseNumber', null=True, verbose_name='Cruise number', limit_choices_to={'status': True})  # Field name made lowercase.
     dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag')  # Field name made lowercase.
     wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag')  # Field name made lowercase.
 
@@ -123,10 +122,11 @@ class Cast(models.Model):
             endcal=str(self.enddate)
             df=pd.read_sql_query("SELECT * FROM " + winch + " WHERE DateTime BETWEEN '" + startcal + "' AND '" + endcal + "'", conn)
 
-            castmaxtension=df['Tension'].max()
+            castmaxtensiondf=df[df.Tension==df.Tension.max()]
+            castmaxtension=castmaxtensiondf['Tension'].max()
             castmaxpayout=df['Payout'].max()
-            castpayoutmaxtension=df.loc[df['Tension'].max(),'Payout']
-            casttimemaxtension=df.loc[df['Tension'].max(), 'DateTime']
+            castpayoutmaxtension=castmaxtensiondf['Payout'].max()
+            casttimemaxtension=castmaxtensiondf['DateTime'].max()
 
             wetend=int(self.wet_end_tag)
             dryend=int(self.dry_end_tag)
@@ -151,7 +151,7 @@ class Cast(models.Model):
             self.wetendtag=wetend
             self.dryendtag=dryend
 
-        except:
+        except :
             wetend=int(self.wet_end_tag)
             dryend=int(self.dry_end_tag)
             self.wetendtag=wetend
@@ -162,6 +162,7 @@ class Cruise(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
     number = models.TextField(db_column='Number', blank=True, null=True, verbose_name='Cruise number')  # Field name made lowercase.
     startdate = models.DateField(db_column='StartDate', blank=True, null=True, verbose_name='Start date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
+    enddate = models.DateField(db_column='EndDate', blank=True, null=True, verbose_name='End date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  # Field name made lowercase.
 
     class Meta:
