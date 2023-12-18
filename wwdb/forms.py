@@ -16,6 +16,7 @@ class StartCastForm(ModelForm):
             'startdate',
             'deploymenttype',
             'winch',
+			'motor',
             'notes',
             'flagforreview',
         ]
@@ -101,6 +102,9 @@ class EditOperatorStatusForm(ModelForm):
         model = WinchOperator
   
         fields = [
+            'firstname',
+            'lastname',
+            'username',
             'status',
         ]
 
@@ -133,6 +137,9 @@ class EditCruiseForm(ModelForm):
             'number',
             'startdate',
             'enddate',
+            'winch1',
+            'winch2',
+            'winch3',
         ]
  
         widgets = {'startdate': DatePickerInput(
@@ -144,6 +151,47 @@ class EditCruiseForm(ModelForm):
                     "format": "YYYY-MM-DD"}
                     )}
 
+class EditCruiseReportForm(ModelForm):
+  
+    class Meta:
+        model = Cruise
+  
+        fields = [
+            'startdate',
+            'enddate',
+            'winch1blockarrangement',
+            'winch2blockarrangement',
+            'winch3blockarrangement',
+            'winch1termination',
+            'winch2termination',
+            'winch3termination',
+            'winch2spindirection',
+            'winch1notes',
+            'winch2notes',
+            'winch3notes',
+            'scienceprovidedwinch',
+        ]
+ 
+        widgets = {'startdate': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    ),
+                   'enddate': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    )}
+
+class EditCruiseWinchForm(ModelForm):
+  
+    class Meta:
+        model = Cruise
+  
+        fields = [
+            'winch1',
+            'winch2',
+            'winch3',
+        ]
+
 class AddCutbackReterminationForm(ModelForm):
 
     class Meta:
@@ -152,14 +200,13 @@ class AddCutbackReterminationForm(ModelForm):
             'date',
             'wire',
             'wetendtag',
-            'lengthremoved',
             'notes',
         ]
 
         widgets = {'date': DatePickerInput(
                     options={
                     "format": "YYYY-MM-DD"}
-                    )}
+        )}
 
 class EditCutbackReterminationForm(ModelForm):
   
@@ -170,7 +217,6 @@ class EditCutbackReterminationForm(ModelForm):
             'date',
             'wire',
             'wetendtag',
-            'lengthremoved',
             'notes',
         ]
 
@@ -249,10 +295,14 @@ class CruiseAddForm(ModelForm):
         fields = [
             'number',
             'startdate',
-            'status',
+            'enddate',
         ]
 
         widgets = {'startdate': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    ),
+					'enddate': DatePickerInput(
                     options={
                     "format": "YYYY-MM-DD"}
                     )}
@@ -285,3 +335,29 @@ class DrumLocationAddForm(ModelForm):
                     options={
                     "format": "YYYY-MM-DD"}
                     )}
+
+class CruiseReportForm(forms.Form):
+    start_date = forms.DateField()
+    end_date = forms.DateField()
+
+    widgets = {'start_date': DateTimePickerInput(), 
+            'end_date': DateTimePickerInput(),}
+    
+    def clean_start_date(self):
+        start = self.cleaned_data['start_date']
+        end = self.cleaned_data['end_date']
+
+        if end < start:
+            raise ValidationError(_('end date must be after start date'))
+
+        return data
+		
+class WinchAddForm(ModelForm):
+
+    class Meta:
+        model = Winch
+        fields = [
+            'name',
+            'institution',
+            'status',
+        ]

@@ -3,6 +3,10 @@
 from pathlib import Path
 import os
 
+import django_stubs_ext
+
+django_stubs_ext.monkeypatch()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,7 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*',]
 
-CSRF_TRUSTED_ORIGINS = ['http://192.168.2.5:8081','http://192.168.1.90:8081','http://localhost:8081']
+CSRF_TRUSTED_ORIGINS = ['http://192.168.2.5:8081','http://192.168.1.90:8081','http://localhost:8081''http://winch.local:8081',]
 
 CSRF_COOKIE_SECURE = False
 
@@ -40,9 +44,33 @@ INSTALLED_APPS = [
     'bootstrap4',
     'bootstrap_datepicker_plus',
     'crispy_forms',
+    'django_filters',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+BOOTSTRAP_DATEPICKER_PLUS = {
+    # Options for all input widgets
+    # More options: https://getdatepicker.com/4/Options/
+	#
+    # Advanced: Choose where from static JS/CSS files are served.
+    # defaults: https://github.com/monim67/django-bootstrap-datepicker-plus/blob/5.0.0/src/bootstrap_datepicker_plus/settings.py#L16
+    # To serve from any other preferred CDN, just update the options below.
+    # You can also set them to None if you already have the following resources
+    # included into your template.
+    #
+    "datetimepicker_js_url": None,
+    "datetimepicker_css_url": None,
+    "momentjs_url": None,  # If you already have momentjs added into your template
+    "bootstrap_icon_css_url": None,  # If you don't need bootstrap icons
+    #
+    # If you want to serve static files yourself without CDN (from staticfiles) and
+    # you know how to serve django static files on production server (DEBUG=False)
+    # Then download the js/css files to any of your static directory, update the js/css
+    # urls above and set the following option
+    #
+     "app_static_url": "bootstrap_datepicker_plus/",
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -56,6 +84,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'wwdb_proj.urls'
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'context_processors.cast_context',
+)
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -67,6 +99,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'context_processors.cast_context',
             ],
         },
     },

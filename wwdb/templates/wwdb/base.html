@@ -3,91 +3,140 @@
 
 <html>
 <head>
-    <title>WWDB</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href={% static 'css/bootstrap.min.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/bootstrap.css' %}>
+    <link rel="stylesheet" type="text/css" href={% static 'css/bootstrap-datepicker.min.css' %}>
+    <link rel="stylesheet" type="text/css" href={% static 'css/bootstrap-icons.min.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/datatables.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/buttons.datatables.min.css' %}>
-    <link rel="stylesheet" type="text/css" href={% static 'css/select.datatables.min.css' %}>
-    <link rel="stylesheet" type="text/css" href={% static 'css/dataTables.dateTime.min.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/wwdb.css' %}>
     <script type="text/javascript" src={% static 'admin/js/vendor/jquery/jquery.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/Chart.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/highcharts.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/exporting.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/bootstrap.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/popper.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/moment.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/bootstrap-datepicker.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/datatables.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/dataTables.buttons.min.js' %} crossorigin="anonymous"></script>
-    <script type="text/javascript" src={% static 'js/dataTables.select.min.js' %} crossorigin="anonymous"></script>
-    <script type="text/javascript" src={% static 'js/jquery.dataTables.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript" src={% static 'js/datetime-moment.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/jszip.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/pdfmake.min.js' %} crossorigin="anonymous"></script>
-    <script type="text/javascript" src={% static 'js/vfs_fonts.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/buttons.html5.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/buttons.print.min.js' %} crossorigin="anonymous"></script>
-    <script type="text/javascript" src={% static 'js/exporting.js' %} crossorigin="anonymous"></script>
-    <script type="text/javascript" src={% static 'js/wwdb.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            $.fn.dataTable.moment('DD-MMM-YY');
             $('table.display').DataTable({
-                dom: 'Bfrtip',
+                dom: 'Bflrtip',
                 buttons: [
                     'csv', 'print'
-                ]
+                ],
+				autoWidth: false,
+				scrollX: true
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.fn.dataTable.moment('DD-MMM-YY');
+            $('table.display_nosearch').DataTable({
+                dom: 'Blrtip',
+                buttons: [
+                    'csv', 'print'
+                ],
+				autoWidth: false,
+				scrollX: true
             });
         });
     </script>
     {{form.media}}
 </head>
 <body>
-    <header>
-        <nav class="navbar fixed-top navbar-expand-sm navbar-light">
-            <div class="menu-container">
-                <div class="menu-left">
-                    <a class="navbar-brand">URI Winch Wire DataBase</a>
-                </div>
-                <div class="menu-right">
-                    <div class="navbar-nav">
-                        <div class="top-button-container"> 
-                            <button type="button" class="btn btn-startcast">
-                                <a class="nav-link" href="{% url 'caststart' %}">Start Cast</a>
-                            </button>
-                        </div>
+    <div class="top-button-container stickey-top">
+        {% if last.enddate %}
+            <button type="button" class="btn btn-danger btn-lg btn-block">
+                <a class="nav-link" href="{% url 'caststart' %}">Start Cast</a>
+            </button>
+        {% else %}
+            <button type="button" class="btn btn-danger btn-lg btn-block">
+                <a class="nav-link" href="{% url 'cast_end' %}">End Cast</a>
+            </button>
+        {% endif %}
+    </div>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            WWDB
+        </a>
+		{% if user.is_superuser %}
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'cruiseconfigurehome' %}">
+                        Configuration
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Reports
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'castlist' %}">Casts</a>
+                        <a class="dropdown-item" href="{% url 'cruiselist' %}">Cruise</a>
+                        <a class="dropdown-item" href="{% url 'safeworkingtensions' %}">Safe working tensions</a>
                     </div>
-                </div>
-            </div>
-        </nav>
-    </header>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Maintenance
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'cutbackreterminationlist' %}">Cutbacks/reterminations</a>
+                        <a class="dropdown-item" href="{% url 'breaktestlist' %}">Breaktests</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Inventories
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'wirelist' %}">Tension members</a>
+                        <a class="dropdown-item" href="{% url 'drumlist' %}">Drums</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+		{% endif %}
+    </nav>
     <div class="container mt-5 mb-5">
         {% block content %}
         {% endblock content %}
         </br>
         </br>
     </div>
-
-<nav class="navbar fixed-bottom navbar-expand-sm navbar-light">
-    <div class="menu-container">
-        <div class="menu-left">
-            <ul class="navbar-nav">
-                <li class="nav-item-bottom">
-                    <a class="nav-link" href="{% url 'cruiseconfigurehome' %}">Precruise Configuration</a>
-                </li>
-                <li class="nav-item-bottom">
-                    <a class="nav-link" href="{% url 'cruisereport' %}">Cruise Report</a>
-                </li>
-                <li class="nav-item-bottom">
-                    <a class="nav-link" href="{% url 'reporting' %}">Maintenance</a>
-                </li>
-                <li class="nav-item-bottom">
-                    <a class="nav-link" href="{% url 'inventories' %}">Inventories</a>
-                </li>
-                <li class="nav-item-bottom">
-                    <a class="nav-link" href="{% url 'castlist' %}">View Casts</a>
-                </li>
+    <nav class="navbar fixed-bottom navbar-expand-sm navbar-light">
+        <div class="menu-right">
+            <ul class="navbar-nav login-control">
+                <div class="nav-item-bottom">
+                    </li>
+                    {% if user.is_authenticated %}
+						<span>Hi {{user.username}}!</span>
+						<span><a href="{% url 'logout' %}">Log out</a></span>
+                    {% else %}
+						<span><a href="{% url 'login' %}">Log in</a></span>
+						<span><a href="{% url 'signup' %}">Sign up</a></span>
+                    {% endif %}
+                    </li>
+                </div>
             </ul>
         </div>
-    </div>
-</nav>
+    </nav>
 </body>
 </html>
 

@@ -1,0 +1,40 @@
+<!--template/wirelist.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+<html>
+{% block content %}
+<h2>Tension Member Inventory</h2>
+<table id="tableexport" class="display table">
+    <thead>
+        <tr>
+            <th>NSF-ID</th>
+            <th>Wire Type</th>
+            <th>Manufacturer id</th>
+            <th>Dry End Tag</th>
+            <th>Wet End Tag</th>
+            <th>Length</th>
+            <th>Nominal Breaking Load</th>
+            <th>Tested Breaking Load</th>
+            <th>Absolute Breaking Load</th>
+            <th>Drum</th>
+            <th>Location</th>
+        </tr>
+    </thead>
+    {% for wire in wires %}
+    <tr>
+        <td><a href="{% url 'wirereport' wire.pk %}">{{wire.nsfid}}</a></td>
+        <td>{{wire.wirerope}}</td>
+        <td>{{wire.manufacturerid}}</td>
+        <td>{{wire.dryendtag}}</td>
+        <td>{{wire.active_wetendtag}}</td>
+        <td>{{wire.active_length}}</td>
+        <td>{{wire.nominal_breaking_load}}</td>
+        <td>{{wire.tested_breaking_load}}</td>
+        <td>{{wire.absolute_breaking_load}}</td>
+        <td>{{wire.active_drum}}</td>
+        <td>{{wire.active_drum_location}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock content %}

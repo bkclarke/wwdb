@@ -1,0 +1,176 @@
+﻿<!--template/cruisereport.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+{% block content %}
+<div class="container p-5">
+    {% for c in cruise %}
+        <h2>{{c.number}} Cruise Report</h2>
+        </br>
+        <p>start date: {{c.startdate}}</p>
+        <p>end date: {{c.enddate}}</p>
+        <p></p>
+    {% endfor %}
+</div>
+<div class="container p-5">
+    <h2>Winch Report</h2>
+    </br>
+    <h5>Winch 1</h5>
+    {% if casts_winch1_count %}
+        {% if casts_winch1_maxtension %}
+            <p>Winch 1 max tension: {{casts_winch1_maxtension.maxtension}}</p>
+        {% else %}
+            <p>no winch 1 max tension</p>
+        {% endif %}
+        {% if casts_winch1_maxpayout %}
+            <p>Winch 1 max payout: {{casts_winch1_maxpayout.maxpayout}}</p>
+        {% else %}
+            <p>no winch 1 max payout</p>
+        {% endif %}
+        {% if casts_winch1_count %}
+            <p>Winch 1 cast count: {{casts_winch1_count}}</p>
+        {% else %}
+            <p>no winch 1 casts</p>
+        {% endif %}
+        {%  for c in cruise %}
+            {% if c.winch1blockarrangement %}
+                <p>Winch 1 block arrangement: {{c.winch1blockarrangement}}</p>
+            {% else %}
+                <p>No winch 1 block arrangement entered</p>
+            {% endif %}
+            {% if c.winch1termination %}
+                <p>Winch 1 termination: {{c.winch1termination}}</p>
+            {% else %}
+                <p>No winch 1 termination entered</p>
+            {% endif %}
+            {% if c.winch1notes %}
+                <p>Winch 1 notes: {{c.winch1notes}}</p>
+            {% else %}
+                <p>No winch 1 notes entered</p>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>Winch 1 was not used</p>
+    {% endif %}
+    </br>
+    <h5>Winch 2</h5>
+    {% if casts_winch2_count %}
+        {% if casts_winch2_maxtension %}
+            <p>Winch 2 max tension: {{casts_winch2_maxtension.maxtension}}</p>
+        {% else %}
+            <p>no winch 2 max tension</p>
+        {% endif %}
+        {% if casts_winch2_maxpayout %}
+            <p>Winch 2 max payout: {{casts_winch2_maxpayout.maxpayout}}</p>
+        {% else %}
+            <p>no winch 2 max payout</p>
+        {% endif %}
+        {% if casts_winch2_count %}
+            <p>Winch 2 cast count: {{casts_winch2_count}}</p>
+        {% else %}
+            <p>no winch 2 casts</p>
+        {% endif %}
+        {%  for c in cruise %}
+            {% if c.winch2blockarrangement %}
+                <p>Winch 2 block arrangement: {{c.winch2blockarrangement}}</p>
+            {% else %}
+                <p>No winch 2 block arrangement entered</p>
+            {% endif %}
+            {% if c.winch2termination %}
+                <p>Winch 2 termination: {{c.winch2termination}}</p>
+            {% else %}
+                <p>No winch 2 termination entered</p>
+            {% endif %}
+            {% if c.winch2notes %}
+                <p>Winch 2 notes: {{c.winch2notes}}</p>
+            {% else %}
+                <p>No winch 2 notes entered</p>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>Winch 2 was not used</p>
+    {% endif %}
+    </br>
+    <h5>Winch 3</h5>
+    {% if casts_winch3_count %}
+        {% if casts_winch3_maxtension %}
+            <p>Winch 3 max tension: {{casts_winch3_maxtension.maxtension}}</p>
+        {% else %}
+            <p>no winch 3 max tension</p>
+        {% endif %}
+        {% if casts_winch3_maxpayout %}
+            <p>Winch 3 max payout: {{casts_winch3_maxpayout.maxpayout}}</p>
+        {% else %}
+            <p>no winch 3 max payout</p>
+        {% endif %}
+        {% if casts_winch3_count %}
+            <p>Winch 3 cast count: {{casts_winch3_count}}</p>
+        {% else %}
+            <p>no winch 3 casts</p>
+        {% endif %}
+        {%  for c in cruise %}
+            {% if c.winch3blockarrangement %}
+                <p>Winch 3 block arrangement: {{c.winch2blockarrangement}}</p>
+            {% else %}
+                <p>No winch 3 block arrangement entered</p>
+            {% endif %}
+            {% if c.winch3termination %}
+                <p>Winch 3 termination: {{c.winch3termination}}</p>
+            {% else %}
+                <p>No winch 3 termination entered</p>
+            {% endif %}
+            {% if c.winch3notes %}
+                <p>Winch 3 notes: {{c.winch3notes}}</p>
+            {% else %}
+                <p>No winch 3 notes entered</p>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>Winch 3 was not used</p>
+    {% endif %}
+</div>
+<div class="container p-5">
+<h2>Casts</h2>
+</br>
+<table id="" class="display">
+    <thead>
+        <tr>
+            <th>Start time</th>
+            <th>Winch</th>
+            <th>Deployment type</th>
+            <th>Start operator</th>
+            <th>End operator</th>
+            <th>Max tension</th>
+            <th>Max payout</th>
+            <th>Payout at max tension</th>
+            <th>meter mark at max tension</th>
+            <th>time of max tension</th>
+            <th>Wet end tag</th>
+            <th>Dry end tag</th>
+        </tr>
+    </thead>
+    {% for cast in casts %}
+    <tr>
+        <td><a href="{% url 'castedit' cast.pk %}">{{cast.format_startdate}}</a></td>
+        <td>{{cast.winch}}</td>
+        <td>{{cast.deploymenttype}}</td>
+        <td>{{cast.startoperator}}</td>
+        <td>{{cast.endoperator}}</td>
+        <td>{{cast.maxtension}}</td>
+        <td>{{cast.maxpayout}}</td>
+        <td>{{cast.payoutmaxtension}}</td>
+        <td>{{cast.metermaxtension}}</td>
+        <td>{{cast.format_timemaxtension}}</td>
+        <td>{{cast.wetendtag}}</td>
+        <td>{{cast.dryendtag}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</br>
+</br>
+{% for c in cruise %}
+    <button type="button" class="btn btn-outline-dark">
+        <a class="nav-link" href="{% url 'cruise_report_file' pk=c.id %}">download cruise report</a>
+    </button>
+{% endfor %}
+{% endblock content %}

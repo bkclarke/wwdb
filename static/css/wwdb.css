@@ -8,14 +8,10 @@
     float: right;
 }
 
-.btn-startcast, .btn-group-sm > .btn {
-    color: #fff;
-    background-color: #A63446;
-    border-color: #A63446;
+.btn-startcast {
+    color: #dc3545;
+    background-color: #dc3545;
     padding: 0.1rem 0.1rem;
-    font-size: 1rem;
-    line-height: 1.0;
-    border-radius: 0.2rem;
     float: right;
 }
 

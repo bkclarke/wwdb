@@ -1,0 +1,100 @@
+<!--templates/castreporteditedit.html-->
+{% extends "wwdb/base.html" %}
+{% load bootstrap4 %}
+{{ form.media }}
+
+{% block content %}
+<h1>Cruise Report Form</h1>
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <p>Start Date</p>
+    <div class="fieldWrapper">
+        {{ form.startdate.errors }}
+        {{ form.startdate }}
+    </div>
+    </br>
+    <p>End date</p>
+    <div class="fieldWrapper">
+        {{ form.enddate.errors }}
+        {{ form.enddate }}
+    </div>
+    </br>
+    {% if casts_winch1_count %}
+    <p>Winch 1 block arrangement</p>
+    <div class="fieldWrapper">
+        {{ form.winch1blockarrangement.errors }}
+        {{ form.winch1blockarrangement }}
+    </div>
+    </br>
+    <p>Winch 1 termination</p>
+    <div class="fieldWrapper">
+        {{ form.winch1termination.errors }}
+        {{ form.winch1termination }}
+    </div>
+    </br>
+    <p>Winch 1 notes</p>
+    <div class="fieldWrapper">
+        {{ form.winch1notes.errors }}
+        {{ form.winch1notes }}
+    </div>
+    {% endif %}
+    {% if casts_winch2_count %}
+    </br>
+    <p>Winch 2 block arrangement</p>
+    <div class="fieldWrapper">
+        {{ form.winch2blockarrangement.errors }}
+        {{ form.winch2blockarrangement }}
+    </div>
+    </br>
+    <p>Winch 2 termination</p>
+    <div class="fieldWrapper">
+        {{ form.winch2termination.errors }}
+        {{ form.winch2termination }}
+    </div>
+    </br>
+    <p>Winch 2 spin direction</p>
+    <div class="fieldWrapper">
+        {{ form.winch2spindirection.errors }}
+        {{ form.winch2spindirection }}
+    </div>
+    </br>
+    <p>Winch 2 notes</p>
+    <div class="fieldWrapper">
+        {{ form.winch2notes.errors }}
+        {{ form.winch2notes }}
+    </div>
+    {% endif %}
+    {% if casts_winch3_count %}
+    </br>
+    <p>Winch 3 block arrangement</p>
+    <div class="fieldWrapper">
+        {{ form.winch3blockarrangement.errors }}
+        {{ form.winch3blockarrangement }}
+    </div>
+    </br>
+    <p>Winch 3 temrination</p>
+    <div class="fieldWrapper">
+        {{ form.winch3termination.errors }}
+        {{ form.winch3termination }}
+    </div>
+    </br>
+    <p>Winch 3 notes</p>
+    <div class="fieldWrapper">
+        {{ form.winch3notes.errors }}
+        {{ form.winch3notes }}
+    </div>
+    </br>
+    {% endif %}
+    <p>Science provided winch notes</p>
+    <div class="fieldWrapper">
+        {{ form.scienceprovidedwinch.errors }}
+        {{ form.scienceprovidedwinch }}
+    </div>
+    </br>
+    </br>
+    <input type="submit" value="update">
+</form>
+    
+{% endblock content %}

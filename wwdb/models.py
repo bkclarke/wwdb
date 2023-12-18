@@ -10,14 +10,19 @@ from pandas.core.base import NoNewAttributesMixin
 import pyodbc 
 import pandas as pd
 
-#note
+
+def validate_commas(value):
+    if "," in value:
+        raise ValidationError("Invalid entry: remove commas")
+    else:
+        return
 
 class Breaktest(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire', related_name='wire_break_test')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
-    testedbreakingload = models.IntegerField(db_column='TestedBreakingLoad', blank=True, null=True, verbose_name='Tested breaking load')  # Field name made lowercase.
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire', related_name='wire_break_test')  
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
+    testedbreakingload = models.IntegerField(db_column='TestedBreakingLoad', blank=True, null=True, verbose_name='Tested breaking load')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
 
     class Meta:
         managed = True
@@ -27,15 +32,21 @@ class Breaktest(models.Model):
     def __str__(self):
         return str(self.date)
 
+    @property
+    def format_date(self):
+        date=self.date
+        formatdate=date.strftime("%Y-%m-%d")
+        return formatdate
+
 class Calibration(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    appliedloadlow = models.IntegerField(db_column='AppliedLoadLow', blank=True, null=True, verbose_name='Lowest applied load')  # Field name made lowercase.
-    tensionlow = models.IntegerField(db_column='TensionLow', blank=True, null=True, verbose_name='Lowest tension')  # Field name made lowercase.
-    rawmvlow = models.FloatField(db_column='RawmVLow', blank=True, null=True, verbose_name='Lowest raw mv')  # Field name made lowercase.
-    appliedloadhigh = models.IntegerField(db_column='AppliedLoadHigh', blank=True, null=True, verbose_name='Highest applied load')  # Field name made lowercase.
-    tensionhigh = models.IntegerField(db_column='TensionHigh', blank=True, null=True, verbose_name='Highest tension')  # Field name made lowercase.
-    rawmvhigh = models.FloatField(db_column='RawmVHigh', blank=True, null=True, verbose_name='Highest raw mv')  # Field name made lowercase.
-    calibration = models.ForeignKey('CalibrationMeta', models.DO_NOTHING, db_column='CalibrationId', blank=True, null=True, verbose_name='Calibration id')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    appliedloadlow = models.IntegerField(db_column='AppliedLoadLow', blank=True, null=True, verbose_name='Lowest applied load')  
+    tensionlow = models.IntegerField(db_column='TensionLow', blank=True, null=True, verbose_name='Lowest tension')  
+    rawmvlow = models.FloatField(db_column='RawmVLow', blank=True, null=True, verbose_name='Lowest raw mv')  
+    appliedloadhigh = models.IntegerField(db_column='AppliedLoadHigh', blank=True, null=True, verbose_name='Highest applied load')  
+    tensionhigh = models.IntegerField(db_column='TensionHigh', blank=True, null=True, verbose_name='Highest tension')  
+    rawmvhigh = models.FloatField(db_column='RawmVHigh', blank=True, null=True, verbose_name='Highest raw mv')  
+    calibration = models.ForeignKey('CalibrationMeta', models.DO_NOTHING, db_column='CalibrationId', blank=True, null=True, verbose_name='Calibration id')  
 
     class Meta:
         managed = True
@@ -44,15 +55,15 @@ class Calibration(models.Model):
 
 
 class CalibrationMeta(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
-    operator = models.ForeignKey('Winchoperator', models.DO_NOTHING, db_column='OperatorId', blank=True, null=True, verbose_name='Operator')  # Field name made lowercase.
-    wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire id')  # Field name made lowercase.
-    dynomometerid = models.ForeignKey('Dynomometer', models.DO_NOTHING, db_column='DynomometerId', blank=True, null=True, verbose_name='Dynomometer')  # Field name made lowercase.
-    frame = models.ForeignKey('Frame', models.DO_NOTHING, db_column='FrameId', blank=True, null=True, verbose_name='Frame')  # Field name made lowercase.
-    safetyfactor = models.IntegerField(db_column='SafetyFactor', blank=True, null=True, verbose_name='Factor of safety')  # Field name made lowercase.
-    monitoringaccuracy = models.IntegerField(db_column='MonitoringAccuracy', blank=True, null=True, verbose_name='Monitoring accuracy')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
+    operator = models.ForeignKey('Winchoperator', models.DO_NOTHING, db_column='OperatorId', blank=True, null=True, verbose_name='Operator')  
+    wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire id')  
+    dynomometerid = models.ForeignKey('Dynomometer', models.DO_NOTHING, db_column='DynomometerId', blank=True, null=True, verbose_name='Dynomometer')  
+    frame = models.ForeignKey('Frame', models.DO_NOTHING, db_column='FrameId', blank=True, null=True, verbose_name='Frame')  
+    safetyfactor = models.IntegerField(db_column='SafetyFactor', blank=True, null=True, verbose_name='Factor of safety')  
+    monitoringaccuracy = models.IntegerField(db_column='MonitoringAccuracy', blank=True, null=True, verbose_name='Monitoring accuracy')  
 
     class Meta:
         managed = True
@@ -64,23 +75,24 @@ class CalibrationMeta(models.Model):
 
 
 class Cast(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    startoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='StartOperatorId', null=True, related_name='startoperatorid', verbose_name="Start operator", limit_choices_to={'status': True})  # Field name made lowercase.
-    endoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='EndOperatorId', null=True, related_name='endoperatorid', verbose_name='End operator', limit_choices_to={'status': True})  # Field name made lowercase.
-    startdate = models.DateTimeField(db_column='StartDate', null=False, verbose_name='Start date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  # Field name made lowercase.
-    enddate = models.DateTimeField(db_column='EndDate', blank=True, null=True, verbose_name='End date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  # Field name made lowercase.
-    deploymenttype = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True, verbose_name='Deployment type', limit_choices_to={'status': True})  # Field name made lowercase.
-    wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  # Field name made lowercase.
-    winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', null=True, verbose_name='Winch', limit_choices_to={'status': True})  # Field name made lowercase.
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
-    maxtension = models.IntegerField(db_column='MaxTension', blank=True, null=True, verbose_name='Max tension')  # Field name made lowercase.
-    maxpayout = models.IntegerField(db_column='MaxPayout', blank=True, null=True, verbose_name='Max payout')  # Field name made lowercase.
-    payoutmaxtension = models.IntegerField(db_column='PayoutMaxTension', blank=True, null=True, verbose_name='Payout at max tension')  # Field name made lowercase.
-    metermaxtension = models.IntegerField(db_column='MeterMaxTension', blank=True, null=True, verbose_name='Meter mark at max tension')  # Field name made lowercase.
-    timemaxtension = models.DateTimeField(db_column='TimeMaxTension', blank=True, null=True, verbose_name='Time at max tension')  # Field name made lowercase.
-    flagforreview = models.BooleanField(db_column='Flagforreview', blank=True, null=True, verbose_name='Flag for review')  # Field name made lowercase.
-    dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag')  # Field name made lowercase.
-    wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    startoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='StartOperatorId', null=True, related_name='startoperatorid', verbose_name="Start operator", limit_choices_to={'status': True})  
+    endoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='EndOperatorId', null=True, related_name='endoperatorid', verbose_name='End operator', limit_choices_to={'status': True})  
+    startdate = models.DateTimeField(db_column='StartDate', null=False, verbose_name='Start date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  
+    enddate = models.DateTimeField(db_column='EndDate', blank=True, null=True, verbose_name='End date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  
+    deploymenttype = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True, verbose_name='Deployment type', limit_choices_to={'status': True})  
+    wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
+    winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', null=True, verbose_name='Winch', limit_choices_to={'status': True})  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
+    maxtension = models.IntegerField(db_column='MaxTension', blank=True, null=True, verbose_name='Max tension')  
+    maxpayout = models.IntegerField(db_column='MaxPayout', blank=True, null=True, verbose_name='Max payout')  
+    payoutmaxtension = models.IntegerField(db_column='PayoutMaxTension', blank=True, null=True, verbose_name='Payout at max tension')  
+    metermaxtension = models.IntegerField(db_column='MeterMaxTension', blank=True, null=True, verbose_name='Meter mark at max tension')  
+    timemaxtension = models.DateTimeField(db_column='TimeMaxTension', blank=True, null=True, verbose_name='Time at max tension')  
+    flagforreview = models.BooleanField(db_column='Flagforreview', blank=True, null=True, verbose_name='Flag for review')  
+    dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag')  
+    wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag')  
+    motor = models.ForeignKey('Motor', models.DO_NOTHING, db_column='MotorId', blank=True, null=True, verbose_name='Motor')  
 
 
     class Meta:
@@ -108,62 +120,107 @@ class Cast(models.Model):
         wetend=wire.active_wetendtag
         return wetend
 
+    @property
+    def active_winch(self):
+        d=self.winch.name
+        return d
+		
+    @property
+    def active_motor(self):
+        if not self.motor:
+            return
+        d=self.motor.number
+        return d
+
+    @property
+    def format_startdate(self):
+        date=self.startdate
+        formatdate=date.strftime("%Y-%m-%d, %H:%M:%S")
+        return formatdate
+
+    @property
+    def format_timemaxtension(self):
+        if not self.timemaxtension:
+            return
+        date=self.timemaxtension
+        formatdate=date.strftime("%Y-%m-%d, %H:%M:%S")
+        return formatdate
+
     def endcastcal(self):
-        try:
-            conn = pyodbc.connect('Driver={SQL Server};'
-                                    'Server=192.168.2.5, 1433;'
-                                    'Database=WinchDb;'
-                                    'Trusted_Connection=no;'
-			                'UID=remoteadmin;'
-			                'PWD=eris.2003;')
+        winch=(self.winch.name)
+        if winch=='winch1' or winch=='winch2' or winch=='winch3':
+            try:
+                conn = pyodbc.connect('Driver={SQL Server};'
+                                        'Server=192.168.1.90, 1433;'
+                                        'Database=WinchDb;'
+                                        'Trusted_Connection=no;'
+			                    'UID=remoteadmin;'
+			                    'PWD=eris.2003;')
 
-            winch=(self.winch.name)
-            startcal=str(self.startdate)
-            endcal=str(self.enddate)
-            df=pd.read_sql_query("SELECT * FROM " + winch + " WHERE DateTime BETWEEN '" + startcal + "' AND '" + endcal + "'", conn)
+                winch=(self.winch.name)
+                startcal=str(self.startdate)
+                endcal=str(self.enddate)
+                df=pd.read_sql_query("SELECT * FROM " + winch + " WHERE DateTime BETWEEN '" + startcal + "' AND '" + endcal + "'", conn)
 
-            castmaxtensiondf=df[df.Tension==df.Tension.max()]
-            castmaxtension=castmaxtensiondf['Tension'].max()
-            castmaxpayout=df['Payout'].max()
-            castpayoutmaxtension=castmaxtensiondf['Payout'].max()
-            casttimemaxtension=castmaxtensiondf['DateTime'].max()
+                castmaxtensiondf=df[df.Tension==df.Tension.max()]
+                castmaxtension=castmaxtensiondf['Tension'].max()
+                castmaxpayout=df['Payout'].max()
+                castpayoutmaxtension=castmaxtensiondf['Payout'].max()
+                casttimemaxtension=castmaxtensiondf['DateTime'].max()
 
-            wetend=int(self.wet_end_tag)
-            dryend=int(self.dry_end_tag)
+                wetend=int(self.wet_end_tag)
+                dryend=int(self.dry_end_tag)
 
-            if castpayoutmaxtension<0:
-                payout=0
-            else:
-                payout=castpayoutmaxtension
+                if castpayoutmaxtension<0:
+                    payout=0
+                else:
+                    payout=castpayoutmaxtension
 
-            if wetend>dryend:
-                length=int(wetend)-int(payout)
-                castmetermaxtension=length
-            else:
-                length=int(wetend)+int(payout)
-                castmetermaxtension=length
+                if wetend>dryend:
+                    length=int(wetend)-int(payout)
+                    castmetermaxtension=length
+                else:
+                    length=int(wetend)+int(payout)
+                    castmetermaxtension=length
 
-            self.maxtension=castmaxtension
-            self.maxpayout=castmaxpayout
-            self.payoutmaxtension=castpayoutmaxtension
-            self.timemaxtension=casttimemaxtension
-            self.metermaxtension=castmetermaxtension
-            self.wetendtag=wetend
-            self.dryendtag=dryend
+                self.maxtension=castmaxtension
+                self.maxpayout=castmaxpayout
+                self.payoutmaxtension=castpayoutmaxtension
+                self.timemaxtension=casttimemaxtension
+                self.metermaxtension=castmetermaxtension
+                self.wetendtag=wetend
+                self.dryendtag=dryend
 
-        except :
-            wetend=int(self.wet_end_tag)
-            dryend=int(self.dry_end_tag)
-            self.wetendtag=wetend
-            self.dryendtag=dryend
+            except :
+                wetend=int(self.wet_end_tag)
+                dryend=int(self.dry_end_tag)
+                self.wetendtag=wetend
+                self.dryendtag=dryend
+                return
+
+        else:
             return
 
 class Cruise(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    number = models.TextField(db_column='Number', blank=True, null=True, verbose_name='Cruise number')  # Field name made lowercase.
-    startdate = models.DateField(db_column='StartDate', blank=True, null=True, verbose_name='Start date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
-    enddate = models.DateField(db_column='EndDate', blank=True, null=True, verbose_name='End date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
-    status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)   
+    number = models.TextField(db_column='Number', blank=True, null=True, verbose_name='Cruise number', validators=[validate_commas])   
+    startdate = models.DateField(db_column='StartDate', blank=True, null=True, verbose_name='Start date')   
+    enddate = models.DateField(db_column='EndDate', blank=True, null=True, verbose_name='End date')   
+    status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')   
+    winch1 = models.BooleanField(db_column='Winch1', blank=True, null=True, verbose_name='Winch 1')   
+    winch2 = models.BooleanField(db_column='Winch2', blank=True, null=True, verbose_name='Winch 2')   
+    winch3 = models.BooleanField(db_column='Winch3', blank=True, null=True, verbose_name='Winch 3')   
+    winch1blockarrangement = models.TextField(db_column='Winch1BlockArrangement', blank=True, null=True, verbose_name='Winch 1 Block Arrangement', validators=[validate_commas])   
+    winch2blockarrangement = models.TextField(db_column='Winch2BlockArrangement', blank=True, null=True, verbose_name='Winch 2 Block Arrangement', validators=[validate_commas])   
+    winch3blockarrangement = models.TextField(db_column='Winch3BlockArrangement', blank=True, null=True, verbose_name='Winch 3 Block Arrangement', validators=[validate_commas])   
+    winch1termination = models.TextField(db_column='Winch1Termination', blank=True, null=True, verbose_name='Winch 1 Termination', validators=[validate_commas])   
+    winch2termination = models.TextField(db_column='Winch2Termination', blank=True, null=True, verbose_name='Winch 2 Termination', validators=[validate_commas])   
+    winch3termination = models.TextField(db_column='Winch3Termination', blank=True, null=True, verbose_name='Winch 3 Termination', validators=[validate_commas])   
+    winch2spindirection = models.TextField(db_column='Winch2SpinDirection', blank=True, null=True, verbose_name='Winch 3 Spin Direction', validators=[validate_commas])   
+    winch1notes = models.TextField(db_column='Winch1Notes', blank=True, null=True, verbose_name='Winch 1 Notes', validators=[validate_commas])   
+    winch2notes = models.TextField(db_column='Winch2Notes', blank=True, null=True, verbose_name='Winch 2 Notes', validators=[validate_commas])   
+    winch3notes = models.TextField(db_column='Winch3Notes', blank=True, null=True, verbose_name='Winch 3 Notes', validators=[validate_commas])   
+    scienceprovidedwinch = models.TextField(db_column='ScienceProvidedWinch', blank=True, null=True, verbose_name='Science Provided Winch', validators=[validate_commas])   
 
     class Meta:
         managed = True
@@ -173,13 +230,27 @@ class Cruise(models.Model):
     def __str__(self):
         return str(self.number)
 
+    @property
+    def format_startdate(self):
+        date=self.startdate
+        formatdate=date.strftime("%Y-%m-%d")
+        return formatdate
+
+    @property
+    def format_enddate(self):
+        if not self.enddate:
+            return
+        date=self.enddate
+        formatdate=date.strftime("%Y-%m-%d")
+        return formatdate
+
 class CutbackRetermination(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag value (m)')  # Field name made lowercase.
-    lengthremoved = models.IntegerField(db_column='LengthRemoved', blank=True, null=True, verbose_name='Length removed (m)')  # Field name made lowercase.
-    wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, related_name='wire_cutback_retermination', verbose_name='Wire')  # Field name made lowercase.
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag value (m)')  
+    wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, related_name='wire_cutback_retermination', verbose_name='Wire')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])
+    lengthaftercutback = models.IntegerField(db_column='LengthAfterCutback', blank=True, null=True, verbose_name='Length after cutback')  
 
     class Meta:
         managed = True
@@ -201,13 +272,25 @@ class CutbackRetermination(models.Model):
         length=wetendlength-dryendlength
         return length
 
+    @property
+    def format_date(self):
+        date=self.date
+        formatdate=date.strftime("%Y-%m-%d")
+        return formatdate
+
+    def submitlength(self):
+        dryendlength=self.wire_dry_end_tag
+        wetendlength=self.wetendtag
+        length=wetendlength-dryendlength
+        self.lengthaftercutback=abs(int(length))
+        return
 
 class DeploymentType(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  
     name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')
-    equipment = models.TextField(db_column='Equipment', blank=True, null=True, verbose_name='Equipment')  # Field name made lowercase.
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
+    equipment = models.TextField(db_column='Equipment', blank=True, null=True, verbose_name='Equipment')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
 
     class Meta:
         managed = True
@@ -221,8 +304,8 @@ class DeploymentType(models.Model):
         return str(self.name)
 
 class Location(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    location = models.TextField(db_column='Location', blank=True, null=True, verbose_name='Location')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    location = models.TextField(db_column='Location', blank=True, null=True, verbose_name='Location')  
 
     class Meta:
         managed = True
@@ -231,16 +314,28 @@ class Location(models.Model):
 
     def __str__(self):
         return str(self.location)
+		
+class Motor(models.Model):
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    number = models.IntegerField(db_column='Number', blank=True, null=True, verbose_name='Number')  
+
+    class Meta:
+        managed = True
+        db_table = 'Motor'
+        verbose_name_plural = "Motor"
+
+    def __str__(self):
+        return str(self.number)
 
 class Drum(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    internalid = models.TextField(db_column='InternalId', blank=True, null=True, verbose_name='Internal id')  # Field name made lowercase.
-    color = models.TextField(db_column='Color', blank=True, null=True, verbose_name='Color')  # Field name made lowercase.
-    size = models.TextField(db_column='Size', blank=True, null=True, verbose_name='Size')  # Field name made lowercase.
-    weight = models.TextField(db_column='Weight', blank=True, null=True, verbose_name='Weight')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    internalid = models.TextField(db_column='InternalId', blank=True, null=True, verbose_name='Internal id')  
+    color = models.TextField(db_column='Color', blank=True, null=True, verbose_name='Color')  
+    size = models.TextField(db_column='Size', blank=True, null=True, verbose_name='Size')  
+    weight = models.TextField(db_column='Weight', blank=True, null=True, verbose_name='Weight')  
     location = models.ManyToManyField(Location, through='DrumLocation', related_name='active_location', verbose_name='Location')
-    material = models.TextField(db_column='Material', blank=True, null=True, verbose_name='Material')  # Field name made lowercase.
-    wiretype = models.TextField(db_column='WireType', blank=True, null=True, verbose_name='Wire type')  # Field name made lowercase. This field type is a guess.
+    material = models.TextField(db_column='Material', blank=True, null=True, verbose_name='Material')  
+    wiretype = models.TextField(db_column='WireType', blank=True, null=True, verbose_name='Wire type')    
 
     class Meta:
         managed = True
@@ -261,10 +356,10 @@ class Drum(models.Model):
         return d
 
 class Dynomometer(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')  # Field name made lowercase.
-    dynomometertype = models.TextField(db_column='DynomometerType', blank=True, null=True, verbose_name='Dynomometer type')  # Field name made lowercase.
-    comments = models.TextField(db_column='Comments', blank=True, null=True, verbose_name='notes')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')  
+    dynomometertype = models.TextField(db_column='DynomometerType', blank=True, null=True, verbose_name='Dynomometer type')  
+    comments = models.TextField(db_column='Comments', blank=True, null=True, verbose_name='notes')  
 
     class Meta:
         managed = True
@@ -275,9 +370,9 @@ class Dynomometer(models.Model):
         return str(self.name)
 
 class Frame(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')  # Field name made lowercase.
-    frametype = models.TextField(db_column='FrameType', blank=True, null=True, verbose_name='Frame type')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')  
+    frametype = models.TextField(db_column='FrameType', blank=True, null=True, verbose_name='Frame type')  
 
     class Meta:
         managed = True
@@ -291,12 +386,12 @@ class Frame(models.Model):
 
 
 class Lubrication(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  # Field name made lowercase.
-    lubetype = models.TextField(db_column='LubeType', blank=True, null=True, verbose_name='Lube type')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
-    lubelength = models.IntegerField(db_column='LubeLength', blank=True, null=True, verbose_name='Length lubed')  # Field name made lowercase.
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
+    lubetype = models.TextField(db_column='LubeType', blank=True, null=True, verbose_name='Lube type')  
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
+    lubelength = models.IntegerField(db_column='LubeLength', blank=True, null=True, verbose_name='Length lubed')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
 
     class Meta:
         managed = True
@@ -307,8 +402,8 @@ class Lubrication(models.Model):
         return str(self.date)
 
 class FactorOfSafety(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    factorofsafety = models.FloatField(db_column='FactorofSafety', blank=False, null=False, default=5.0, verbose_name='Factor of safety')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    factorofsafety = models.FloatField(db_column='FactorofSafety', blank=False, null=False, default=5.0, verbose_name='Factor of safety')  
 
     class Meta:
         managed = True
@@ -319,15 +414,15 @@ class FactorOfSafety(models.Model):
         return str(self.factorofsafety)
 
 class Winch(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
     name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')
-    ship = models.TextField(db_column='Ship', blank=True, null=True, verbose_name='Ship')  # Field name made lowercase.
-    institution = models.TextField(db_column='Institution', blank=True, null=True, verbose_name='Institution')  # Field name made lowercase.
-    manufacturer = models.TextField(db_column='Manufacturer', blank=True, null=True, verbose_name='Manufacturer')  # Field name made lowercase.
+    ship = models.TextField(db_column='Ship', blank=True, null=True, verbose_name='Ship')  
+    institution = models.TextField(db_column='Institution', blank=True, null=True, verbose_name='Institution')  
+    manufacturer = models.TextField(db_column='Manufacturer', blank=True, null=True, verbose_name='Manufacturer')  
     drums = models.ManyToManyField(Drum, through='Drumlocation', related_name='winches', verbose_name='Drum')
-    wiretrainschematicjframe = models.TextField(db_column='WireTrainSchematicJFrame', blank=True, null=True, verbose_name='Wire train schematic Jframe')  # Field name made lowercase.
-    wiretrainschematicaframe = models.TextField(db_column='WireTrainSchematicAFrame', blank=True, null=True, verbose_name='Wire train schematic Aframe')  # Field name made lowercase.
-    status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  # Field name made lowercase.
+    wiretrainschematicjframe = models.TextField(db_column='WireTrainSchematicJFrame', blank=True, null=True, verbose_name='Wire train schematic Jframe')  
+    wiretrainschematicaframe = models.TextField(db_column='WireTrainSchematicAFrame', blank=True, null=True, verbose_name='Wire train schematic Aframe')  
+    status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  
 
     class Meta:
         managed = True
@@ -341,13 +436,13 @@ class Winch(models.Model):
         return str(self.name)
         
 class DrumLocation(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    date= models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
-    enteredby = models.ForeignKey(User, models.DO_NOTHING, db_column='EnteredBy', blank=True, null=True, verbose_name='Entered by')  # Field name made lowercase.
-    drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum')  # Field name made lowercase.
-    winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  # Field name made lowercase.
-    location = models.ForeignKey(Location, models.DO_NOTHING, db_column='LocationId', blank=True, null=True, verbose_name='Location')  # Field name made lowercase.
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    date= models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
+    enteredby = models.ForeignKey(User, models.DO_NOTHING, db_column='EnteredBy', blank=True, null=True, verbose_name='Entered by')  
+    drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum')  
+    winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  
+    location = models.ForeignKey(Location, models.DO_NOTHING, db_column='LocationId', blank=True, null=True, verbose_name='Location')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  
 
     class Meta:
         managed = True
@@ -358,11 +453,11 @@ class DrumLocation(models.Model):
         return str(self.location) + '-' + str(self.drumid)
 
 class WinchOperator(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase. This field type is a guess.
-    status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  # Field name made lowercase.
-    firstname = models.TextField(db_column='FirstName', blank=True, null=True, verbose_name='First name')  # Field name made lowercase.
-    lastname = models.TextField(db_column='LastName', blank=True, null=True, verbose_name='Last name')  # Field name made lowercase.
-    username = models.TextField(db_column='UserName', blank=True, null=True, verbose_name='User name')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)    
+    status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  
+    firstname = models.TextField(db_column='FirstName', blank=True, null=True, verbose_name='First name')  
+    lastname = models.TextField(db_column='LastName', blank=True, null=True, verbose_name='Last name')  
+    username = models.TextField(db_column='UserName', blank=True, null=True, verbose_name='User name')  
 
 
     class Meta:
@@ -377,13 +472,13 @@ class WinchOperator(models.Model):
         return str(self.username)
 
 class WireRopeData(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
     name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')
     manufacturer = models.TextField(db_column='Manufacturer',blank=True, null=True, verbose_name='Manufacturer')
-    manufacturerpartnumber = models.TextField(db_column='ManufacturerPartNumber', blank=True, null=True, verbose_name='Manufacturer part number')  # Field name made lowercase.
-    cabletype = models.TextField(db_column='CableType', blank=True, null=True, verbose_name='Cable type')  # Field name made lowercase.
-    nominalbreakingload = models.IntegerField(db_column='nominalbreakingload', blank=True, null=True, verbose_name='Nominal breaking load')  # Field name made lowercase.
-    weightperfoot = models.FloatField(db_column='WeightPerFoot', blank=True, null=True, verbose_name='Weight per foot')  # Field name made lowercase.
+    manufacturerpartnumber = models.TextField(db_column='ManufacturerPartNumber', blank=True, null=True, verbose_name='Manufacturer part number')  
+    cabletype = models.TextField(db_column='CableType', blank=True, null=True, verbose_name='Cable type')  
+    nominalbreakingload = models.IntegerField(db_column='nominalbreakingload', blank=True, null=True, verbose_name='Nominal breaking load')  
+    weightperfoot = models.FloatField(db_column='WeightPerFoot', blank=True, null=True, verbose_name='Weight per foot')  
     
     class Meta:
         managed = True
@@ -393,18 +488,32 @@ class WireRopeData(models.Model):
     def __str__(self):
         return str(self.name)
 
+class OwnershipStatus(models.Model):
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)    
+    status = models.TextField(db_column='Status', blank=True, null=True, verbose_name='Status')  
+
+
+    class Meta:
+        managed = True
+        db_table = 'OwnershipStatus'
+        verbose_name_plural = "OwnershipStatus"
+
+    def __str__(self):
+        return str(self.status)
+
 class Wire(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    wirerope = models.ForeignKey(WireRopeData, models.DO_NOTHING, db_column='WireRopeId', blank=True, null=True, verbose_name='Wire rope data id')  # Field name made lowercase.
-    winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch', related_name='reverse_wire')  # Field name made lowercase.
-    manufacturerid = models.TextField(db_column='ManufacturerId', blank=True, null=True, verbose_name='Manufacturer id')  # Field name made lowercase.
-    nsfid = models.TextField(db_column='NsfId', blank=True, null=True, verbose_name='NSF id')  # Field name made lowercase.
-    dateacquired = models.DateTimeField(db_column='DateAcquired', blank=True, null=True, verbose_name='Date Acquired', validators=[MaxValueValidator(limit_value=datetime.today)])  # Field name made lowercase.
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    wirerope = models.ForeignKey(WireRopeData, models.DO_NOTHING, db_column='WireRopeId', blank=True, null=True, verbose_name='Wire rope data id')  
+    winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch', related_name='reverse_wire')  
+    manufacturerid = models.TextField(db_column='ManufacturerId', blank=True, null=True, verbose_name='Manufacturer id')  
+    nsfid = models.TextField(db_column='NsfId', blank=True, null=True, verbose_name='NSF id')  
+    dateacquired = models.DateTimeField(db_column='DateAcquired', blank=True, null=True, verbose_name='Date Acquired', validators=[MaxValueValidator(limit_value=datetime.today)])  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')
+    ownershipstatus = models.ForeignKey(OwnershipStatus, models.DO_NOTHING, db_column='OwnershipStatusId', blank=True, null=True, verbose_name='Ownership status')  
     drums = models.ManyToManyField(Drum, through='WireDrum', related_name='loaded_wires', verbose_name='Drum')
-    factorofsafety = models.ForeignKey(FactorOfSafety, models.DO_NOTHING, db_column='FactorofSafety', blank=True, null=True, related_name='wirefactorofsafety', verbose_name='Factor of safety')  # Field name made lowercase.
-    dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag value (m)')  # Field name made lowercase.
+    factorofsafety = models.ForeignKey(FactorOfSafety, models.DO_NOTHING, db_column='FactorofSafety', blank=True, null=True, related_name='wirefactorofsafety', verbose_name='Factor of safety')  
+    dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag value (m)')  
 
     class Meta:
         managed = True
@@ -504,11 +613,11 @@ class Wire(models.Model):
 
 
 class Wiredrum(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  # Field name made lowercase.
-    drum = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum', related_name='reverse_drum')  # Field name made lowercase.
-    wire = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  # Field name made lowercase.
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  # Field name made lowercase.
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  # Field name made lowercase.
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    drum = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum', related_name='reverse_drum')  
+    wire = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
+    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
     
 
     class Meta:
@@ -518,4 +627,5 @@ class Wiredrum(models.Model):
 
     def __str__(self):
         return str(self.drum)
+
 

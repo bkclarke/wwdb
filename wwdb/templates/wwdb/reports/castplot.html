@@ -1,0 +1,67 @@
+<html>
+{% extends "wwdb/base.html" %}
+{% block content %}
+
+<head>
+    <meta name="viewport">
+    <script type="text/javascript">
+        var chart;/*from   ww  w.  j a  v a 2  s . c  o m*/
+    $(document).ready(function () {
+        var data = {{ df_json | safe }};
+            var options = {
+                chart: {
+                    renderTo: 'container',
+                    type: 'line',
+                    zoomType: 'x',
+                    panning: true,
+                    panKey: 'shift'
+                },
+                title: {
+                    x: -20 //center
+                },
+                subtitle: {
+                    text: '',
+                    x: -20
+                },
+                xAxis: {
+                    categories: []
+                },
+                yAxis: {
+                    title: {},
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'top',
+                    x: -10,
+                    y: 100,
+                    borderWidth: 0
+                },
+                series: []
+            };
+            options.chart.renderTo = 'container';
+            options.title.text = 'Time';
+            options.yAxis.title.text = 'Tension (lbs)';
+            var dataSeries = { data: [] };
+            data.forEach(function (va) {
+                options.xAxis.categories.push(va.DateTime);
+                dataSeries.data.push(va.Tension);
+            })
+            options.series.push(dataSeries);
+            chart = new Highcharts.Chart(options);
+            console.log(options);
+        });
+    </script>
+</head>
+<body>
+    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto">
+    </div>
+</body>
+{% endblock content %}
+</html>

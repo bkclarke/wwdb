@@ -1,0 +1,142 @@
+﻿<!--template/cruiseconfiguration.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+
+<html>
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h1>Precruise Configuration</h1>
+    <ul>
+        <li>Winch operators and deployment must be preconfigured for the winch operator to log casts during a cruise </li>
+        <li>Check to make sure factors of safety are correct for cruise prior to printing safe working tensions posting</li>
+    </ul>
+    <h2>Cruise number</h2>
+    <br />
+    <table id="" class="display table">
+        <thead>
+            <tr>
+                <th>Cruise number</th>
+                <th>Start date</th>
+                <th>End date</th>
+            </tr>
+        </thead>
+        {% for cruise in cruise %}
+        <tr>
+            <td><a href="{% url 'cruiseedit' cruise.pk %}">{{cruise.number}}</a></td>
+            <td>{{cruise.format_startdate}}</td>
+            <td>{{cruise.format_enddate}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <button type="button" class="btn btn-outline-dark">
+        <a class="nav-link" href="{% url 'cruiseadd' %}">Add Cruise</a>
+    </button>
+    <br />
+    <br />
+    <br />
+    <h2>Operators</h2>
+    <p>Only operators for this cruise should have <i>status: True</i>. To change status, select the operators username and edit status on the following page.</p>
+    <table id="" class="display table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>First</th>
+                <th>Last</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        {% for operator in operators %}
+        <tr>
+            <td><a href="{% url 'operatoreditstatus' operator.pk %}">{{operator.username}}</a></td>
+            <td>{{operator.firstname}}</td>
+            <td>{{operator.lastname}}</td>
+            <td>{{operator.status}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <button type="button" class="btn btn-outline-dark">
+        <a class="nav-link" href="{% url 'operatoradd' %}">Add Operator</a>
+    </button>
+    <br />
+    <br />
+    <br />
+    <h2>Deployments</h2>
+    <p>Only deployments for this cruise should have <i>status: True</i>. To change status, select the deployemnt and edit status on the following page.</p>
+    <table id="" class=" display table">
+        <thead>
+            <tr>
+                <th>Deployment</th>
+                <th>Equipment</th>
+                <th>Notes</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        {% for deployment in deployments %}
+        <tr>
+            <td><a href="{% url 'deploymenteditstatus' deployment.pk %}">{{deployment.name}}</a></td>
+            <td>{{deployment.equipment}}</td>
+            <td>{{deployment.notes}}</td>
+            <td>{{deployment.status}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <button type="button" class="btn btn-outline-dark">
+        <a class="nav-link" href="{% url 'deploymentadd' %}">Add Deployment</a>
+    </button>
+    <br />
+    <br />
+    <br />
+    <h2>Winches</h2>
+    <p>Only winches for this cruise should have <i>status: True</i>. To change status, select the winch id and edit status on the following page.</p>
+    <table id="" class="display table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        {% for winch in winches %}
+        <tr>
+            <td><a href="{% url 'wincheditstatus' winch.pk %}">{{winch.name}}</a></td>
+            <td>{{winch.status}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+	    <button type="button" class="btn btn-outline-dark">
+        <a class="nav-link" href="{% url 'winchadd' %}">Add Winch</a>
+    </button>
+    <br />
+    <br />
+	<br />
+    <h2>Safe Working Tensions Posting</h2>
+    <p>Confirm that Factor of Safety is correct.  Select factor of safety to change.  If correct, select <i>Go To Posting</i> and print on next page.</p>
+    <ul>
+        <li>Select only lowest factor of safety </li>
+        <li>Assume free end</li>
+    </ul>
+    <table id="" class="display table">
+        <thead>
+            <tr>
+                <th>Winch</th>
+                <th>Factor of Safety</th>
+            </tr>
+        </thead>
+        {% for wire in active_wire %}
+        <tr>
+            <td>{{wire.winch}}</td>
+            <td><a href="{% url 'wireeditfactorofsafety' wire.pk %}">{{wire.factorofsafety}}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    </br>
+    <button type="button" class="btn btn-outline-dark">
+        <a class="nav-link" href="{% url 'safeworkingtensions' %}">Go to Posting</a>
+    </button>
+    </br>
+    </br>
+</div>
+{% endblock %}
+
+</html>

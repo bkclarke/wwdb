@@ -1,0 +1,52 @@
+<!--template/wirereport.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+{% block content %}
+<div class="container p-5">
+    {% for w in wire %}
+        <h2>{{w.nsfid}} History</h2>
+    {% endfor %}
+    </br>
+    <h4>Cutbacks and reterminations</h4>
+    </br>
+    <table id="" class="display">
+        <thead>
+            <tr>
+                <th>Wet end tag</th>
+                <th>Length removed</th>
+                <th>Date</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        {% for cutback in cutback_retermination %}
+        <tr>
+            <td>{{cutback.wetendtag}}</td>
+            <td>{{cutback.lengthremoved}}</td>
+            <td>{{cutback.date}}</td>
+            <td>{{cutback.notes}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </br>
+    </br>
+    <h4>Breaktests</h4>
+    </br>
+    <table id="" class="display">
+        <thead>
+            <tr>
+                <th>date</th>
+                <th>Tested breaking load</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        {% for break in break_test %}
+        <tr>
+            <td>{{break.date}}</td>
+            <td>{{break.testedbreakingload}}</td>
+            <td>{{break.notes}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock content %}
