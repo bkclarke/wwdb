@@ -418,8 +418,6 @@ def drumlocationedit(request, id):
         form = EditDrumLocationForm(request.POST, instance = obj)
         if form.is_valid():
             form.save()
-            obj.retain_wire_length()
-            obj.save()
             drumlocation=DrumLocation.objects.get(id=id)
             return HttpResponseRedirect('/wwdb/inventories/drumlocationlist')
     else:
