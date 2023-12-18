@@ -13,17 +13,17 @@
     <table id="" class="display">
         <thead>
             <tr>
-                <th>Wet end tag</th>
-                <th>Length removed</th>
                 <th>Date</th>
+                <th>Wet end tag</th>
+                <th>Length after cutback</th>
                 <th>Notes</th>
             </tr>
         </thead>
         {% for cutback in cutback_retermination %}
         <tr>
+            <td>{{cutback.format_date}}</td>
             <td>{{cutback.wetendtag}}</td>
-            <td>{{cutback.lengthremoved}}</td>
-            <td>{{cutback.date}}</td>
+            <td>{{cutback.lengthaftercutback}}</td>
             <td>{{cutback.notes}}</td>
         </tr>
         {% endfor %}
@@ -42,7 +42,7 @@
         </thead>
         {% for break in break_test %}
         <tr>
-            <td>{{break.date}}</td>
+            <td>{{break.format_date}}</td>
             <td>{{break.testedbreakingload}}</td>
             <td>{{break.notes}}</td>
         </tr>

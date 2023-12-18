@@ -382,7 +382,6 @@ def wiredrumedit(request, id):
         form = EditWireDrumForm(request.POST, instance = obj)
         if form.is_valid():
             form.save()
-            wiredrum=Wiredrum.objects.get(id=id)
             return HttpResponseRedirect('/wwdb/inventories/wiredrumlist')
     else:
         form = EditWireDrumForm(instance = obj)
@@ -410,6 +409,58 @@ def wiredrumadd(request):
     context['form']= form
 
     return render(request, "wwdb/inventories/wiredrumadd.html", context)
+
+def drumlocationedit(request, id):
+    context ={}
+    obj = get_object_or_404(DrumLocation, id = id)
+
+    if request.method == 'POST':
+        form = EditDrumLocationForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            obj.retain_wire_length()
+            obj.save()
+            drumlocation=DrumLocation.objects.get(id=id)
+            return HttpResponseRedirect('/wwdb/inventories/drumlocationlist')
+    else:
+        form = EditDrumLocationForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/inventories/drumlocation/%i/edit' % drumlocationid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/inventories/drumlocationedit.html", context)
+
+def drumlocationadd(request):
+    context ={}
+    form = DrumLocationAddForm(request.POST or None)
+    if request.method == "POST":
+        form = DrumLocationAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            obj=DrumLocation.objects.last()
+            obj.retain_wire_length()
+            obj.save()
+            return HttpResponseRedirect('/wwdb/inventories/drumlocationlist')
+    else:
+        form = DrumLocationAddForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/inventories/drumlocationadd.html', {'form':form, 'submitted':submitted, 'id':id})
+ 
+    context['form']= form
+
+    return render(request, "wwdb/inventories/drumlocationadd.html", context)
+
+def drumlocationlist(request):
+    drum_location = DrumLocation.objects.order_by('-date')
+    
+    context = {
+        'drum_location': drum_location,
+        }
+
+    return render(request, 'wwdb/inventories/drumlocationlist.html', context=context)
+
 
 def castplot(request, pk):
 

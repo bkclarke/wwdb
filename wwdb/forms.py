@@ -288,6 +288,34 @@ class EditDrumForm(ModelForm):
             'wiretype',
         ]
 
+
+class AddDrumLocationForm(ModelForm):
+
+    class Meta:
+        model = DrumLocation
+        fields = [
+            'date',
+            'enteredby',
+            'drumid',
+            'location',
+            'notes',
+            'winch',
+        ]
+
+class EditDrumLocationForm(ModelForm):
+  
+    class Meta:
+        model = DrumLocation
+  
+        fields = [
+            'date',
+            'enteredby',
+            'drumid',
+            'location',
+            'notes',
+            'winch',
+        ]
+
 class CruiseAddForm(ModelForm):
 
     class Meta:

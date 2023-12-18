@@ -435,22 +435,6 @@ class Winch(models.Model):
     def __str__(self):
         return str(self.name)
         
-class DrumLocation(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    date= models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
-    enteredby = models.ForeignKey(User, models.DO_NOTHING, db_column='EnteredBy', blank=True, null=True, verbose_name='Entered by')  
-    drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum')  
-    winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  
-    location = models.ForeignKey(Location, models.DO_NOTHING, db_column='LocationId', blank=True, null=True, verbose_name='Location')  
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  
-
-    class Meta:
-        managed = True
-        db_table = 'DrumLocation'
-        verbose_name_plural = "DrumLocation"
-        
-    def __str__(self):
-        return str(self.location) + '-' + str(self.drumid)
 
 class WinchOperator(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)    
@@ -611,6 +595,50 @@ class Wire(models.Model):
         swl=i/s 
         return swl
 
+class DrumLocation(models.Model):
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    date= models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
+    enteredby = models.ForeignKey(User, models.DO_NOTHING, db_column='EnteredBy', blank=True, null=True, verbose_name='Entered by')  
+    drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum')  
+    winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  
+    location = models.ForeignKey(Location, models.DO_NOTHING, db_column='LocationId', blank=True, null=True, verbose_name='Location')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  
+    wire = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
+
+    class Meta:
+        managed = True
+        db_table = 'DrumLocation'
+        verbose_name_plural = "DrumLocation"
+        
+    def __str__(self):
+        return str(self.location) + '-' + str(self.drumid)
+
+    @property
+    def active_wire(self):
+        drum=self.drumid
+        wiredrum=drum.reverse_drum.last()
+        if not wiredrum:
+            return None
+        else:
+            wire=wiredrum.wire
+            return wire
+
+    def retain_wire_length(self):
+        if not self.active_wire:
+            return None
+        else:
+            wire=self.active_wire
+            self.wire=wire
+            return
+
+    @property
+    def format_date(self):
+        if not self.date:
+            return None
+        else:
+            date=self.date
+            formatdate=date.strftime("%Y-%m-%d")
+            return formatdate
 
 class Wiredrum(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
@@ -627,5 +655,4 @@ class Wiredrum(models.Model):
 
     def __str__(self):
         return str(self.drum)
-
 
