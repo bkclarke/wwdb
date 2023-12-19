@@ -247,6 +247,7 @@ class Cruise(models.Model):
 class CutbackRetermination(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
     wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag value (m)')  
+    dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag value (m)')  
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, related_name='wire_cutback_retermination', verbose_name='Wire')  
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
     date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])
@@ -278,12 +279,33 @@ class CutbackRetermination(models.Model):
         formatdate=date.strftime("%Y-%m-%d")
         return formatdate
 
-    def submitlength(self):
-        dryendlength=self.wire_dry_end_tag
-        wetendlength=self.wetendtag
-        length=wetendlength-dryendlength
-        self.lengthaftercutback=abs(int(length))
-        return
+    def submit_length(self):
+        if not self.wire_dry_end_tag and self.wetendtag:
+            return
+        else:
+            dryendlength=self.wire_dry_end_tag
+            wetendlength=self.wetendtag
+            length=wetendlength-dryendlength
+            self.lengthaftercutback=abs(int(length))
+            return
+
+    def submit_dry_end_tag(self):
+        if not self.wire_dry_end_tag:
+            return
+        else:
+            dryendtag=self.wire_dry_end_tag
+            self.dryendtag=dryendtag
+            return
+
+    def edit_length(self):
+        if not self.dryendtag and self.wetendtag:
+            return
+        else:
+            dryendlength=self.dryendtag
+            wetendlength=self.wetendtag
+            length=wetendlength-dryendlength
+            self.lengthaftercutback=abs(int(length))
+            return
 
 class DeploymentType(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
