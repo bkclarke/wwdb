@@ -31,6 +31,10 @@
     var dt = new Date();
     document.getElementById("datetime").innerHTML = dt.toLocaleDateString();
 </script>
-
+</br>
+</br>
+<button type="button" class="btn btn-outline-dark">
+    <a class="nav-link" href="{% url 'safeworkingtensions_file' %}">download safe working tensions posting</a>
+</button>
 {% endblock %}
 </html>

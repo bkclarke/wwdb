@@ -1,8 +1,7 @@
 from django import template
 from django.db.models.query import QuerySet
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseRedirect, FileResponse
 from django.template import loader
-
 from wwdb.filters import CastFilter
 from .models import *
 from django.views.generic import *
@@ -17,7 +16,15 @@ import pyodbc
 from django.db.models import Avg, Count, Min, Sum, Max
 import logging
 from .filters import *
-import json
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import landscape, letter, A4
+from reportlab.lib import colors
+from reportlab.lib.units import inch, mm
+from reportlab.lib.enums import TA_LEFT
+from reportlab.platypus import Table, TableStyle, Paragraph
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+import io
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -496,10 +503,82 @@ def safeworkingtensions(request):
 
     return render(request, 'wwdb/reports/safeworkingtensions.html', context=context)
 
+def safeworkingtensions_file(request):
+
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer)
+
+    #Set canvas as landscape A4
+    c.setPageSize(landscape(A4))
+
+    #Draw title
+    c.setFont("Helvetica", 36, leading=None)
+    c.drawString(1*inch,7*inch,"Safe Working Tensions")
+
+    #Create formatted datetime object 
+    now=datetime.now()
+    date_time=now.strftime('%m/%d/%Y')
+
+    #draw date posted on canvas
+    c.setFont("Helvetica", 12, leading=None)
+    c.drawString(1*inch,1*inch,"date posted: " + date_time)
+
+    #create empty lines list object
+    lines = []
+    
+    #wire objects where status=True, ordered by winch name in ascending order
+    active_wire = Wire.objects.filter(status=True).order_by('-winch')
+    
+    #Define stylesheet for headers
+    stylesheet=getSampleStyleSheet()
+    HeaderStyle=ParagraphStyle('yourtitle',
+                           fontName="Helvetica-Bold",
+                           fontSize=16,
+                           parent=stylesheet['Heading2'],
+                           alignment=TA_LEFT,
+                           spaceAfter=14)
+
+    #Define header objects
+    header1=Paragraph('winch',HeaderStyle)
+    header2=Paragraph('Wire ID',HeaderStyle)
+    header3=Paragraph('Length',HeaderStyle)
+    header4=Paragraph('Factor of Safety',HeaderStyle)
+    header5=Paragraph('Safe Working tension',HeaderStyle)
+
+    #append headers to lines list
+    lines.append((header1,header2,header3,header4,header5))
+    
+    #append wire data to lines list
+    for wire in active_wire:
+        lines.append((wire.winch.name, 
+                      wire.nsfid, 
+                      wire.active_length, 
+                      wire.factorofsafety, 
+                      wire.safe_working_tension))
+    
+    #Define table settings and styles, add lines list to table
+    table = Table(lines,
+                  colWidths=[100,175,100,155,155],
+                  rowHeights=[100,100,100,100])
+
+    table.setStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                    ('LINEABOVE', (0, 1), (-1, -1), 0.10, colors.grey),
+                    ('FONTSIZE',(0,0),(-1,-1),24)])
+    
+    width, height = A4
+    table.wrapOn(c, width, height)
+
+    #Draw table on canvas
+    table.drawOn(c, 1 * inch, 1.5 * inch)
+
+    c.save()
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename='swt_posting.pdf')
+
 """
 Maintenance
 """
-
 
 def wirelist(request):
     wires_in_use = Wire.objects.filter(status=True)

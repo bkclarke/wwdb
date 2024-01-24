@@ -63,6 +63,7 @@ urlpatterns = [
     #URLS related to reports
     path('reports/castlist/', views.castlist, name='castlist'),
     path('reports/safeworkingtensions/', views.safeworkingtensions, name='safeworkingtensions'),
+    path('reports/safeworkingtensions_file/', views.safeworkingtensions_file, name='safeworkingtensions_file'),
     path('reports/<int:pk>/cruisereport/', views.cruisereport, name='cruisereport'),
     path('reports/castplot/<int:pk>/', views.castplot, name='castplot'),
     path('reports/cruiselist/', views.cruiselist, name='cruiselist'),
