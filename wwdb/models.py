@@ -615,6 +615,7 @@ class Wire(models.Model):
         s=self.factorofsafety.factorofsafety
         i=self.absolute_breaking_load
         swl=i/s 
+        swl=int(swl)
         return swl
 
 class DrumLocation(models.Model):

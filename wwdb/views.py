@@ -543,7 +543,7 @@ def safeworkingtensions_file(request):
     header2=Paragraph('Wire ID',HeaderStyle)
     header3=Paragraph('Length',HeaderStyle)
     header4=Paragraph('Factor of Safety',HeaderStyle)
-    header5=Paragraph('Safe Working tension',HeaderStyle)
+    header5=Paragraph('Safe Working Tension',HeaderStyle)
 
     #append headers to lines list
     lines.append((header1,header2,header3,header4,header5))
