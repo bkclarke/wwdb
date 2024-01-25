@@ -575,7 +575,7 @@ def safeworkingtensions_file(request):
 
     c.save()
     buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename='safeworkingtension_%s.pdf' %date_time_filename)
+    return FileResponse(buffer, as_attachment=True, filename='safe_working_tension_%s.pdf' %date_time_filename)
 
 """
 Maintenance
