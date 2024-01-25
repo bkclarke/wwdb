@@ -518,6 +518,7 @@ def safeworkingtensions_file(request):
     #Create formatted datetime object 
     now=datetime.now()
     date_time=now.strftime('%m/%d/%Y')
+    date_time_filename=now.strftime('%Y%m%d')
 
     #draw date posted on canvas
     c.setFont("Helvetica", 12, leading=None)
@@ -574,7 +575,7 @@ def safeworkingtensions_file(request):
 
     c.save()
     buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename='swt_posting.pdf')
+    return FileResponse(buffer, as_attachment=True, filename='safeworkingtension_%s.pdf' %date_time_filename)
 
 """
 Maintenance
