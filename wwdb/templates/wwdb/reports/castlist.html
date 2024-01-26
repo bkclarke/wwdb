@@ -48,16 +48,12 @@
     {% if cast_uricomplete %}
     <h2>Completed casts</h2>
     <br />
-    <div class="row">
-        <div class="col">
-            <form method="get">
-                {{myfilter.form}}
-                <button class="btn btn-primary" type="submit">
-                    Search
-                </button>
-            </form>
-        </div>
-    </div>
+    <form method="get">
+        {{castfilter.form}}
+        <button class="btn btn-primary" input type="submit">
+            Search
+        </button>
+    </form>
     <table id="" class="display_nosearch">
         <thead class="thead-light">
             <tr>
