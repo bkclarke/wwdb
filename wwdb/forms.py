@@ -137,9 +137,6 @@ class EditCruiseForm(ModelForm):
             'number',
             'startdate',
             'enddate',
-            'winch1',
-            'winch2',
-            'winch3',
         ]
  
         widgets = {'startdate': DatePickerInput(

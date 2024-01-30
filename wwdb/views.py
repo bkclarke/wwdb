@@ -336,8 +336,11 @@ def cruise_report_file(request, pk):
     lines = []
     lines.append(cruise_object.number)
 
+    lines.append('\n' + str(startdate))
+    lines.append('\n' + str(enddate))
+
     if casts_winch1_maxtension:
-        lines.append('\nWinch 1\nMax tension: ' + str(casts_winch1_maxtension.maxtension) + 
+        lines.append('\n\nWinch 1\nMax tension: ' + str(casts_winch1_maxtension.maxtension) + 
                      'lbs\nMax payout: ' + str(casts_winch1_maxpayout.maxpayout) + 
                      'm\nNumber of casts: ' + str(casts_winch1_count) +
                      '\nBlock arrangement: ' + cruise_object.winch1blockarrangement + 
@@ -352,7 +355,7 @@ def cruise_report_file(request, pk):
                         'm\nNumber of casts: ' + str(casts_winch2_count) +
                         '\nBlock arrangement: ' + cruise_object.winch2blockarrangement + 
                         '\nTermination: ' + cruise_object.winch2termination +
-                        '\nSpin direction: ' + cruise.object.winch2spindirection +
+                        '\nSpin direction: ' + cruise_object.winch2spindirection +
                         '\nNotes: ' + cruise_object.winch2notes)
     else:
         lines.append('\n\n\nWinch 2 not used')
