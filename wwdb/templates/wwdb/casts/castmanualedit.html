@@ -1,0 +1,13 @@
+﻿<!--templates/castmanualedit.html-->
+{% extends "wwdb/base.html" %}
+{% load bootstrap4 %}
+{{ form.media }}
+
+{% block content %}
+<h1>Manually edit Tension and Payout</h1>
+<form action="" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" value="update">
+</form>
+{% endblock content %}

@@ -107,8 +107,46 @@ def castedit(request, id):
             form.save()
             return HttpResponseRedirect('/wwdb/casts/%i/edit' % cast.pk)
 
-    context["form"] = form
+    context["form", obj] = form
     return render(request, "wwdb/casts/castedit.html", context)
+
+def castmanualenter(request):
+    context ={}
+    form = ManualCastForm(request.POST or None)
+    if request.method == "POST":
+        form = ManualCastForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            cast=Cast.objects.last()
+            return HttpResponseRedirect("/wwdb/casts/%i/castenddetail" % cast.pk)
+    else:
+        form = ManualCastForm
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/casts/castmanualenter.html', {'form':form, 'submitted':submitted, 'id':id})
+
+    context['form']= form
+
+    return render(request, "wwdb/casts/castmanualenter.html", context)
+
+def castmanualedit(request, id):
+    context ={}
+    obj = Cast.objects.get(id=id)
+    if request.method == 'POST':
+        form = ManualCastForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            obj.save()
+            return HttpResponseRedirect('/wwdb/reports/castlist')
+    else:
+        form = ManualCastForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/casts/%i/manualedit' % cast.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/casts/castmanualedit.html", context)
+
 
 def castdetail(request, id):
     context ={}

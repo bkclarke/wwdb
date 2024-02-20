@@ -76,13 +76,13 @@ class CalibrationMeta(models.Model):
 
 class Cast(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    startoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='StartOperatorId', null=True, related_name='startoperatorid', verbose_name="Start operator", limit_choices_to={'status': True})  
-    endoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='EndOperatorId', null=True, related_name='endoperatorid', verbose_name='End operator', limit_choices_to={'status': True})  
+    startoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='StartOperatorId', null=True, related_name='startoperatorid', verbose_name="Start operator")  
+    endoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='EndOperatorId', null=True, related_name='endoperatorid', verbose_name='End operator')  
     startdate = models.DateTimeField(db_column='StartDate', null=False, verbose_name='Start date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  
     enddate = models.DateTimeField(db_column='EndDate', blank=True, null=True, verbose_name='End date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  
-    deploymenttype = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True, verbose_name='Deployment type', limit_choices_to={'status': True})  
+    deploymenttype = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True, verbose_name='Deployment type')  
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
-    winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', null=True, verbose_name='Winch', limit_choices_to={'status': True})  
+    winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', null=True, verbose_name='Winch')  
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
     maxtension = models.IntegerField(db_column='MaxTension', blank=True, null=True, verbose_name='Max tension')  
     maxpayout = models.IntegerField(db_column='MaxPayout', blank=True, null=True, verbose_name='Max payout')  
@@ -318,6 +318,7 @@ class DeploymentType(models.Model):
         managed = True
         db_table = 'DeploymentType'
         verbose_name_plural = "DeploymentType"
+        ordering = ['name']
 
     def get_absolute_url(self):
         return reverse('deploymentdetail', kwargs={'pk':self.pk})
@@ -333,6 +334,8 @@ class Location(models.Model):
         managed = True
         db_table = 'Location'
         verbose_name_plural = "Location"
+        ordering = ['location']
+
 
     def __str__(self):
         return str(self.location)
@@ -450,6 +453,7 @@ class Winch(models.Model):
         managed = True
         db_table = 'Winch'
         verbose_name_plural = "Winch"
+        ordering = ['name']
 
     def get_absolute_url(self):
         return reverse('winchdetail', kwargs={'pk':self.pk})
@@ -470,6 +474,7 @@ class WinchOperator(models.Model):
         managed = True
         db_table = 'WinchOperator'
         verbose_name_plural = "WinchOperator"
+        ordering = ['username']
 
     def get_absolute_url(self):
         return reverse('operatordetail', kwargs={'pk':self.pk})

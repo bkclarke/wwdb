@@ -2,7 +2,13 @@
 {% extends "wwdb/base.html" %}
 
 {% block content %}
+
 <div class="container p-5">
+    <button type="button" class="btn btn-outline-dark">
+        <a class="nav-link" href="{% url 'castmanualenter' %}">Manually enter cast</a>
+    </button>
+    </br>
+    </br>
     {% if cast_flag %}
     <h2>Flagged for review</h2>
     <table id="" class="display_nosearch table-danger">
@@ -20,7 +26,10 @@
                 <th>time of max tension</th>
                 <th>Wet end tag</th>
                 <th>Dry end tag</th>
-				<th>Motor</th>
+                <th>Motor</th>
+                <th>Edit</th>
+                <th>Enter values manually</th>
+                <th>Delete</th>
             </tr>
         </thead>
         {% for cast in cast_flag %}
@@ -38,6 +47,9 @@
             <td>{{cast.wetendtag}}</td>
             <td>{{cast.dryendtag}}</td>
             <td>{{cast.active_motor}}</td>
+            <td><a href="{%url 'castedit' cast.pk %}">Edit</a></td>
+            <td><a href="{%url 'castmanualedit' cast.pk %}">Manual edit</a></td>
+            <td><a href="{%url 'castdelete' cast.pk %}">Delete</a></td>
         </tr>
         {% endfor %}
     </table>
@@ -71,6 +83,8 @@
                 <th>Dry end tag</th>
                 <th>Motor</th>
                 <th>Plot</th>
+                <th>Edit</th>
+                <th>Enter values manually</th>
                 <th>Delete</th>
             </tr>
         </thead>
@@ -90,6 +104,8 @@
             <td>{{cast.dryendtag}}</td>
             <td>{{cast.active_motor}}</td>
             <td><a href="{%url 'castplot' cast.pk %}">View</a></td>
+            <td><a href="{%url 'castedit' cast.pk %}">Edit</a></td>
+            <td><a href="{%url 'castmanualedit' cast.pk %}">Manual edit</a></td>
             <td><a href="{%url 'castdelete' cast.pk %}">Delete</a></td>
         </tr>
         {% endfor %}
@@ -97,6 +113,6 @@
     {% else %}
     <p>There are no completed casts on URI tension members</p>
     {% endif %}
-	<br />
+    <br />
 </div>
 {% endblock content %}

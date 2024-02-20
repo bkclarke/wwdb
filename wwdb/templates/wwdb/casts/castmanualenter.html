@@ -1,0 +1,15 @@
+﻿<!--templates/castmanualenter.html-->
+{% extends "wwdb/base.html" %}
+{% load bootstrap4 %}
+{{ form.media }}
+
+{% block content %}
+<h1>Enter manual cast</h1>
+<div class="container pt-2 pb-2 pl-5 pr-5">
+    <form action="" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <input type="submit" value="save">
+    </form>
+</div>
+{% endblock content %}

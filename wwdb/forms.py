@@ -23,6 +23,36 @@ class StartCastForm(ModelForm):
 
         widgets = {'startdate': DateTimePickerInput()}
 
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        active_operators = WinchOperator.objects.filter(status=True)
+        active_winches = Winch.objects.filter(status=True)
+        active_deployments = DeploymentType.objects.filter(status=True)
+        self.fields['startoperator'].queryset  = active_operators
+        self.fields['winch'].queryset  = active_winches
+        self.fields['deploymenttype'].queryset  = active_deployments
+
+
+class ManualCastForm(ModelForm):
+
+    class Meta:
+        model = Cast
+        fields = [
+            'startoperator',
+            'startdate',
+            'enddate',
+            'deploymenttype',
+            'winch',
+			'motor',
+            'notes',
+            'maxtension',
+            'maxpayout',
+        ]
+
+        widgets = {'startdate': DateTimePickerInput(), 
+                   'enddate': DateTimePickerInput()}
+
 class EndCastForm(ModelForm):
     flagforreview = forms.BooleanField(required=False)
   
@@ -40,6 +70,11 @@ class EndCastForm(ModelForm):
         widgets = {'startdate': DateTimePickerInput(), 
                     'enddate': DateTimePickerInput(),
                     'startdate': forms.HiddenInput(),}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        active_operators = WinchOperator.objects.filter(status=True)
+        self.fields['endoperator'].queryset  = active_operators
 
         
     def is_valid(self):
