@@ -40,6 +40,7 @@ class ManualCastForm(ModelForm):
         model = Cast
         fields = [
             'startoperator',
+            'endoperator',
             'startdate',
             'enddate',
             'deploymenttype',

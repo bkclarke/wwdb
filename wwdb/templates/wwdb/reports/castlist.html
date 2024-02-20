@@ -34,7 +34,7 @@
         </thead>
         {% for cast in cast_flag %}
         <tr>
-            <td><a href="{% url 'castedit' cast.pk %}">{{cast.format_startdate}}</a></td>
+            <td>{{cast.format_startdate}}</td>
             <td>{{cast.winch}}</td>
             <td>{{cast.deploymenttype}}</td>
             <td>{{cast.startoperator}}</td>
@@ -90,7 +90,7 @@
         </thead>
         {% for cast in cast_uricomplete %}
         <tr>
-            <td><a href="{% url 'castedit' cast.pk %}">{{cast.format_startdate}}</a></td>
+            <td>{{cast.format_startdate}}</td>
             <td>{{cast.winch}}</td>
             <td>{{cast.deploymenttype}}</td>
             <td>{{cast.startoperator}}</td>
