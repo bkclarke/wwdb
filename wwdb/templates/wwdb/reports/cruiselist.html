@@ -16,8 +16,8 @@
         {% for cruise in cruises %}
         <tr>
             <td><a href="{% url 'cruisereportedit' cruise.pk %}">{{cruise.number}}</a></td>
-            <td>{{cruise.startdate}}</td>
-            <td>{{cruise.enddate}}</td>
+            <td>{{cruise.format_startdate}}</td>
+            <td>{{cruise.format_enddate}}</td>
         </tr>
         {% endfor %}
     </table>
