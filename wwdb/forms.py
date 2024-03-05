@@ -214,6 +214,7 @@ class EditCruiseReportForm(ModelForm):
                     "format": "YYYY-MM-DD"}
                     )}
 
+'''
 class EditCruiseWinchForm(ModelForm):
   
     class Meta:
@@ -224,6 +225,7 @@ class EditCruiseWinchForm(ModelForm):
             'winch2',
             'winch3',
         ]
+'''
 
 class AddCutbackReterminationForm(ModelForm):
 
