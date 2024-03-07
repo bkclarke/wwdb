@@ -237,6 +237,130 @@ def cruiselist(request):
 
     return render(request, 'wwdb/reports/cruiselist.html', context=context)
 
+def is_valid_queryparam(param):
+    return param != '' and param is not None
+
+def unols_form_filter(request):
+    qs = Cast.objects.all()
+    winch = request.GET.get('winch')
+    date_min = request.GET.get('date_min')
+    date_max = request.GET.get('enddate')
+
+    if is_valid_queryparam(winch) and winch != 'choose...':
+        qs = qs.filter(winch__name=winch)
+
+    if is_valid_queryparam(date_min):
+        qs=qs.filter(startdate__gte=date_min)
+
+    if is_valid_queryparam(date_max):
+        qs=qs.filter(enddate__lt=date_max)
+    return qs
+
+def unolswirereport(request):
+    qs = unols_form_filter(request)
+    context = {
+        'qs': qs,
+        'winches':Winch.objects.all()
+    }
+    return render(request, "wwdb/reports/unolswirereport.html", context)
+
+def unols_wire_report_file(request):
+    cast = unols_form_filter(request)
+
+    response = HttpResponse(content_type="text/plain")
+    response['Content-Disposition']='attachement; filename=cruise_reports.txt'
+
+    #create dictionary of active winch keys and cast object list values
+    cast_by_winch = {}
+    for c in cast:
+        if c.active_winch not in cast_by_winch:
+            cast_by_winch[c.active_winch] = []
+
+        cast_by_winch[c.active_winch].append(c)
+        
+    #create dictionary of active winch keys and integer value of casts completed values
+    cast_by_winch_count = {}
+    for c in cast_by_winch:
+        cast_by_winch_count[c]=len(cast_by_winch[c])
+
+    #create dictionary of active winch keys and maxtension list values of casts completed
+    tension_by_winch = {}
+    for c in cast:
+        if c.active_winch not in tension_by_winch:
+            tension_by_winch[c.active_winch] = []
+        tension_by_winch[c.active_winch].append(c.maxtension)
+
+    # filter none values from key value lists
+    for t in tension_by_winch:
+        tension_by_winch[t]=list(filter(lambda item: item is not None,tension_by_winch[t]))
+
+    #Create dictionary of active winch keys and max tension per winch values
+    maxtension_by_winch={}
+    for t in tension_by_winch:
+        if tension_by_winch[t]:
+            maxtension_by_winch[t]=max(tension_by_winch[t])
+        else:
+            maxtension_by_winch[t]='None'
+
+    #create dictionary of active winch keys and max payout list values of casts completed
+    payout_by_winch = {}
+    for c in cast:
+        if c.active_winch not in payout_by_winch:
+            payout_by_winch[c.active_winch] = []
+        payout_by_winch[c.active_winch].append(c.maxpayout)
+
+    #Create dictionary of active winch keys and max payout per winch values
+    for t in payout_by_winch:
+        payout_by_winch[t]=list(filter(lambda item: item is not None,payout_by_winch[t]))
+
+    #Create dictionary of active winch keys and max payout per winch values
+    maxpayout_by_winch={}
+    for t in payout_by_winch:
+        if payout_by_winch[t]:
+            maxpayout_by_winch[t]=max(payout_by_winch[t])
+        else:
+            maxpayout_by_winch[t]='None'
+
+    #append data to list, write to file
+    lines = []
+
+    lines.append('\n#Start date:' + str(date_min))
+    lines.append('\n#End Date:' + str(date_max))
+
+    lines.append('\n#\n#')
+
+    for t in maxtension_by_winch:
+        lines.append('\n#' + str(t) + ' Max tension: ' + str(maxtension_by_winch[t]))
+
+    lines.append('\n#\n#')
+
+    for t in maxpayout_by_winch:
+        lines.append('\n#' + str(t) + ' Max payout: ' + str(maxpayout_by_winch[t]))
+
+    lines.append('\n#\nstarttime, endtime, winch, deploymenttype, startoperator, endoperator, maxtension, maxpayout, payoutmaxtension, metermaxtension, timemaxtension, wetendtag, dryendtag, notes')
+
+    for c in cast:
+            lines.append('\n' + str(c.startdate) + ',' 
+            +  str(c.enddate) + ',' 
+            +  str(c.active_winch) + ',' 
+            +  str(c.deploymenttype) + ',' 
+            +  str(c.startoperator) + ',' 
+            +  str(c.endoperator) + ',' 
+            +  str(c.maxtension) + ',' 
+            +  str(c.maxpayout) + ',' 
+            +  str(c.payoutmaxtension) + ',' 
+            +  str(c.metermaxtension) + ',' 
+            +  str(c.timemaxtension) + ','
+            +  str(c.wetendtag) + ',' 
+            +  str(c.dryendtag) + ',' 
+            +  str(c.notes) + ',' )
+
+
+    response.writelines(lines)
+
+
+    return response
+
 
 def cruisereportedit(request, pk):
     obj = get_object_or_404(Cruise, id = pk)
@@ -252,22 +376,6 @@ def cruisereportedit(request, pk):
 
     for w in winches:
         active_winches.append(w)
-    
-    #for w in winches():
-    #    "casts_winch"+w=casts.filter(winch=w)
-    #    "casts_winch"+w"_count"="casts_winch"+w.count(w)
-
-    #winch 1 casts calculations
-    #casts_winch1=casts.filter(winch='3')
-    #casts_winch1_count=casts_winch1.count()
-
-    #winch 2 casts calculations
-    #casts_winch2=casts.filter(winch='2')
-    #casts_winch2_count=casts_winch2.count()
-
-    #winch 3 casts calculations
-    #casts_winch3=casts.filter(winch='1')
-    #casts_winch3_count=casts_winch3.count()
 
     if request.method == 'POST':
         form = EditCruiseReportForm(request.POST, instance = obj)
@@ -431,6 +539,7 @@ def cruise_report_file(request, pk):
         else:
             maxpayout_by_winch[t]='None'
 
+    #append data to list, write to file
     lines = []
     lines.append('#' + cruise_object.number)
 

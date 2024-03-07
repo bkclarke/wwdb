@@ -423,3 +423,15 @@ class WinchAddForm(ModelForm):
             'institution',
             'status',
         ]
+
+class UnolsWireReportForm(ModelForm):
+
+    class Meta:
+        model = Cast
+        fields = [
+            'startdate',
+            'enddate',
+        ]
+
+        widgets = {'startdate': DateTimePickerInput(), 
+                   'enddate': DateTimePickerInput()}

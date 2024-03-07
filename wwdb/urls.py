@@ -18,6 +18,7 @@ urlpatterns = [
     path('casts/<id>/castend/', views.castend, name='castend'),
     path('casts/cast_end/', views.cast_end, name='cast_end'),
 
+
     #URLS related to configuration
     path('configuration/cruiseadd/', views.cruiseadd, name='cruiseadd'),
     path('configuration/cruise/<int:id>/edit/', views.cruiseedit, name='cruiseedit'),
@@ -72,4 +73,6 @@ urlpatterns = [
     path('reports/<int:pk>/cruisereportedit/', views.cruisereportedit, name='cruisereportedit'),
     path('<int:pk>/cruise_report_file', views.cruise_report_file, name='cruise_report_file'),
     path('reports/<int:pk>/wirereport/', views.wirereport, name='wirereport'),
+    path('reports/unolswirereport/', views.unolswirereport, name='unolswirereport'),
+    path('reports/unols_wire_report_file/', views.unols_wire_report_file, name='unols_wire_report_file'),
 ]
