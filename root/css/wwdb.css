@@ -8,26 +8,64 @@
     float: right;
 }
 
-.btn-startcast, .btn-group-sm > .btn {
-    color: #fff;
-    background-color: #A63446;
-    border-color: #A63446;
+.btn-startcast {
+    color: #dc3545;
+    background-color: #dc3545;
     padding: 0.1rem 0.1rem;
-    font-size: 1rem;
-    line-height: 1.0;
-    border-radius: 0.2rem;
     float: right;
 }
 
 .btn-configure, .btn-group-sm > .btn {
     color: #fff;
-    background-color: #ACBDC8;
-    border-color: #ACBDC8;
+    background-color: #003366;
+    border-color: #003366;
     padding: 0.1rem 0.1rem;
     font-size: 1rem;
     line-height: 1.0;
     border-radius: 0.2rem;
     font-weight: 400;
+}
+
+.home-btn-startcast {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: blue;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 96px;
+}
+
+.home-btn-startcast:hover {
+    background-color: darkblue;
+}
+
+.home-left-container {
+    width: 30%;
+    height: 100vh;
+    float: left;
+    padding: 20px;
+    background-color: #dee2e6; 
+}
+
+.home-right-container {
+    width: 70%;
+    height: 100vh;
+    float: right;
+    padding: 20px;
+}
+
+.button-link {
+    color: white;
+    text-decoration: none;
+}
+
+.button-link:hover {
+    color: white;
+    text-decoration: none;
 }
 
 .nav-item-top {

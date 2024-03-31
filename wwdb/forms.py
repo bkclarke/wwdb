@@ -16,7 +16,6 @@ class StartCastForm(ModelForm):
             'startdate',
             'deploymenttype',
             'winch',
-			'motor',
             'notes',
             'flagforreview',
         ]
@@ -45,7 +44,6 @@ class ManualCastForm(ModelForm):
             'enddate',
             'deploymenttype',
             'winch',
-			'motor',
             'notes',
             'maxtension',
             'maxpayout',
@@ -184,49 +182,6 @@ class EditCruiseForm(ModelForm):
                     "format": "YYYY-MM-DD"}
                     )}
 
-class EditCruiseReportForm(ModelForm):
-  
-    class Meta:
-        model = Cruise
-  
-        fields = [
-            'startdate',
-            'enddate',
-            'winch1blockarrangement',
-            'winch2blockarrangement',
-            'winch3blockarrangement',
-            'winch1termination',
-            'winch2termination',
-            'winch3termination',
-            'winch2spindirection',
-            'winch1notes',
-            'winch2notes',
-            'winch3notes',
-            'scienceprovidedwinch',
-        ]
- 
-        widgets = {'startdate': DatePickerInput(
-                    options={
-                    "format": "YYYY-MM-DD"}
-                    ),
-                   'enddate': DatePickerInput(
-                    options={
-                    "format": "YYYY-MM-DD"}
-                    )}
-
-'''
-class EditCruiseWinchForm(ModelForm):
-  
-    class Meta:
-        model = Cruise
-  
-        fields = [
-            'winch1',
-            'winch2',
-            'winch3',
-        ]
-'''
-
 class AddCutbackReterminationForm(ModelForm):
 
     class Meta:
@@ -260,96 +215,6 @@ class EditCutbackReterminationForm(ModelForm):
                     )}
 
 
-class EditWireDrumForm(ModelForm):
-  
-    class Meta:
-        model = Wiredrum
-  
-        fields = [
-            'date',
-            'drum',
-            'wire',
-            'notes',
-        ]
-
-        widgets = {'date': DatePickerInput(
-                options={
-                "format": "YYYY-MM-DD"}
-                )}
-
-class WireDrumAddForm(ModelForm):
-
-    class Meta:
-        model = Wiredrum
-        fields = [
-            'wire',
-            'drum',
-            'date',
-            'notes',
-        ]
-
-        widgets = {'date': DatePickerInput(
-                    options={
-                    "format": "YYYY-MM-DD"}
-                    )}
-
-class AddDrumForm(ModelForm):
-
-    class Meta:
-        model = Drum
-        fields = [
-            'internalid',
-            'color',
-            'size',
-            'weight',
-            'location',
-            'material',
-            'wiretype',
-        ]
-
-class EditDrumForm(ModelForm):
-  
-    class Meta:
-        model = Drum
-  
-        fields = [
-            'internalid',
-            'color',
-            'size',
-            'weight',
-            'location',
-            'material',
-            'wiretype',
-        ]
-
-
-class AddDrumLocationForm(ModelForm):
-
-    class Meta:
-        model = DrumLocation
-        fields = [
-            'date',
-            'enteredby',
-            'drumid',
-            'location',
-            'notes',
-            'winch',
-        ]
-
-class EditDrumLocationForm(ModelForm):
-  
-    class Meta:
-        model = DrumLocation
-  
-        fields = [
-            'date',
-            'enteredby',
-            'drumid',
-            'location',
-            'notes',
-            'winch',
-        ]
-
 class CruiseAddForm(ModelForm):
 
     class Meta:
@@ -379,24 +244,6 @@ class AddOperatorForm(ModelForm):
             'username',
             'status',
         ]
-
-class DrumLocationAddForm(ModelForm):
-
-    class Meta:
-        model = DrumLocation
-        fields = [
-            'date',
-            'enteredby',
-            'drumid',
-            'winch',
-            'location',
-            'notes',
-        ]
-
-        widgets = {'date': DatePickerInput(
-                    options={
-                    "format": "YYYY-MM-DD"}
-                    )}
 
 class CruiseReportForm(forms.Form):
     start_date = forms.DateField()

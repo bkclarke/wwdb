@@ -9,6 +9,7 @@ from datetime import datetime, date
 from pandas.core.base import NoNewAttributesMixin
 import pyodbc 
 import pandas as pd
+import mysql.connector
 
 
 def validate_commas(value):
@@ -92,7 +93,6 @@ class Cast(models.Model):
     flagforreview = models.BooleanField(db_column='Flagforreview', blank=True, null=True, verbose_name='Flag for review')  
     dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag')  
     wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag')  
-    motor = models.ForeignKey('Motor', models.DO_NOTHING, db_column='MotorId', blank=True, null=True, verbose_name='Motor')  
 
 
     class Meta:
@@ -124,13 +124,6 @@ class Cast(models.Model):
     def active_winch(self):
         d=self.winch.name
         return d
-		
-    @property
-    def active_motor(self):
-        if not self.motor:
-            return
-        d=self.motor.number
-        return d
 
     @property
     def format_startdate(self):
@@ -150,12 +143,11 @@ class Cast(models.Model):
         winch=(self.winch.name)
         if winch=='winch1' or winch=='winch2' or winch=='winch3':
             try:
-                conn = pyodbc.connect('Driver={SQL Server};'
-                                        'Server=192.168.1.90, 1433;'
-                                        'Database=WinchDb;'
-                                        'Trusted_Connection=no;'
-			                    'UID=remoteadmin;'
-			                    'PWD=eris.2003;')
+                conn = mysql.connector.connect(host='127.0.0.1',
+                    user='root',
+                    password='67Giffordstreet!',
+                    database='winch_data'
+                )
 
                 winch=(self.winch.name)
                 startcal=str(self.startdate)
@@ -167,6 +159,8 @@ class Cast(models.Model):
                 castmaxpayout=df['Payout'].max()
                 castpayoutmaxtension=castmaxtensiondf['Payout'].max()
                 casttimemaxtension=castmaxtensiondf['DateTime'].max()
+
+                conn.close()
 
                 wetend=int(self.wet_end_tag)
                 dryend=int(self.dry_end_tag)
@@ -206,18 +200,8 @@ class Cruise(models.Model):
     number = models.TextField(db_column='Number', blank=True, null=True, verbose_name='Cruise number', validators=[validate_commas])   
     startdate = models.DateField(db_column='StartDate', blank=True, null=True, verbose_name='Start date')   
     enddate = models.DateField(db_column='EndDate', blank=True, null=True, verbose_name='End date')   
-    status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')   
-    winch1blockarrangement = models.TextField(db_column='Winch1BlockArrangement', blank=True, null=True, verbose_name='Winch 1 Block Arrangement', validators=[validate_commas])   
-    winch2blockarrangement = models.TextField(db_column='Winch2BlockArrangement', blank=True, null=True, verbose_name='Winch 2 Block Arrangement', validators=[validate_commas])   
-    winch3blockarrangement = models.TextField(db_column='Winch3BlockArrangement', blank=True, null=True, verbose_name='Winch 3 Block Arrangement', validators=[validate_commas])   
-    winch1termination = models.TextField(db_column='Winch1Termination', blank=True, null=True, verbose_name='Winch 1 Termination', validators=[validate_commas])   
-    winch2termination = models.TextField(db_column='Winch2Termination', blank=True, null=True, verbose_name='Winch 2 Termination', validators=[validate_commas])   
-    winch3termination = models.TextField(db_column='Winch3Termination', blank=True, null=True, verbose_name='Winch 3 Termination', validators=[validate_commas])   
-    winch2spindirection = models.TextField(db_column='Winch2SpinDirection', blank=True, null=True, verbose_name='Winch 3 Spin Direction', validators=[validate_commas])   
-    winch1notes = models.TextField(db_column='Winch1Notes', blank=True, null=True, verbose_name='Winch 1 Notes', validators=[validate_commas])   
-    winch2notes = models.TextField(db_column='Winch2Notes', blank=True, null=True, verbose_name='Winch 2 Notes', validators=[validate_commas])   
-    winch3notes = models.TextField(db_column='Winch3Notes', blank=True, null=True, verbose_name='Winch 3 Notes', validators=[validate_commas])   
-    scienceprovidedwinch = models.TextField(db_column='ScienceProvidedWinch', blank=True, null=True, verbose_name='Science Provided Winch', validators=[validate_commas])   
+    winchnotes = models.TextField(db_column='WinchNotes', blank=True, null=True, verbose_name='Winch Notes', validators=[validate_commas])   
+    scienceprovidedwinchnotes = models.TextField(db_column='ScienceProvidedWinch', blank=True, null=True, verbose_name='Science Provided Winch', validators=[validate_commas])   
 
     class Meta:
         managed = True
@@ -246,6 +230,7 @@ class CutbackRetermination(models.Model):
     wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag value (m)')  
     dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag value (m)')  
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, related_name='wire_cutback_retermination', verbose_name='Wire')  
+    terminationtype = models.ForeignKey('TerminationType', models.DO_NOTHING, db_column='TerminationType', blank=True, null=True, related_name='wire_termination_type', verbose_name='Termination Type')  
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
     date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])
     lengthaftercutback = models.IntegerField(db_column='LengthAfterCutback', blank=True, null=True, verbose_name='Length after cutback')  
@@ -304,6 +289,19 @@ class CutbackRetermination(models.Model):
             self.lengthaftercutback=abs(int(length))
             return
 
+class TerminationType(models.Model):
+    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
+    name = models.TextField(db_column='Name', blank=True, null=False, verbose_name='Termination Type')  
+    
+    class Meta:
+        managed = True
+        db_table = 'TerminationType'
+        verbose_name_plural = "TerminationType"
+
+    def __str__(self):
+        return str(self.name)
+
+
 class DeploymentType(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  
@@ -337,45 +335,6 @@ class Location(models.Model):
     def __str__(self):
         return str(self.location)
 		
-class Motor(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    number = models.IntegerField(db_column='Number', blank=True, null=True, verbose_name='Number')  
-
-    class Meta:
-        managed = True
-        db_table = 'Motor'
-        verbose_name_plural = "Motor"
-
-    def __str__(self):
-        return str(self.number)
-
-class Drum(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    internalid = models.TextField(db_column='InternalId', blank=True, null=True, verbose_name='Internal id')  
-    color = models.TextField(db_column='Color', blank=True, null=True, verbose_name='Color')  
-    size = models.TextField(db_column='Size', blank=True, null=True, verbose_name='Size')  
-    weight = models.TextField(db_column='Weight', blank=True, null=True, verbose_name='Weight')  
-    location = models.ManyToManyField(Location, through='DrumLocation', related_name='active_location', verbose_name='Location')
-    material = models.TextField(db_column='Material', blank=True, null=True, verbose_name='Material')  
-    wiretype = models.TextField(db_column='WireType', blank=True, null=True, verbose_name='Wire type')    
-
-    class Meta:
-        managed = True
-        db_table = 'Drum'
-        verbose_name_plural = "Drum"
-
-    def __str__(self):
-        return str(self.internalid)
-
-    @property
-    def active_drum_location(self):
-        d=self.drumlocation_set.order_by('-date').first()
-        return d
-
-    @property
-    def active_location(self):
-        d=self.active_drum_location.location
-        return d
 
 class Dynomometer(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
@@ -403,9 +362,6 @@ class Frame(models.Model):
 
     def __str__(self):
         return str(self.name)
-
-
-
 
 class Lubrication(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
@@ -441,9 +397,6 @@ class Winch(models.Model):
     ship = models.TextField(db_column='Ship', blank=True, null=True, verbose_name='Ship')  
     institution = models.TextField(db_column='Institution', blank=True, null=True, verbose_name='Institution')  
     manufacturer = models.TextField(db_column='Manufacturer', blank=True, null=True, verbose_name='Manufacturer')  
-    drums = models.ManyToManyField(Drum, through='Drumlocation', related_name='winches', verbose_name='Drum')
-    wiretrainschematicjframe = models.TextField(db_column='WireTrainSchematicJFrame', blank=True, null=True, verbose_name='Wire train schematic Jframe')  
-    wiretrainschematicaframe = models.TextField(db_column='WireTrainSchematicAFrame', blank=True, null=True, verbose_name='Wire train schematic Aframe')  
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  
 
     class Meta:
@@ -457,6 +410,11 @@ class Winch(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+    @property
+    def active_wire(self):
+        d=self.wirelocation_set.order_by('date').last()
+        return d
         
 
 class WinchOperator(models.Model):
@@ -515,11 +473,10 @@ class Wire(models.Model):
     winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch', related_name='reverse_wire')  
     manufacturerid = models.TextField(db_column='ManufacturerId', blank=True, null=True, verbose_name='Manufacturer id')  
     nsfid = models.TextField(db_column='NsfId', blank=True, null=True, verbose_name='NSF id')  
-    dateacquired = models.DateTimeField(db_column='DateAcquired', blank=True, null=True, verbose_name='Date Acquired', validators=[MaxValueValidator(limit_value=datetime.today)])  
+    dateacquired = models.DateField(db_column='DateAcquired', blank=True, null=True, verbose_name='Date Acquired', validators=[MaxValueValidator(limit_value=date.today)])  
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')
     ownershipstatus = models.ForeignKey(OwnershipStatus, models.DO_NOTHING, db_column='OwnershipStatusId', blank=True, null=True, verbose_name='Ownership status')  
-    drums = models.ManyToManyField(Drum, through='WireDrum', related_name='loaded_wires', verbose_name='Drum')
     factorofsafety = models.ForeignKey(FactorOfSafety, models.DO_NOTHING, db_column='FactorofSafety', blank=True, null=True, related_name='wirefactorofsafety', verbose_name='Factor of safety')  
     dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag value (m)')  
 
@@ -536,22 +493,8 @@ class Wire(models.Model):
         return str(self.nsfid)
 
     @property
-    def active_wire_drum(self):
-        d=self.wiredrum_set.order_by('date').last()
-        return d
-
-    @property
-    def active_drum(self):
-        if not self.active_wire_drum:
-            return None
-        d=self.active_wire_drum.drum
-        return d
-
-    @property
-    def active_drum_location(self):
-        if not self.active_drum:
-            return None
-        d=self.active_drum.active_location
+    def active_wire_location(self):
+        d=self.wirelocation_set.order_by('date').last()
         return d
 
     @property 
@@ -620,41 +563,32 @@ class Wire(models.Model):
         swl=int(swl)
         return swl
 
-class DrumLocation(models.Model):
+
+class WireLocation(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
     date= models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
     enteredby = models.ForeignKey(User, models.DO_NOTHING, db_column='EnteredBy', blank=True, null=True, verbose_name='Entered by')  
-    drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum')  
+    wireid = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
     winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  
     location = models.ForeignKey(Location, models.DO_NOTHING, db_column='LocationId', blank=True, null=True, verbose_name='Location')  
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  
-    wire = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
 
     class Meta:
         managed = True
-        db_table = 'DrumLocation'
-        verbose_name_plural = "DrumLocation"
+        db_table = 'WireLocation'
+        verbose_name_plural = "WireLocation"
         
     def __str__(self):
         return str(self.location) + '-' + str(self.drumid)
 
     @property
     def active_wire(self):
-        drum=self.drumid
-        wiredrum=drum.reverse_drum.last()
-        if not wiredrum:
+        wire=self.wireid
+        if not wire:
             return None
         else:
-            wire=wiredrum.wire
+            wire=self.wireid
             return wire
-
-    def retain_wire_length(self):
-        if not self.active_wire:
-            return None
-        else:
-            wire=self.active_wire
-            self.wire=wire
-            return
 
     @property
     def format_date(self):
@@ -665,19 +599,4 @@ class DrumLocation(models.Model):
             formatdate=date.strftime("%Y-%m-%d")
             return formatdate
 
-class Wiredrum(models.Model):
-    id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    drum = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum', related_name='reverse_drum')  
-    wire = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
-    date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
-    
-
-    class Meta:
-        managed = True
-        db_table = 'WireDrum'
-        verbose_name_plural = "WireDrum"
-
-    def __str__(self):
-        return str(self.drum)
 

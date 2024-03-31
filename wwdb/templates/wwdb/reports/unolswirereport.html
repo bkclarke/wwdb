@@ -15,11 +15,11 @@
             <input type="date" class="form-control" id="enddate" name="date_max" placeholder="End Date:">
         </div>
         <div class="form-group col-md-4">
-            <label for="category">Winch</label>
-            <select id="winch" class="form-control" name="winch">
+            <label for="category">Wire</label>
+            <select id="wire" class="form-control" name="wire_nsfid">
                 <option selected>Choose...</option>
-                {% for w in winches %}
-                <option value="{{ w.name }}">{{ w.name }}</option>
+                {% for w in wire %}
+                <option value="{{ w.nsfid }}">{{ w.nsfid }}</option>
                 {% endfor %}
             </select>
         </div>
