@@ -1,4 +1,4 @@
-﻿<!--template/home.html-->
+﻿<!--template/base.html-->
 <!DOCTYPE html>
 
 <html>
@@ -26,26 +26,61 @@
     <script type="text/javascript" src={% static 'js/pdfmake.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/buttons.html5.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/buttons.print.min.js' %} crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.fn.dataTable.moment('DD-MMM-YY');
+            $('table.display').DataTable({
+                layout: {
+                    top2Start: 'pageLength',
+                    top2End: 'search',
+                    topStart: 'info',
+                    topEnd: 'paging',
+                    bottomStart: 'pageLength',
+                    bottomEnd: 'search',
+                    bottom2Start: 'info',
+                    bottom2End: 'paging',
+                },
+                order: [[0, 'desc']],
+                buttons: [
+                    'csv', 'print'
+                ],
+                autoWidth: false,
+                scrollX: true
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.fn.dataTable.moment('DD-MMM-YY');
+            $('table.display_nosearch').DataTable({
+                layout: {
+                    top2Start: 'pageLength',
+                    topStart: 'info',
+                    topEnd: 'paging',
+                    bottomStart: 'pageLength',
+                    bottom2Start: 'info',
+                    bottom2End: 'paging'
+                },
+                buttons: [
+                    'csv', 'print'
+                ],
+                autoWidth: false,
+                scrollX: true
+            });
+        });
+    </script>
     {{form.media}}
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-image: url("/static/img/home_background.jpg");
-            background-size: cover;
-            background-position: center;
-            height: 100vh; /* Set the height of the background image */
-            position: relative;
-        }
-    </style>
 </head>
 <body>
-    <nav class="navbar sticky-top navbar-expand-lg navbar-light nav-bar-wire-log sticky-top">
-        <img src="/static/img/wire_log_logo_4.png" alt='Logo' class="logo" />
+    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            WWDB
+        </a>
         {% if user.is_superuser %}
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
@@ -85,16 +120,11 @@
         </div>
         {% endif %}
     </nav>
-    <div class="home-container">
-        {% if last.enddate %}
-        <button type="button" class="btn home-btn-startcast">
-            <a class="button-link" href="{% url 'caststart' %}">Start Cast</a>
-        </button>
-        {% else %}
-        <button type="button" class="btn home-btn-startcast">
-            <a class="button-link" href="{% url 'cast_end' %}">Cast in progess - click here to End Cast</a>
-        </button>
-        {% endif %}
+    <div class="container mt-5 mb-5">
+        {% block content %}
+        {% endblock content %}
+        </br>
+        </br>
     </div>
     <nav class="navbar fixed-bottom navbar-expand-sm navbar-light">
         <div class="menu-right">
@@ -121,3 +151,5 @@
     </nav>
 </body>
 </html>
+
+

@@ -9,10 +9,21 @@
 }
 
 .btn-startcast {
-    color: #dc3545;
-    background-color: #dc3545;
+    width: 100%;
+    background-color: #001933;
     padding: 0.1rem 0.1rem;
+    font-size: 5vw;
     float: right;
+}
+
+.button-link-startcast {
+    color: white;
+    text-decoration: none;
+}
+
+.button-link-startcast:hover {
+    color: white;
+    text-decoration: none;
 }
 
 .btn-configure, .btn-group-sm > .btn {
@@ -34,7 +45,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 96px;
+    font-size: 5vw;
     opacity: 0.6;
 }
 
