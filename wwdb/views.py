@@ -214,12 +214,14 @@ Classes related to winch and wire reporting
 def wirereport(request, pk):
     wire=Wire.objects.filter(id=pk)
     wire_object=wire.last()
+    wire_drum=Wiredrum.objects.filter(wire=pk)
     cutback_retermination=CutbackRetermination.objects.filter(wire=pk)
     break_test=Breaktest.objects.filter(wire=pk)
 
     context ={
         'wire':wire,
         'wire_object':wire_object,
+        'wire_drum':wire_drum,
         'cutback_retermination':cutback_retermination,
         'break_test':break_test,
         }
@@ -239,29 +241,27 @@ def is_valid_queryparam(param):
     return param != '' and param is not None
 
 def unols_form_filter(request):
-    
     qs = Cast.objects.all()
-    wire = request.GET.get('wire_nsfid')
+    winch = request.GET.get('winch')
     date_min = request.GET.get('date_min')
-    date_max = request.GET.get('date_max')
+    date_max = request.GET.get('enddate')
+
+    if is_valid_queryparam(winch) and winch != 'choose...':
+        qs = qs.filter(winch__name=winch)
 
     if is_valid_queryparam(date_min):
         qs=qs.filter(startdate__gte=date_min)
 
     if is_valid_queryparam(date_max):
         qs=qs.filter(enddate__lt=date_max)
-
     return qs
 
 def unolswirereport(request):
-    wire=Wire.objects.all()
     qs = unols_form_filter(request)
-
     context = {
-        'qs':qs,
-        'wire':wire,
-        }
-
+        'qs': qs,
+        'winches':Winch.objects.all()
+    }
     return render(request, "wwdb/reports/unolswirereport.html", context)
 
 def unols_wire_report_file(request):
@@ -290,7 +290,7 @@ def unols_wire_report_file(request):
             tension_by_winch[c.active_winch] = []
         tension_by_winch[c.active_winch].append(c.maxtension)
 
-    # filter none values from key value lists
+    #filter none values from key value lists
     for t in tension_by_winch:
         tension_by_winch[t]=list(filter(lambda item: item is not None,tension_by_winch[t]))
 
@@ -360,6 +360,43 @@ def unols_wire_report_file(request):
 
 
     return response
+
+
+def cruisereportedit(request, pk):
+    obj = get_object_or_404(Cruise, id = pk)
+
+    #cruise object and casts by cruise daterange
+    cruise_object=obj
+    startdate=cruise_object.startdate
+    enddate=cruise_object.enddate
+    casts=Cast.objects.filter(startdate__range=[startdate, enddate])
+    winches=Cast.objects.filter(startdate__range=[startdate, enddate]).values('winch').distinct()
+
+    active_winches=[]
+
+    for w in winches:
+        active_winches.append(w)
+
+    if request.method == 'POST':
+        form = EditCruiseReportForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            cruiseid=Cruise.objects.get(id=pk)
+            return HttpResponseRedirect("/wwdb/reports/%i/cruisereport" % cruiseid.pk)
+    else:
+        form = EditCruiseReportForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/reports/%i/cruisereportedit" % cruiseid.pk)
+    
+    context ={
+        'casts_winch1_count':casts_winch1_count,
+        'casts_winch2_count':casts_winch2_count,
+        'casts_winch3_count':casts_winch3_count,
+        }
+
+    context["form"] = form
+    return render(request, "wwdb/reports/cruisereportedit.html", context)
 
 def cruisereport(request, pk):
     
@@ -542,6 +579,101 @@ def cruise_report_file(request, pk):
 
     return response
 
+def wiredrumlist(request):
+    wire_drum = Wiredrum.objects.order_by('-date')
+
+    context = {
+        'wire_drum': wire_drum, 
+        }
+
+    return render(request, 'wwdb/inventories/wiredrumlist.html', context=context)
+
+def wiredrumedit(request, id):
+    context ={}
+    obj = get_object_or_404(Wiredrum, id = id)
+
+    if request.method == 'POST':
+        form = EditWireDrumForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/inventories/wiredrumlist')
+    else:
+        form = EditWireDrumForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/inventories/wiredrum/%i/edit' % wiredrumid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/inventories/wiredrumedit.html", context)
+
+def wiredrumadd(request):
+    context ={}
+    form = WireDrumAddForm(request.POST or None)
+    if request.method == "POST":
+        form = WireDrumAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/inventories/wiredrumlist')
+    else:
+        form = WireDrumAddForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/inventories/wiredrumadd.html', {'form':form, 'submitted':submitted, 'id':id})
+ 
+    context['form']= form
+
+    return render(request, "wwdb/inventories/wiredrumadd.html", context)
+
+def drumlocationedit(request, id):
+    context ={}
+    obj = get_object_or_404(DrumLocation, id = id)
+
+    if request.method == 'POST':
+        form = EditDrumLocationForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            drumlocation=DrumLocation.objects.get(id=id)
+            return HttpResponseRedirect('/wwdb/inventories/drumlocationlist')
+    else:
+        form = EditDrumLocationForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/inventories/drumlocation/%i/edit' % drumlocationid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/inventories/drumlocationedit.html", context)
+
+def drumlocationadd(request):
+    context ={}
+    form = DrumLocationAddForm(request.POST or None)
+    if request.method == "POST":
+        form = DrumLocationAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            obj=DrumLocation.objects.last()
+            obj.retain_wire_length()
+            obj.save()
+            return HttpResponseRedirect('/wwdb/inventories/drumlocationlist')
+    else:
+        form = DrumLocationAddForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/inventories/drumlocationadd.html', {'form':form, 'submitted':submitted, 'id':id})
+ 
+    context['form']= form
+
+    return render(request, "wwdb/inventories/drumlocationadd.html", context)
+
+def drumlocationlist(request):
+    drum_location = DrumLocation.objects.order_by('-date')
+    
+    context = {
+        'drum_location': drum_location,
+        }
+
+    return render(request, 'wwdb/inventories/drumlocationlist.html', context=context)
+
+
 def castplot(request, pk):
 
     obj = get_object_or_404(Cast, id=pk)
@@ -660,11 +792,13 @@ def wirelist(request):
     wires_in_use = Wire.objects.filter(status=True)
     wires_in_storage = Wire.objects.filter(status=False)
     wires = Wire.objects.all()
+    drums=Drum.objects.all()
     
     context = {
         'wires_in_use': wires_in_use,
         'wires_in_storage': wires_in_storage, 
         'wires' : wires,
+        'drums' : drums,
         }
 
     return render(request, 'wwdb/inventories/wirelist.html', context=context)
@@ -942,6 +1076,61 @@ def cutbackreterminationadd(request):
 
     return render(request, 'wwdb/maintenance/cutbackreterminationadd.html', context)
 
+
+"""
+DRUM
+Classes related to create, update, view Drum model
+"""
+
+def drumlist(request):
+    drum_list = Drum.objects.order_by('internalid')
+
+    context = {
+        'drum_list': drum_list, 
+        }
+
+    return render(request, 'wwdb/inventories/drumlist.html', context=context)
+
+def drumedit(request, id):
+    context ={}
+    obj = get_object_or_404(Drum, id = id)
+
+    if request.method == 'POST':
+        form = EditDrumForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            drum=Drum.objects.get(id=id)
+            return HttpResponseRedirect('/wwdb/inventories/drumlist')
+    else:
+        form = EditDrumForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/inventories/drum/%i/edit" % drumid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/inventories/drumedit.html", context)
+
+class DrumDetail(DetailView):
+    model = Drum
+    template_name="wwdb/inventories/drumdetail.html"
+
+def drumadd(request):
+    context ={}
+    form = AddDrumForm(request.POST or None)
+    if request.method == "POST":
+        form = AddDrumForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/inventories/drumlist")
+    else:
+        form = AddDrumForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/inventories/drumadd.html', {'form':form, 'submitted':submitted, 'id':id})
+
+    context['form']= form
+
+    return render(request, 'wwdb/inventories/drumadd.html', context)
 
 """
 Cruises

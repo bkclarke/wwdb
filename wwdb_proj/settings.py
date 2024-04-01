@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'bootstrap4',
     'bootstrap_datepicker_plus',
+    'crispy_forms',
     'django_filters',
 ]
 
