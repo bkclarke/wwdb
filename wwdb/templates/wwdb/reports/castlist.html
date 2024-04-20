@@ -4,8 +4,8 @@
 {% block content %}
 
 <div class="container p-5">
-    <button type="button" class="btn btn-outline-dark">
-        <a class="nav-link" href="{% url 'castmanualenter' %}">Manually enter cast</a>
+    <button type="button" class="btn btn-outline-wwdb">
+        <a class="btn-link-wwdb" href="{% url 'castmanualenter' %}">Manually enter cast</a>
     </button>
     </br>
     </br>
@@ -16,6 +16,7 @@
             <tr>
                 <th>Start time</th>
                 <th>Winch</th>
+                <th>Wire</th>
                 <th>Deployment type</th>
                 <th>Start operator</th>
                 <th>End operator</th>
@@ -36,6 +37,7 @@
         <tr>
             <td>{{cast.format_startdate}}</td>
             <td>{{cast.winch}}</td>
+            <td>{{cast.wire}}</td>
             <td>{{cast.deploymenttype}}</td>
             <td>{{cast.startoperator}}</td>
             <td>{{cast.endoperator}}</td>
@@ -57,20 +59,15 @@
     <p>There are no flagged casts</p>
     {% endif %}
     <br />
-    {% if cast_uricomplete %}
+    {% if cast_complete %}
     <h2>Completed casts</h2>
     <br />
-    <form method="get">
-        {{castfilter.form}}
-        <button class="btn btn-primary" input type="submit">
-            Search
-        </button>
-    </form>
     <table id="" class="display_nosearch">
         <thead class="thead-light">
             <tr>
                 <th>Start time</th>
                 <th>Winch</th>
+                <th>Wire</th>
                 <th>Deployment type</th>
                 <th>Start operator</th>
                 <th>End operator</th>
@@ -81,17 +78,16 @@
                 <th>time of max tension</th>
                 <th>Wet end tag</th>
                 <th>Dry end tag</th>
-                <th>Motor</th>
-                <th>Plot</th>
                 <th>Edit</th>
                 <th>Enter values manually</th>
                 <th>Delete</th>
             </tr>
         </thead>
-        {% for cast in cast_uricomplete %}
+        {% for cast in cast_complete %}
         <tr>
             <td>{{cast.format_startdate}}</td>
             <td>{{cast.winch}}</td>
+            <td>{{cast.wire}}</td>
             <td>{{cast.deploymenttype}}</td>
             <td>{{cast.startoperator}}</td>
             <td>{{cast.endoperator}}</td>
@@ -102,8 +98,6 @@
             <td>{{cast.format_timemaxtension}}</td>
             <td>{{cast.wetendtag}}</td>
             <td>{{cast.dryendtag}}</td>
-            <td>{{cast.active_motor}}</td>
-            <td><a href="{%url 'castplot' cast.pk %}">View</a></td>
             <td><a href="{%url 'castedit' cast.pk %}">Edit</a></td>
             <td><a href="{%url 'castmanualedit' cast.pk %}">Manual edit</a></td>
             <td><a href="{%url 'castdelete' cast.pk %}">Delete</a></td>
@@ -111,7 +105,7 @@
         {% endfor %}
     </table>
     {% else %}
-    <p>There are no completed casts on URI tension members</p>
+    <p>There are no completed casts</p>
     {% endif %}
     <br />
 </div>
