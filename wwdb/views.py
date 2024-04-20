@@ -63,7 +63,7 @@ def castlist(request):
     cast_flag = Cast.objects.filter((Q(winch=1) | Q(winch=2) | Q(winch=3)), (Q(flagforreview=True) | Q(maxpayout__isnull=True) | Q(payoutmaxtension__isnull=True) | Q(maxtension__isnull=True)))
 
     context = {
-        'cast_complete': cast_uricomplete,
+        'cast_complete': cast_complete,
         'cast_flag': cast_flag,
        }
 
