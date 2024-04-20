@@ -59,14 +59,14 @@ def caststart(request):
     return render(request, "wwdb/casts/caststart.html", context)
 
 def castlist(request):
-    cast_uricomplete = Cast.objects.filter(flagforreview=False, maxpayout__isnull=False, payoutmaxtension__isnull=False, maxtension__isnull=False) 
-    cast_flag = Cast.objects.filter((Q(winch=1) | Q(winch=2) | Q(winch=3)), (Q(flagforreview=True) | Q(maxpayout__isnull=True) | Q(payoutmaxtension__isnull=True) | Q(maxtension__isnull=True)))
+    cast_complete = Cast.objects.filter(maxpayout__isnull=False, maxtension__isnull=False) 
+    cast_flag = Cast.objects.filter((Q(flagforreview=True) | Q(maxpayout__isnull=True) | Q(maxtension__isnull=True)))
     
-    castfilter = CastFilter(request.GET, queryset=cast_uricomplete)
-    cast_uricomplete= castfilter.qs
+    castfilter = CastFilter(request.GET, queryset=cast_complete)
+    cast_complete= castfilter.qs
 
     context = {
-        'cast_uricomplete': cast_uricomplete,
+        'cast_complete': cast_complete,
         'cast_flag': cast_flag,
         'castfilter':castfilter,
        }
