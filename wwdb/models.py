@@ -106,23 +106,27 @@ class Cast(models.Model):
     def __str__(self):
         return str(self.startdate)
 
+
     @property
     def dry_end_tag(self):
-        winch=self.winch
-        wire=winch.reverse_wire.last()
+        wire=self.wire
         dryend=wire.dryendtag
         return dryend
 
     @property
     def wet_end_tag(self):
-        winch=self.winch
-        wire=winch.reverse_wire.last()
-        wetend=wire.active_wetendtag
+        wetend=self.wire.active_wetendtag
         return wetend
 
     @property
     def active_winch(self):
         d=self.winch.name
+        return d
+
+    @property
+    def active_wire(self):
+        if self.winch:
+            d=self.winch.active_wire.wireid
         return d
 		
     @property
@@ -146,6 +150,11 @@ class Cast(models.Model):
         formatdate=date.strftime("%Y-%m-%d, %H:%M:%S")
         return formatdate
 
+    def get_active_wire(self):
+        if self.active_wire:
+            self.wire=self.active_wire
+        return
+
     def endcastcal(self):
         winch=(self.winch.name)
         if winch=='winch1' or winch=='winch2' or winch=='winch3':
@@ -167,6 +176,8 @@ class Cast(models.Model):
                 castmaxpayout=df['Payout'].max()
                 castpayoutmaxtension=castmaxtensiondf['Payout'].max()
                 casttimemaxtension=castmaxtensiondf['DateTime'].max()
+
+                conn.close()
 
                 wetend=int(self.wet_end_tag)
                 dryend=int(self.dry_end_tag)
