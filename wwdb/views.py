@@ -46,8 +46,11 @@ def caststart(request):
         form = StartCastForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            castid=Cast.objects.last()
-            return HttpResponseRedirect("%i/castend" % castid.pk)
+            cast=Cast.objects.last()
+            cast.refresh_from_db()
+            cast.get_active_wire()
+            cast.save()
+            return HttpResponseRedirect("%i/castend" % cast.pk)
     else:
         form = StartCastForm 
         if 'submitted' in request.GET:
