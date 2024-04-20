@@ -1,0 +1,87 @@
+{% extends "wwdb/base.html" %}
+<!doctype html>
+
+<html>
+{% block content %}
+<div>
+    <div class="cast-form-container">
+        <form method="GET" action=".">
+            <label for="startdate">Start date:</label>
+            <input type="date" class="form-control" id="startdate" name="date_min" placeholder="Start Date:">
+            </br>
+            <label for="enddate">End date:</label>
+            <input type="date" class="form-control" id="enddate" name="date_max" placeholder="End Date:">
+            </br>
+            <select id="wire" class="form-control" name="wire_nsfid">
+                <option selected>Wire</option>
+                {% for w in wire %}
+                <option value="{{ w.nsfid }}">{{ w.nsfid }}</option>
+                {% endfor %}
+            </select>
+            </br>
+            <select id="winch" class="form-control" name="winch_id">
+                <option selected>Winch</option>
+                {% for w in winch %}
+                <option value="{{ w.name }}">{{ w.name }}</option>
+                {% endfor %}
+            </select>
+            </br>
+            <select id="deploymenttype" class="form-control" name="deployment_id">
+                <option selected>Deployment</option>
+                {% for d in deployment %}
+                <option value="{{ d.name }}">{{ d.name }}</option>
+                {% endfor %}
+            </select>
+            </br>
+            <div class="">
+                <button type="submit" class="btn btn-outline-dark">Search</button>
+            </div>
+        </form>
+    </div>
+    <div>
+        <hr />
+        <table id="" class="display_nosearch">
+            <thead>
+                <tr>
+                    <th>Start time</th>
+                    <th>Winch</th>
+                    <th>Wire</th>
+                    <th>Deployment type</th>
+                    <th>Start operator</th>
+                    <th>End operator</th>
+                    <th>Max tension</th>
+                    <th>Max payout</th>
+                    <th>Payout at max tension</th>
+                    <th>meter mark at max tension</th>
+                    <th>time of max tension</th>
+                    <th>Wet end tag</th>
+                    <th>Dry end tag</th>
+                </tr>
+            </thead>
+            {% for cast in qs %}
+            <tr>
+                <td>{{cast.format_startdate}}</td>
+                <td>{{cast.winch}}</td>
+                <td>{{cast.wire}}</td>
+                <td>{{cast.deploymenttype}}</td>
+                <td>{{cast.startoperator}}</td>
+                <td>{{cast.endoperator}}</td>
+                <td>{{cast.maxtension}}</td>
+                <td>{{cast.maxpayout}}</td>
+                <td>{{cast.payoutmaxtension}}</td>
+                <td>{{cast.metermaxtension}}</td>
+                <td>{{cast.format_timemaxtension}}</td>
+                <td>{{cast.wetendtag}}</td>
+                <td>{{cast.dryendtag}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <button type="button" class="btn btn-outline-wwdb">
+        <a class="btn-link-wwdb" href="{% url 'unols_report_csv' %}">Unols wire report</a>
+    </button>
+    <button type="button" class="btn btn-outline-wwdb">
+        <a class="btn-link-wwdb" href="{% url 'cast_table_csv' %}">Print table</a>
+    </button>
+    {% endblock content %}
+</html>

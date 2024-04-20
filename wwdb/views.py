@@ -240,35 +240,97 @@ def cruiselist(request):
 def is_valid_queryparam(param):
     return param != '' and param is not None
 
-def unols_form_filter(request):
+def cast_table_filter(request):
+    
     qs = Cast.objects.all()
-    winch = request.GET.get('winch')
+    wire = request.GET.get('wire_nsfid')
+    winch = request.GET.get('winch_id')
+    deployment = request.GET.get('deployment_id')
     date_min = request.GET.get('date_min')
-    date_max = request.GET.get('enddate')
-
-    if is_valid_queryparam(winch) and winch != 'choose...':
-        qs = qs.filter(winch__name=winch)
+    date_max = request.GET.get('date_max')
 
     if is_valid_queryparam(date_min):
         qs=qs.filter(startdate__gte=date_min)
 
     if is_valid_queryparam(date_max):
         qs=qs.filter(enddate__lt=date_max)
+
+    if is_valid_queryparam(wire):
+        if wire!='Wire':
+            wire_obj=Wire.objects.filter(nsfid=wire).last()
+            qs=qs.filter(wire=wire_obj)
+
+    if is_valid_queryparam(winch):
+        if winch!='Winch':
+            winch_obj=Winch.objects.filter(name=winch).last()
+            qs=qs.filter(winch=winch_obj)
+
+    if is_valid_queryparam(deployment):
+        if deployment!='Deployment':
+            deployment_obj=DeploymentType.objects.filter(name=deployment).last()
+            qs=qs.filter(deploymenttype=deployment_obj)
+
     return qs
 
-def unolswirereport(request):
-    qs = unols_form_filter(request)
-    context = {
-        'qs': qs,
-        'winches':Winch.objects.all()
-    }
-    return render(request, "wwdb/reports/unolswirereport.html", context)
+def castreport(request):
+    wire=Wire.objects.all()
+    winch=Winch.objects.all()
+    deployment=DeploymentType.objects.all()
+    qs = cast_table_filter(request)
 
-def unols_wire_report_file(request):
-    cast = unols_form_filter(request)
+    context = {
+        'qs':qs,
+        'wire':wire,
+        'winch':winch,
+        'deployment':deployment,
+        }
+
+    return render(request, "wwdb/reports/castreport.html", context)
+
+def cast_table_csv(request):
+    cast = cast_table_filter(request)
 
     response = HttpResponse(content_type="text/plain")
-    response['Content-Disposition']='attachement; filename=cruise_reports.txt'
+    response['Content-Disposition']='attachement; filename=cast_table.csv'
+    
+    lines = []
+
+    date_min=cast.order_by('startdate').first()
+    date_max=cast.order_by('enddate').last()
+
+    lines.append('\n#Start date:' + str(date_min))
+    lines.append('\n#End Date:' + str(date_max))
+    lines.append('\n#\n#')
+    lines.append('\n#\nstarttime, endtime, winch, wire, deploymenttype, startoperator, endoperator, maxtension, maxpayout, payoutmaxtension, metermaxtension, timemaxtension, wetendtag, dryendtag, notes')
+
+    for c in cast:
+            lines.append('\n' + str(c.startdate) + ',' 
+            +  str(c.enddate) + ',' 
+            +  str(c.active_winch) + ',' 
+            +  str(c.wire) + ','
+            +  str(c.deploymenttype) + ',' 
+            +  str(c.startoperator) + ',' 
+            +  str(c.endoperator) + ',' 
+            +  str(c.maxtension) + ',' 
+            +  str(c.maxpayout) + ',' 
+            +  str(c.payoutmaxtension) + ',' 
+            +  str(c.metermaxtension) + ',' 
+            +  str(c.timemaxtension) + ','
+            +  str(c.wetendtag) + ',' 
+            +  str(c.dryendtag) + ',' 
+            +  str(c.notes) + ',' )
+
+
+    response.writelines(lines)
+
+
+    return response
+
+def unols_report_csv(request):
+    cast = cast_table_filter(request)
+
+    response = HttpResponse(content_type="text/plain")
+    response['Content-Disposition']='attachement; filename=cruise_reports.csv'
 
     #create dictionary of active winch keys and cast object list values
     cast_by_winch = {}
@@ -290,7 +352,7 @@ def unols_wire_report_file(request):
             tension_by_winch[c.active_winch] = []
         tension_by_winch[c.active_winch].append(c.maxtension)
 
-    #filter none values from key value lists
+    # filter none values from key value lists
     for t in tension_by_winch:
         tension_by_winch[t]=list(filter(lambda item: item is not None,tension_by_winch[t]))
 
@@ -321,6 +383,10 @@ def unols_wire_report_file(request):
         else:
             maxpayout_by_winch[t]='None'
 
+    #find startdatetime and enddatetime
+    date_min=cast.order_by('startdate').first()
+    date_max=cast.order_by('enddate').last()
+
     #append data to list, write to file
     lines = []
 
@@ -337,12 +403,13 @@ def unols_wire_report_file(request):
     for t in maxpayout_by_winch:
         lines.append('\n#' + str(t) + ' Max payout: ' + str(maxpayout_by_winch[t]))
 
-    lines.append('\n#\nstarttime, endtime, winch, deploymenttype, startoperator, endoperator, maxtension, maxpayout, payoutmaxtension, metermaxtension, timemaxtension, wetendtag, dryendtag, notes')
+    lines.append('\n#\nstarttime, endtime, winch, wire, deploymenttype, startoperator, endoperator, maxtension, maxpayout, payoutmaxtension, metermaxtension, timemaxtension, wetendtag, dryendtag, notes')
 
     for c in cast:
             lines.append('\n' + str(c.startdate) + ',' 
             +  str(c.enddate) + ',' 
             +  str(c.active_winch) + ',' 
+            +  str(c.wire) + ',' 
             +  str(c.deploymenttype) + ',' 
             +  str(c.startoperator) + ',' 
             +  str(c.endoperator) + ',' 
@@ -1174,3 +1241,63 @@ def cruiseadd(request):
 
     return render(request, 'wwdb/configuration/cruiseadd.html', context)
 
+"""
+LUBRICATION
+Classes related to create, update, view Lubrication model
+"""
+
+def lubricationlist(request):
+    lubrication = Lubrication.objects.order_by('-date')
+
+    context = {
+        'lubrication': lubrication, 
+        }
+
+    return render(request, 'wwdb/maintenance/lubricationlist.html', context=context)
+
+def lubricationadd(request):
+    context ={}
+    form = LubricationAddForm(request.POST or None)
+    if request.method == "POST":
+        form = LubricationAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/maintenance/lubricationlist')
+    else:
+        form = LubricationAddForm
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/maintenance/lubricationadd.html', {'form':form, 'submitted':submitted, 'id':id})
+ 
+    context['form']= form
+
+    return render(request, "wwdb/maintenance/lubricationadd.html", context)
+
+def lubricationdetail(request, id):
+    context ={}
+    context["lubrication"] = Lubrication.objects.get(id = id)     
+    return render(request, "wwdb/maintenance/lubricationdetail.html", context)
+
+def lubricationedit(request, id):
+    context ={}
+    obj = get_object_or_404(Lubrication, id = id)
+
+    if request.method == 'POST':
+        form = LubricationEditForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            lubricationid=Lubrication.objects.get(id=id)
+            return HttpResponseRedirect("/wwdb/maintenance/lubricationlist")
+    else:
+        form = LubricationEditForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/maintenance/lubrication/%i/edit" % lubricationid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/maintenance/lubricationedit.html", context)
+
+class LubricationDelete(DeleteView):
+    model = Lubrication
+    template_name="wwdb/maintenance/lubricationdelete.html"
+    success_url= reverse_lazy('lubricationlist')

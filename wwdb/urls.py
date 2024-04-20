@@ -62,6 +62,12 @@ urlpatterns = [
     path('maintenance/cutbackretermination/<int:pk>/deploymentdetail', CutbackReterminationDetail.as_view(), name='cutbackreterminationdetail'),
     path('maintenance/cutbackretermination/<int:id>/edit/', views.cutbackreterminationedit, name='cutbackreterminationedit'),
     path('maintenance/cutbackreterminationadd/', views.cutbackreterminationadd, name='cutbackreterminationadd'),
+    path('maintenance/lubricationadd/', views.lubricationadd, name='lubricationadd'),
+    path('maintenance/lubrication/<int:id>/edit/', views.lubricationedit, name='lubricationedit'),
+    path('maintenance/lubricationlist', views.lubricationlist, name='lubricationlist'),
+    path('maintenance/lubrication/<int:pk>/lubricationdetail', views.lubricationdetail, name='lubricationdetail'),
+    path('maintenance/lubrication/<int:pk>/delete/', LubricationDelete.as_view(), name='lubricationdelete'),
+
 
     #URLS related to reports
     path('reports/castlist/', views.castlist, name='castlist'),
@@ -73,6 +79,7 @@ urlpatterns = [
     path('reports/<int:pk>/cruisereportedit/', views.cruisereportedit, name='cruisereportedit'),
     path('<int:pk>/cruise_report_file', views.cruise_report_file, name='cruise_report_file'),
     path('reports/<int:pk>/wirereport/', views.wirereport, name='wirereport'),
-    path('reports/unolswirereport/', views.unolswirereport, name='unolswirereport'),
-    path('reports/unols_wire_report_file/', views.unols_wire_report_file, name='unols_wire_report_file'),
+    path('reports/castreport/', views.castreport, name='castreport'),
+    path('reports/unols_report_csv/', views.unols_report_csv, name='unols_report_csv'),
+    path('reports/cast_table_csv/', views.cast_table_csv, name='cast_table_csv'),
 ]

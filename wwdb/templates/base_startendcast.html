@@ -72,17 +72,6 @@
     {{form.media}}
 </head>
 <body>
-    <div class="top-button-container stickey-top">
-        {% if last.enddate %}
-        <button type="button" class="btn btn-startcast">
-            <a class="button-link-startcast" href="{% url 'caststart' %}">Click here to Start Cast</a>
-        </button>
-        {% else %}
-        <button type="button" class="btn btn-startcast ">
-            <a class="button-link-startcast" href="{% url 'cast_end' %}">Cast in progess - click here to End Cast</a>
-        </button>
-        {% endif %}
-    </div>
     <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
         <a href="{% url 'home' %}">
             <img src='/static/img/wire_logo.png' alt="Logo" class="logo" />

@@ -1,0 +1,13 @@
+﻿<!--templates/winchedit.html-->
+{% extends "wwdb/base.html" %}
+{% load bootstrap4 %}
+{{ form.media }}
+
+{% block content %}
+<h1>Edit Breaktest</h1>
+<form action="" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" value="update">
+</form>
+{% endblock content %}

@@ -412,7 +412,9 @@ class Lubrication(models.Model):
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
     lubetype = models.TextField(db_column='LubeType', blank=True, null=True, verbose_name='Lube type')  
     date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
-    lubelength = models.IntegerField(db_column='LubeLength', blank=True, null=True, verbose_name='Length lubed')  
+    lubelength = models.IntegerField(db_column='LubeLength', blank=True, null=True, verbose_name='Length lubed')
+    lubestartmetermark = models.IntegerField(db_column='LubeStartMeterMark', blank=True, null=True, verbose_name='Start meter mark')
+    lubeendmetermark = models.IntegerField(db_column='LubeEndMeterMark', blank=True, null=True, verbose_name='End meter mark')
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
 
     class Meta:

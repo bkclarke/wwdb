@@ -1,0 +1,42 @@
+﻿<!--template/breaktestlist.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+
+{% block content %}
+<h2>Lubrications</h2>
+</br>
+<button type="button" class="btn btn-outline-wwdb">
+    <a class="btn-link-wwdb" href="{% url 'lubricationadd' %}">Add Lubrication</a>
+</button>
+</br>
+</br>
+<table id="" class="display table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Wire</th>
+            <th>Lube type</th>
+            <th>Length lubed</th>
+            <th>Start lube mark</th>
+            <th>End lube mark</th>
+            <th>Notes</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    {% for lubrication in lubrication %}
+    <tr>
+        <td><a href="{% url 'lubricationedit' lubrication.pk %}">{{lubrication.format_date}}</a></td>
+        <td>{{lubrication.wire}}</td>
+        <td>{{lubrication.lubetype}}</td>
+        <td>{{lubrication.lubelength}}</td>
+        <td>{{lubrication.lubestartmetermark}}</td>
+        <td>{{lubrication.lubeendmetermark}}</td>
+        <td>{{lubrication.notes}}</td>
+        <td><a href="{%url 'lubricationdelete' lubrication.pk %}">Delete</a></td>
+    </tr>
+    {% endfor %}
+</table>
+</br>
+</br>
+{% endblock %}

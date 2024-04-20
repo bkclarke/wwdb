@@ -1,0 +1,15 @@
+﻿<!--templates/lubricationdetail.html-->
+{% extends "wwdb/base.html" %}
+
+{% block content %}
+<div class="winch-entry">
+    <h2>{{lubrication.date}}</h2>
+    <p>{{lubrication.wire}}</p>
+    <p>{{lubrication.lubetype}}</p>
+    <p>{{lubrication.lubelength}}</p>
+    <p>{{lubrication.lubestartmetermark}}</p>
+    <p>{{lubrication.lubeendmetermark}}</p>
+    <p>{{lubrication.notes}}</p>
+</div>
+<a href="{% url 'lubricationedit' lubrication.pk %}"> Edit lubrication event</a>
+{% endblock content %}
