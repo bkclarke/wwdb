@@ -367,6 +367,7 @@ class Drum(models.Model):
     size = models.TextField(db_column='Size', blank=True, null=True, verbose_name='Size')  
     weight = models.TextField(db_column='Weight', blank=True, null=True, verbose_name='Weight')  
     location = models.ManyToManyField(Location, through='DrumLocation', related_name='active_location', verbose_name='Location')
+    #wire = models.ManyToManyField(Wire, through='Wiredrum', related_name='active_wire', verbose_name='Wire')
     material = models.TextField(db_column='Material', blank=True, null=True, verbose_name='Material')  
     wiretype = models.TextField(db_column='WireType', blank=True, null=True, verbose_name='Wire type')    
 
@@ -470,6 +471,11 @@ class Winch(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+    @property
+    def active_drum(self):
+        d=self.drumlocation_set.order_by('date').last()
+        return d
         
 
 class WinchOperator(models.Model):

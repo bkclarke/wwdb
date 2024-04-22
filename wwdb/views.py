@@ -98,6 +98,7 @@ def castedit(request, id):
         form = EditCastForm(request.POST, instance = obj)
         if form.is_valid():
             form.save()
+            obj.get_active_wire()
             obj.endcastcal()
             obj.save()
             return HttpResponseRedirect('/wwdb/reports/castlist')
@@ -107,7 +108,7 @@ def castedit(request, id):
             form.save()
             return HttpResponseRedirect('/wwdb/casts/%i/edit' % cast.pk)
 
-    context["form", obj] = form
+    context["form"] = form
     return render(request, "wwdb/casts/castedit.html", context)
 
 def castmanualenter(request):

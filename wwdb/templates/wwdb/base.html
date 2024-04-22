@@ -87,6 +87,7 @@
         <a href="{% url 'home' %}">
             <img src='/static/img/wire_logo.png' alt="Logo" class="logo" />
         </a>
+        {% if user.is_superuser %}
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -129,6 +130,7 @@
                 </li>
             </ul>
         </div>
+        {% endif %}
     </nav>
     <div class="container mt-5 mb-5">
         {% block content %}
@@ -136,6 +138,23 @@
         </br>
         </br>
     </div>
+    <nav class="navbar fixed-bottom navbar-expand-sm navbar-light">
+        <div class="menu-right">
+            <ul class="navbar-nav login-control">
+                <div class="nav-item-bottom">
+                    </li>
+                    {% if user.is_authenticated %}
+                    <span>Hi {{user.username}}!</span>
+                    <span><a href="{% url 'logout' %}">Log out</a></span>
+                    {% else %}
+                    <span><a href="{% url 'login' %}">Log in</a></span>
+                    <span><a href="{% url 'signup' %}">Sign up</a></span>
+                    {% endif %}
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </nav>
 </body>
 </html>
 
