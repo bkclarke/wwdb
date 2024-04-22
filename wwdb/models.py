@@ -109,13 +109,16 @@ class Cast(models.Model):
 
     @property
     def dry_end_tag(self):
-        wire=self.wire
+        winch=self.winch
+        wire=winch.reverse_wire.last()
         dryend=wire.dryendtag
         return dryend
 
     @property
     def wet_end_tag(self):
-        wetend=self.wire.active_wetendtag
+        winch=self.winch
+        wire=winch.reverse_wire.last()
+        wetend=wire.active_wetendtag
         return wetend
 
     @property
@@ -149,6 +152,12 @@ class Cast(models.Model):
         date=self.timemaxtension
         formatdate=date.strftime("%Y-%m-%d, %H:%M:%S")
         return formatdate
+
+    @property
+    def active_wire(self):
+        winch=self.winch
+        wire=winch.reverse_wire.last()
+        return wire
 
     def get_active_wire(self):
         if self.active_wire:
