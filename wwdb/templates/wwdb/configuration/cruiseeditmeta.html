@@ -1,27 +1,15 @@
-<!--templates/castreporteditedit.html-->
+<!--templates/cruiseeditmeta.html-->
 {% extends "wwdb/base.html" %}
 {% load bootstrap4 %}
 {{ form.media }}
 
 {% block content %}
-<h1>Cruise Report Form</h1>
+<h1>Winches and Block Arrangements</h1>
 
 <form action="" method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
-    <p>Start Date</p>
-    <div class="fieldWrapper">
-        {{ form.startdate.errors }}
-        {{ form.startdate }}
-    </div>
-    </br>
-    <p>End date</p>
-    <div class="fieldWrapper">
-        {{ form.enddate.errors }}
-        {{ form.enddate }}
-    </div>
-    </br>
-    {% if casts_winch1_count %}
+    {% if winch1status is True %}
     <p>Winch 1 block arrangement</p>
     <div class="fieldWrapper">
         {{ form.winch1blockarrangement.errors }}
@@ -40,7 +28,7 @@
         {{ form.winch1notes }}
     </div>
     {% endif %}
-    {% if casts_winch2_count %}
+    {% if winch2status is True %}
     </br>
     <p>Winch 2 block arrangement</p>
     <div class="fieldWrapper">
@@ -66,7 +54,7 @@
         {{ form.winch2notes }}
     </div>
     {% endif %}
-    {% if casts_winch3_count %}
+    {% if winch3status is True %}
     </br>
     <p>Winch 3 block arrangement</p>
     <div class="fieldWrapper">

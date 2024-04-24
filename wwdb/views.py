@@ -48,7 +48,6 @@ def caststart(request):
             form.save()
             cast=Cast.objects.last()
             cast.refresh_from_db()
-            cast.get_active_wire()
             cast.save()
             return HttpResponseRedirect("%i/castend" % cast.pk)
     else:
@@ -204,6 +203,7 @@ def wireeditfactorofsafety(request, id):
 
     context["form"] = form
     return render(request, "wwdb/inventories/wireeditfactorofsafety.html", context)
+
 
 
 """
@@ -1208,17 +1208,27 @@ def cruiseedit(request, id):
     context ={}
     obj = get_object_or_404(Cruise, id = id)
 
+    winch1status=obj.winch1status
+    winch2status=obj.winch2status
+    winch3status=obj.winch3status
+
     if request.method == 'POST':
         form = EditCruiseForm(request.POST, instance = obj)
         if form.is_valid():
             form.save()
-            cruiseid=Cruise.objects.get(id=id)
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration")
+
+            return HttpResponseRedirect("/wwdb/configuration/cruise/%i/edit" % obj.pk)
     else:
         form = EditCruiseForm(instance = obj)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("/wwdb/configuration/cruise/%i/edit" % cruiseid.pk)
+            return HttpResponseRedirect("/wwdb/configuration/cruise/%i/edit" % obj.pk)
+
+    context ={
+    'winch1status':winch1status,
+    'winch2status':winch2status,
+    'winch3status':winch3status,
+    }
 
     context["form"] = form
     return render(request, "wwdb/configuration/cruiseedit.html", context)
@@ -1230,7 +1240,8 @@ def cruiseadd(request):
         form = CruiseAddForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration")
+            cruiseid=Cruise.objects.last()
+            return HttpResponseRedirect("/wwdb/configuration/cruise/%i/cruiseeditmeta" % cruiseid.pk)
     else:
         form = CruiseAddForm 
         if 'submitted' in request.GET:
@@ -1240,6 +1251,35 @@ def cruiseadd(request):
     context['form']= form
 
     return render(request, 'wwdb/configuration/cruiseadd.html', context)
+
+def cruiseeditmeta(request, pk):
+    obj = get_object_or_404(Cruise, id = pk)
+
+    winch1status=obj.winch1status
+    winch2status=obj.winch2status
+    winch3status=obj.winch3status
+
+    if request.method == 'POST':
+        form = EditCruiseMetaForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            cruiseid=Cruise.objects.get(id=pk)
+            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration")
+    else:
+        form = EditCruiseMetaForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/configuration/cruise/%i/cruiseeditmeta" % cruiseid.pk)
+    
+    context ={
+        'winch1status':winch1status,
+        'winch2status':winch2status,
+        'winch3status':winch3status,
+        }
+
+    context["form"] = form
+    return render(request, "wwdb/configuration/cruiseeditmeta.html", context)
+
 
 """
 LUBRICATION

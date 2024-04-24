@@ -114,6 +114,7 @@ class EditCastForm(ModelForm):
         widgets = {'startdate': DateTimePickerInput(), 
                    'enddate': DateTimePickerInput()}
 
+
 class EditFactorofSafetyForm(ModelForm):
   
     class Meta:
@@ -173,6 +174,18 @@ class EditCruiseForm(ModelForm):
             'number',
             'startdate',
             'enddate',
+            'winch1status',
+            'winch2status',
+            'winch3status',
+            'winch1blockarrangement',
+            'winch2blockarrangement',
+            'winch3blockarrangement',
+            'winch3blockarrangement',
+            'winch1termination',
+            'winch2termination',
+            'winch3termination',
+            'winch2spindirection',
+            'scienceprovidedwinch',
         ]
  
         widgets = {'startdate': DatePickerInput(
@@ -183,6 +196,27 @@ class EditCruiseForm(ModelForm):
                     options={
                     "format": "YYYY-MM-DD"}
                     )}
+
+
+class EditCruiseMetaForm(ModelForm):
+  
+    class Meta:
+        model = Cruise
+  
+        fields = [
+            'winch1status',
+            'winch2status',
+            'winch3status',
+            'winch1blockarrangement',
+            'winch2blockarrangement',
+            'winch3blockarrangement',
+            'winch3blockarrangement',
+            'winch1termination',
+            'winch2termination',
+            'winch3termination',
+            'winch2spindirection',
+            'scienceprovidedwinch',
+        ]
 
 class EditCruiseReportForm(ModelForm):
   
@@ -351,6 +385,9 @@ class EditDrumLocationForm(ModelForm):
         ]
 
 class CruiseAddForm(ModelForm):
+    winch1status = forms.BooleanField(required=False)
+    winch2status = forms.BooleanField(required=False)
+    winch3status = forms.BooleanField(required=False)
 
     class Meta:
         model = Cruise
@@ -358,6 +395,9 @@ class CruiseAddForm(ModelForm):
             'number',
             'startdate',
             'enddate',
+            'winch1status',
+            'winch2status',
+            'winch3status',
         ]
 
         widgets = {'startdate': DatePickerInput(

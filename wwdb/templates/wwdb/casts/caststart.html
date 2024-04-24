@@ -12,4 +12,12 @@
         <input type="submit" value="save">
     </form>
 </div>
+<script>
+    $(document).ready(function () {
+        $("form").on("submit", function () {
+            $("input[type=submit]").attr("disabled", true);
+            return true;
+        });
+    });
+</script>
 {% endblock content %}

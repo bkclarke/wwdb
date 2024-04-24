@@ -23,6 +23,7 @@ urlpatterns = [
     path('configuration/cruiseadd/', views.cruiseadd, name='cruiseadd'),
     path('configuration/cruise/<int:id>/edit/', views.cruiseedit, name='cruiseedit'),
     path('configuration/cruiseconfiguration/', views.cruiseconfigurehome, name='cruiseconfigurehome'),
+    path('configuration/cruise/<int:pk>/cruiseeditmeta/', views.cruiseeditmeta, name='cruiseeditmeta'),
     path('configuration/operatorlist/', OperatorList.as_view(), name='operatorlist'),
     path('configuration/operator/<int:pk>/operatordetail', OperatorDetail.as_view(), name='operatordetail'),
     path('configuration/operator/<int:pk>/edit/', OperatorEdit.as_view(), name='operatoredit'),
