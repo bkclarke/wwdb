@@ -135,8 +135,8 @@
     </br>
     </br>
     {% for c in cruise %}
-    <button type="button" class="btn btn-outline-dark">
-        <a class="nav-link" href="{% url 'cruise_report_file' pk=c.id %}">download cruise report</a>
+    <button type="button" class="btn btn-outline-wwdb">
+        <a class="btn-link-wwdb" href="{% url 'cruise_report_file' pk=c.id %}">download cruise report</a>
     </button>
     {% endfor %}
     {% endblock content %}

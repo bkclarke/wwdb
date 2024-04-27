@@ -552,8 +552,8 @@ def cruise_report_file(request, pk):
     cast = Cast.objects.filter(startdate__range=[startdate, enddate])
     cruisenumber=cruise_object.number
 
-    response = HttpResponse(content_type="text/plain")
-    response['Content-Disposition']='attachement; filename=cruise_report_' + str(cruisenumber) + '.txt'
+    response = HttpResponse(content_type="csv")
+    response['Content-Disposition']='attachement; filename=cruise_report_' + str(cruisenumber) + '.csv'
 
     #cruise object and casts by cruise daterange
     cruise=Cruise.objects.filter(id=pk)
