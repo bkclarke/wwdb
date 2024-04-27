@@ -525,6 +525,7 @@ def cruisereport(request, pk):
         else:
             maxpayout_by_winch[t]='None'
 
+    #list of used winches
     active_winches=[]
     for c in cast:
         if c.active_winch not in active_winches:
@@ -612,6 +613,12 @@ def cruise_report_file(request, pk):
         else:
             maxpayout_by_winch[t]='None'
 
+    #list of used winches
+    active_winches=[]
+    for c in cast:
+        if c.active_winch not in active_winches:
+            active_winches.append(c.active_winch)
+
     #append data to list, write to file
     lines = []
     lines.append('#' + cruise_object.number)
@@ -628,6 +635,27 @@ def cruise_report_file(request, pk):
 
     for t in maxpayout_by_winch:
         lines.append('\n#' + str(t) + ' Max payout: ' + str(maxpayout_by_winch[t]))
+
+    for winch in active_winches:
+        if winch == 'winch1':
+            lines.append('\n#\n#\n#Winch 1')
+            lines.append('\n#block arrangement: ' + str(cruise_object.winch1blockarrangement))
+            lines.append('\n#termination: ' + str(cruise_object.winch1termination))
+            lines.append('\n#notes: ' + str(cruise_object.winch1notes))
+        elif winch == 'winch2':
+            lines.append('\n#\n#\n#Winch 2')
+            lines.append('\n#block arrangement: ' + str(cruise_object.winch2blockarrangement))
+            lines.append('\n#termination: ' + str(cruise_object.winch2termination))
+            lines.append('\n#spin direction: ' + str(cruise_object.spindirection))
+            lines.append('\n#notes: ' + str(cruise_object.winch2notes))
+        elif winch == 'winch3':
+            lines.append('\n#\n#\n#Winch 3')
+            lines.append('\n#block arrangement: ' + str(cruise_object.winch3blockarrangement))
+            lines.append('\n#termination: ' + str(cruise_object.winch3termination))
+            lines.append('\n#notes: ' + str(cruise_object.winch3notes))
+        else:
+            lines.append('\n#\n#\n#Science provided winch notes')
+            lines.append('\n#' + str(cruise_object.scienceprovidedwinch))
 
     lines.append('\n#\nstarttime, endtime, winch, deploymenttype, startoperator, endoperator, maxtension, maxpayout, payoutmaxtension, metermaxtension, timemaxtension, wetendtag, dryendtag, notes')
 
