@@ -75,9 +75,9 @@
     {% endfor %}
     </br>
     </br>
-    <h5>Winch 2 spin direction</h5>
     {% for winch in active_winches %}
     {% if winch == 'winch2' %}
+    <h5>Winch 2 spin direction</h5>
     {% for c in cruise %}
     <p>{{winch}}:{{c.winch2spindirection}}</p>
     {% endfor %}
@@ -86,10 +86,10 @@
     {% endfor %}
     </br>
     </br>
-    <h5>Science provided winch notes</h5>
     {% for c in cruise %}
     {% if c.scienceprovidedwinch %}
-    <p>{{winch}}:{{c.scienceprovidedwinch}}</p>
+    <h5>Science provided winch notes</h5>
+    <p>{{c.scienceprovidedwinch}}</p>
     {% else %}
     {% endif %}
     {% endfor %}
