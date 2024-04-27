@@ -41,15 +41,15 @@
     {% for winch in active_winches %}
     {% if winch == 'winch1' %}
     {% for c in cruise %}
-    <p>{{winch}}:{{c.winch1blockarrangement}}</p>
+    <p>{{winch}}: {{c.winch1blockarrangement}}</p>
     {% endfor %}
     {% elif winch == 'winch2' %}
     {% for c in cruise %}
-    <p>{{winch}}:{{c.winch2blockarrangement}}</p>
+    <p>{{winch}}: {{c.winch2blockarrangement}}</p>
     {% endfor %}
     {% elif winch == 'winch3' %}
     {% for c in cruise %}
-    <p>{{winch}}:{{c.winch3blockarrangement}}</p>
+    <p>{{winch}}: {{c.winch3blockarrangement}}</p>
     {% endfor %}
     {% else %}
     {% endif %}
@@ -60,34 +60,34 @@
     {% for winch in active_winches %}
     {% if winch == 'winch1' %}
     {% for c in cruise %}
-    <p>{{winch}}:{{c.winch1termination}}</p>
+    <p>{{winch}}: {{c.winch1termination}}</p>
     {% endfor %}
     {% elif winch == 'winch2' %}
     {% for c in cruise %}
-    <p>{{winch}}:{{c.winch2termination}}</p>
+    <p>{{winch}}: {{c.winch2termination}}</p>
     {% endfor %}
     {% elif winch == 'winch3' %}
     {% for c in cruise %}
-    <p>{{winch}}:{{c.winch3termination}}</p>
+    <p>{{winch}}: {{c.winch3termination}}</p>
     {% endfor %}
     {% else %}
     {% endif %}
     {% endfor %}
-    </br>
-    </br>
     {% for winch in active_winches %}
     {% if winch == 'winch2' %}
+    </br>
+    </br>
     <h5>Winch 2 spin direction</h5>
     {% for c in cruise %}
-    <p>{{winch}}:{{c.winch2spindirection}}</p>
+    <p>{{winch}}: {{c.winch2spindirection}}</p>
     {% endfor %}
     {% else %}
     {% endif %}
     {% endfor %}
-    </br>
-    </br>
     {% for c in cruise %}
     {% if c.scienceprovidedwinch %}
+    </br>
+    </br>
     <h5>Science provided winch notes</h5>
     <p>{{c.scienceprovidedwinch}}</p>
     {% else %}
