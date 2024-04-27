@@ -472,7 +472,7 @@ def cruisereport(request, pk):
     cruise_object=cruise.last()
     startdate=cruise_object.startdate
     enddate=cruise_object.enddate
-    cast = Cast.objects.filter(startdate__range=[startdate, enddate])
+    cast=Cast.objects.filter(startdate__range=[startdate, enddate])
 
     #create dictionary of active winch keys and cast object list values
     cast_by_winch = {}
@@ -525,12 +525,18 @@ def cruisereport(request, pk):
         else:
             maxpayout_by_winch[t]='None'
 
+    active_winches=[]
+    for c in cast:
+        if c.active_winch not in active_winches:
+            active_winches.append(c.active_winch)
+
     context = {
         "cruise": cruise,
         "cast": cast,
         "cast_by_winch_count": cast_by_winch_count,
         "maxtension_by_winch":maxtension_by_winch,
         "maxpayout_by_winch":maxpayout_by_winch,
+        "active_winches":active_winches,
     }
 
     return render(request, "wwdb/reports/cruisereport.html", context)

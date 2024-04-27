@@ -16,24 +16,81 @@
     <h2>Winch Report</h2>
     </br>
 
+    <h5>Cast count</h5>
     {% for winch, count in cast_by_winch_count.items %}
-    <h5>{{winch}}</h5>
     {% if count %}
-    <p>cast count: {{count}}</p>
+    <p>{{winch}} cast count: {{count}}</p>
     {% endif %}
     {% endfor %}
     </br>
+    <h5>Max tension</h5>
     {% for winch, tension in maxtension_by_winch.items %}
-    <h5>{{winch}}</h5>
     {% if tension %}
-    <p>max tension: {{tension}}</p>
+    <p>{{winch}} max tension: {{tension}}</p>
     {% endif %}
     {% endfor %}
     </br>
+    <h5>Max payout</h5>
     {% for winch, payout in maxpayout_by_winch.items %}
-    <h5>{{winch}}</h5>
     {% if payout %}
-    <p>max payout: {{payout}}</p>
+    <p>{{winch}} max payout: {{payout}}</p>
+    {% endif %}
+    {% endfor %}
+    </br>
+    <h5>Block arrangements</h5>
+    {% for winch in active_winches %}
+    {% if winch == 'winch1' %}
+    {% for c in cruise %}
+    <p>{{winch}}:{{c.winch1blockarrangement}}</p>
+    {% endfor %}
+    {% elif winch == 'winch2' %}
+    {% for c in cruise %}
+    <p>{{winch}}:{{c.winch2blockarrangement}}</p>
+    {% endfor %}
+    {% elif winch == 'winch3' %}
+    {% for c in cruise %}
+    <p>{{winch}}:{{c.winch3blockarrangement}}</p>
+    {% endfor %}
+    {% else %}
+    {% endif %}
+    {% endfor %}
+    </br>
+    </br>
+    <h5>Terminations</h5>
+    {% for winch in active_winches %}
+    {% if winch == 'winch1' %}
+    {% for c in cruise %}
+    <p>{{winch}}:{{c.winch1termination}}</p>
+    {% endfor %}
+    {% elif winch == 'winch2' %}
+    {% for c in cruise %}
+    <p>{{winch}}:{{c.winch2termination}}</p>
+    {% endfor %}
+    {% elif winch == 'winch3' %}
+    {% for c in cruise %}
+    <p>{{winch}}:{{c.winch3termination}}</p>
+    {% endfor %}
+    {% else %}
+    {% endif %}
+    {% endfor %}
+    </br>
+    </br>
+    <h5>Winch 2 spin direction</h5>
+    {% for winch in active_winches %}
+    {% if winch == 'winch2' %}
+    {% for c in cruise %}
+    <p>{{winch}}:{{c.winch2spindirection}}</p>
+    {% endfor %}
+    {% else %}
+    {% endif %}
+    {% endfor %}
+    </br>
+    </br>
+    <h5>Science provided winch notes</h5>
+    {% for c in cruise %}
+    {% if c.scienceprovidedwinch %}
+    <p>{{winch}}:{{c.scienceprovidedwinch}}</p>
+    {% else %}
     {% endif %}
     {% endfor %}
     </br>
