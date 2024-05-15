@@ -184,6 +184,9 @@ class EditCruiseForm(ModelForm):
             'winch1termination',
             'winch2termination',
             'winch3termination',
+            'winch1notes',
+            'winch2notes',
+            'winch3notes',
             'winch2spindirection',
             'scienceprovidedwinch',
         ]
