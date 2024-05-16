@@ -8,7 +8,144 @@
 <p><i>Cruise number</i> must be the following format:<br />ENXXX_CHsci<br />ex: EN695_Sosik</p>
 <form action="" method="post">
     {% csrf_token %}
-    {% bootstrap_form form %}
+    {{ form.non_field_errors }}
+    <p>Number</p>
+    <div class="fieldWrapper">
+        {{ form.number.errors }}
+        {{ form.number }}
+    </div>
+    </br>
+    <p>Start Date</p>
+    <div class="fieldWrapper">
+        {{ form.startdate.errors }}
+        {{ form.startdate }}
+    </div>
+    </br>
+    <p>End date</p>
+    <div class="fieldWrapper">
+        {{ form.enddate.errors }}
+        {{ form.enddate }}
+    </div>
+    </br>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="winch1check">
+        <label class="form-check-label" for="defaultCheck1">
+            Winch 1
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="winch2check">
+        <label class="form-check-label" for="defaultCheck2">
+            Winch 2
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="winch3check">
+        <label class="form-check-label" for="defaultCheck2">
+            Winch 3
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="scienceprovidedwinchcheck">
+        <label class="form-check-label" for="defaultCheck2">
+            Science provided winch
+        </label>
+    </div>
+    </br>
+    </br>
+    <div id="winch1fields" style="display:none;">
+        <p>Winch 1 block arrangement</p>
+        <div class="fieldWrapper">
+            {{ form.winch1blockarrangement.errors }}
+            {{ form.winch1blockarrangement }}
+        </div>
+        </br>
+        <p>Winch 1 termination</p>
+        <div class="fieldWrapper">
+            {{ form.winch1termination.errors }}
+            {{ form.winch1termination }}
+        </div>
+        </br>
+        <p>Winch 1 notes</p>
+        <div class="fieldWrapper">
+            {{ form.winch1notes.errors }}
+            {{ form.winch1notes }}
+        </div>
+    </div>
+    </br>
+    <div id="winch2fields" style="display:none;">
+        <p>Winch 2 block arrangement</p>
+        <div class="fieldWrapper">
+            {{ form.winch2blockarrangement.errors }}
+            {{ form.winch2blockarrangement }}
+        </div>
+        </br>
+        <p>Winch 2 termination</p>
+        <div class="fieldWrapper">
+            {{ form.winch2termination.errors }}
+            {{ form.winch2termination }}
+        </div>
+        </br>
+        <p>Winch 2 spin direction</p>
+        <div class="fieldWrapper">
+            {{ form.winch2spindirection.errors }}
+            {{ form.winch2spindirection }}
+        </div>
+        </br>
+        <p>Winch 2 notes</p>
+        <div class="fieldWrapper">
+            {{ form.winch2notes.errors }}
+            {{ form.winch2notes }}
+        </div>
+    </div>
+    <div id="winch3fields" style="display:none;">
+        </br>
+        <p>Winch 3 block arrangement</p>
+        <div class="fieldWrapper">
+            {{ form.winch3blockarrangement.errors }}
+            {{ form.winch3blockarrangement }}
+        </div>
+        </br>
+        <p>Winch 3 temrination</p>
+        <div class="fieldWrapper">
+            {{ form.winch3termination.errors }}
+            {{ form.winch3termination }}
+        </div>
+        </br>
+        <p>Winch 3 notes</p>
+        <div class="fieldWrapper">
+            {{ form.winch3notes.errors }}
+            {{ form.winch3notes }}
+        </div>
+    </div>
+    </br>
+    </br>
+    <div id="scienceprovidedwinchfields" style="display:none;">
+        <p>Science provided winch notes</p>
+        <div class="fieldWrapper">
+            {{ form.scienceprovidedwinch.errors }}
+            {{ form.scienceprovidedwinch }}
+        </div>
+    </div>
+    </div>
+    </br>
+    </br>
     <input type="submit" value="add">
 </form>
+<script>
+    $(document).ready(function () {
+        $("#winch1check").click(function () {
+            $("#winch1fields").toggle();
+        });
+        $("#winch2check").click(function () {
+            $("#winch2fields").toggle();
+        });
+        $("#winch3check").click(function () {
+            $("#winch3fields").toggle();
+        });
+        $("#scienceprovidedwinchcheck").click(function () {
+            $("#scienceprovidedwinchfields").toggle();
+        });
+    });
+</script>
 {% endblock content %}

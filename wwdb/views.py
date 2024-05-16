@@ -1242,42 +1242,32 @@ def cruiseedit(request, id):
     context ={}
     obj = get_object_or_404(Cruise, id = id)
 
-    winch1status=obj.winch1status
-    winch2status=obj.winch2status
-    winch3status=obj.winch3status
-
     if request.method == 'POST':
         form = EditCruiseForm(request.POST, instance = obj)
         if form.is_valid():
             form.save()
-
-            return HttpResponseRedirect("/wwdb/configuration/cruise/%i/edit" % obj.pk)
+            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration/#cruise")
     else:
         form = EditCruiseForm(instance = obj)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect("/wwdb/configuration/cruise/%i/edit" % obj.pk)
 
-    context ={
-    'winch1status':winch1status,
-    'winch2status':winch2status,
-    'winch3status':winch3status,
-    }
-
+    context ={}
     context["form"] = form
     return render(request, "wwdb/configuration/cruiseedit.html", context)
 
 def cruiseadd(request):
     context ={}
-    form = CruiseAddForm(request.POST or None)
+    form = EditCruiseForm(request.POST or None)
     if request.method == "POST":
-        form = CruiseAddForm(request.POST, request.FILES)
+        form = EditCruiseForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             cruiseid=Cruise.objects.last()
-            return HttpResponseRedirect("/wwdb/configuration/cruise/%i/cruiseeditmeta" % cruiseid.pk)
+            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration/#cruise")
     else:
-        form = CruiseAddForm 
+        form = EditCruiseForm 
         if 'submitted' in request.GET:
             submitted = True
             return render(request, 'wwdb/configuration/cruiseadd.html', {'form':form, 'submitted':submitted, 'id':id})
