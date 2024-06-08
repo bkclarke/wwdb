@@ -553,7 +553,7 @@ def cruise_report_file(request, pk):
     cruisenumber=cruise_object.number
 
     response = HttpResponse(content_type="csv")
-    response['Content-Disposition']='attachement; filename=cruise_report_' + str(cruisenumber) + '.csv'
+    response['Content-Disposition']='attachement; filename=wire_report_' + str(cruisenumber) + '.csv'
 
     #cruise object and casts by cruise daterange
     cruise=Cruise.objects.filter(id=pk)
