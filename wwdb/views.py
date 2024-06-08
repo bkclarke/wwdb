@@ -646,7 +646,7 @@ def cruise_report_file(request, pk):
             lines.append('\n#\n#\n#Winch 2')
             lines.append('\n#block arrangement: ' + str(cruise_object.winch2blockarrangement))
             lines.append('\n#termination: ' + str(cruise_object.winch2termination))
-            lines.append('\n#spin direction: ' + str(cruise_object.spindirection))
+            lines.append('\n#spin direction: ' + str(cruise_object.winch2spindirection))
             lines.append('\n#notes: ' + str(cruise_object.winch2notes))
         elif winch == 'winch3':
             lines.append('\n#\n#\n#Winch 3')
