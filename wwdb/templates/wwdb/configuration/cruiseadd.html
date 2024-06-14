@@ -6,6 +6,7 @@
 {% block content %}
 <h1>Add a Cruise</h1>
 <p><i>Cruise number</i> must be the following format:<br />ENXXX_CHsci<br />ex: EN695_Sosik</p>
+<div>
 <form action="" method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
@@ -132,6 +133,7 @@
     </br>
     <input type="submit" value="add">
 </form>
+</div>
 <script>
     $(document).ready(function () {
         $("#winch1check").click(function () {
