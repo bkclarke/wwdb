@@ -28,24 +28,18 @@
     <script type="text/javascript" src={% static 'js/buttons.print.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $.fn.dataTable.moment('DD-MMM-YY');
             $('table.display').DataTable({
-                layout: {
-                    top2Start: 'pageLength',
-                    top2End: 'search',
-                    topStart: 'info',
-                    topEnd: 'paging',
-                    bottomStart: 'pageLength',
-                    bottomEnd: 'search',
-                    bottom2Start: 'info',
-                    bottom2End: 'paging',
-                },
-                order: [[0, 'desc']],
-                buttons: [
-                    'csv', 'print'
-                ],
                 autoWidth: false,
                 scrollX: true
+            });
+
+            // Listen for Bootstrap tab activation event
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                // Get the DataTable instance of the active tab
+                var activeTable = $($(e.target).attr('href')).find('table').DataTable();
+
+                // Adjust columns when the tab becomes active
+                activeTable.columns.adjust().draw();
             });
         });
     </script>
