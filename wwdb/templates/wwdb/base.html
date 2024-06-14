@@ -75,7 +75,6 @@
                 .columns.adjust();
         });
     </script>
-
     {{form.media}}
 </head>
 <body>
@@ -151,11 +150,22 @@
                 <div class="nav-item-bottom">
                     </li>
                     {% if user.is_authenticated %}
-                    <span>Hi {{user.username}}!</span>
-                    <span><a href="{% url 'logout' %}">Log out</a></span>
+                    <span>
+                        <button type="button" class="btn btn-outline-wwdb">
+                            <a class="btn-link-wwdb" href="{% url 'logout' %}">Log out</a>
+                        </button>
+                    </span>
                     {% else %}
-                    <span><a href="{% url 'login' %}">Log in</a></span>
-                    <span><a href="{% url 'signup' %}">Sign up</a></span>
+                    <span>
+                        <button type="button" class="btn btn-outline-wwdb">
+                            <a class="btn-link-wwdb" href="{% url 'login' %}">Log in</a>
+                        </button>
+                    </span>
+                    <span>
+                        <button type="button" class="btn btn-outline-wwdb">
+                            <a class="btn-link-wwdb" href="{% url 'signup' %}">Sign up</a>
+                        </button>
+                    </span>
                     {% endif %}
                     </li>
                 </div>
