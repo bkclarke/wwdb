@@ -132,6 +132,7 @@
             <ul class="navbar-nav login-control">
                 <div class="nav-item-bottom">
                     </li>
+                    {% if user.is_authenticated %}
                     <span>
                         <button type="button" class="btn btn-outline-wwdb">
                             <a class="btn-link-wwdb" href="{% url 'logout' %}">Log out</a>
