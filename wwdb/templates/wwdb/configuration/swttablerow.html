@@ -1,0 +1,14 @@
+﻿<!--wwdb/templates/configuration/cruisetablerow.html-->
+{% load static %}
+<tr>
+    <td>{{ wire.winch }}</td>
+    <td>{{ wire.factorofsafety }}</td>
+    <td>
+        <button class='btn'
+                hx-get="{% url 'swttableedit' wire.pk %}"
+                hx-target="closest tr"
+                hx-swap="outerHTML">
+        Edit
+        </button>
+    </td>
+</tr>

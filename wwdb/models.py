@@ -7,6 +7,7 @@ from django.db.models import Avg, Count, Min, Sum, Max
 from django.core.validators import MaxValueValidator
 from datetime import datetime, date
 from pandas.core.base import NoNewAttributesMixin
+from django.utils.dateparse import parse_datetime
 import pyodbc 
 import pandas as pd
 
@@ -22,7 +23,7 @@ class Breaktest(models.Model):
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire', related_name='wire_break_test')  
     date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
     testedbreakingload = models.IntegerField(db_column='TestedBreakingLoad', blank=True, null=True, verbose_name='Tested breaking load')  
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes', validators=[validate_commas])  
 
     class Meta:
         managed = True
@@ -83,7 +84,7 @@ class Cast(models.Model):
     deploymenttype = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True, verbose_name='Deployment type')  
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
     winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', null=True, verbose_name='Winch')  
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes', validators=[validate_commas])  
     maxtension = models.IntegerField(db_column='MaxTension', blank=True, null=True, verbose_name='Max tension')  
     maxpayout = models.IntegerField(db_column='MaxPayout', blank=True, null=True, verbose_name='Max payout')  
     payoutmaxtension = models.IntegerField(db_column='PayoutMaxTension', blank=True, null=True, verbose_name='Payout at max tension')  
@@ -226,9 +227,9 @@ class Cruise(models.Model):
     number = models.TextField(db_column='Number', blank=True, null=True, verbose_name='Cruise number', validators=[validate_commas])   
     startdate = models.DateField(db_column='StartDate', blank=True, null=True, verbose_name='Start date')   
     enddate = models.DateField(db_column='EndDate', blank=True, null=True, verbose_name='End date')   
-    winch1status = models.BooleanField(db_column='Winch1Status', blank=True, null=True, verbose_name='Winch 1 status')   
-    winch2status = models.BooleanField(db_column='Winch2Status', blank=True, null=True, verbose_name='Winch 2 status')   
-    winch3status = models.BooleanField(db_column='Winch3Status', blank=True, null=True, verbose_name='Winch 3 status')   
+    winch1status = models.BooleanField(db_column='Winch1Status', blank=True, null=True, verbose_name='Winch 1 status', validators=[validate_commas])   
+    winch2status = models.BooleanField(db_column='Winch2Status', blank=True, null=True, verbose_name='Winch 2 status', validators=[validate_commas])   
+    winch3status = models.BooleanField(db_column='Winch3Status', blank=True, null=True, verbose_name='Winch 3 status', validators=[validate_commas])   
     winch1blockarrangement = models.TextField(db_column='Winch1BlockArrangement', blank=True, null=True, verbose_name='Winch 1 Block Arrangement', validators=[validate_commas])   
     winch2blockarrangement = models.TextField(db_column='Winch2BlockArrangement', blank=True, null=True, verbose_name='Winch 2 Block Arrangement', validators=[validate_commas])   
     winch3blockarrangement = models.TextField(db_column='Winch3BlockArrangement', blank=True, null=True, verbose_name='Winch 3 Block Arrangement', validators=[validate_commas])   
@@ -329,9 +330,9 @@ class CutbackRetermination(models.Model):
 class DeploymentType(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  
-    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')
-    equipment = models.TextField(db_column='Equipment', blank=True, null=True, verbose_name='Equipment')  
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
+    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name', validators=[validate_commas])
+    equipment = models.TextField(db_column='Equipment', blank=True, null=True, verbose_name='Equipment', validators=[validate_commas])  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes', validators=[validate_commas])  
 
     class Meta:
         managed = True
@@ -347,7 +348,7 @@ class DeploymentType(models.Model):
 
 class Location(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    location = models.TextField(db_column='Location', blank=True, null=True, verbose_name='Location')  
+    location = models.TextField(db_column='Location', blank=True, null=True, verbose_name='Location', validators=[validate_commas])  
 
     class Meta:
         managed = True
@@ -373,14 +374,14 @@ class Motor(models.Model):
 
 class Drum(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    internalid = models.TextField(db_column='InternalId', blank=True, null=True, verbose_name='Internal id')  
-    color = models.TextField(db_column='Color', blank=True, null=True, verbose_name='Color')  
-    size = models.TextField(db_column='Size', blank=True, null=True, verbose_name='Size')  
-    weight = models.TextField(db_column='Weight', blank=True, null=True, verbose_name='Weight')  
+    internalid = models.TextField(db_column='InternalId', blank=True, null=True, verbose_name='Internal id', validators=[validate_commas])  
+    color = models.TextField(db_column='Color', blank=True, null=True, verbose_name='Color', validators=[validate_commas])  
+    size = models.TextField(db_column='Size', blank=True, null=True, verbose_name='Size', validators=[validate_commas])  
+    weight = models.TextField(db_column='Weight', blank=True, null=True, verbose_name='Weight', validators=[validate_commas])  
     location = models.ManyToManyField(Location, through='DrumLocation', related_name='active_location', verbose_name='Location')
     #wire = models.ManyToManyField(Wire, through='Wiredrum', related_name='active_wire', verbose_name='Wire')
-    material = models.TextField(db_column='Material', blank=True, null=True, verbose_name='Material')  
-    wiretype = models.TextField(db_column='WireType', blank=True, null=True, verbose_name='Wire type')    
+    material = models.TextField(db_column='Material', blank=True, null=True, verbose_name='Material', validators=[validate_commas])  
+    wiretype = models.TextField(db_column='WireType', blank=True, null=True, verbose_name='Wire type', validators=[validate_commas])    
 
     class Meta:
         managed = True
@@ -402,9 +403,9 @@ class Drum(models.Model):
 
 class Dynomometer(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')  
-    dynomometertype = models.TextField(db_column='DynomometerType', blank=True, null=True, verbose_name='Dynomometer type')  
-    comments = models.TextField(db_column='Comments', blank=True, null=True, verbose_name='notes')  
+    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name', validators=[validate_commas])  
+    dynomometertype = models.TextField(db_column='DynomometerType', blank=True, null=True, verbose_name='Dynomometer type', validators=[validate_commas])  
+    comments = models.TextField(db_column='Comments', blank=True, null=True, verbose_name='notes', validators=[validate_commas])  
 
     class Meta:
         managed = True
@@ -416,8 +417,8 @@ class Dynomometer(models.Model):
 
 class Frame(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')  
-    frametype = models.TextField(db_column='FrameType', blank=True, null=True, verbose_name='Frame type')  
+    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name', validators=[validate_commas])  
+    frametype = models.TextField(db_column='FrameType', blank=True, null=True, verbose_name='Frame type', validators=[validate_commas])  
 
     class Meta:
         managed = True
@@ -433,12 +434,12 @@ class Frame(models.Model):
 class Lubrication(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
-    lubetype = models.TextField(db_column='LubeType', blank=True, null=True, verbose_name='Lube type')  
+    lubetype = models.TextField(db_column='LubeType', blank=True, null=True, verbose_name='Lube type', validators=[validate_commas])  
     date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
     lubelength = models.IntegerField(db_column='LubeLength', blank=True, null=True, verbose_name='Length lubed')
     lubestartmetermark = models.IntegerField(db_column='LubeStartMeterMark', blank=True, null=True, verbose_name='Start meter mark')
     lubeendmetermark = models.IntegerField(db_column='LubeEndMeterMark', blank=True, null=True, verbose_name='End meter mark')
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes', validators=[validate_commas])  
 
     class Meta:
         managed = True
@@ -462,13 +463,13 @@ class FactorOfSafety(models.Model):
 
 class Winch(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')
-    ship = models.TextField(db_column='Ship', blank=True, null=True, verbose_name='Ship')  
-    institution = models.TextField(db_column='Institution', blank=True, null=True, verbose_name='Institution')  
-    manufacturer = models.TextField(db_column='Manufacturer', blank=True, null=True, verbose_name='Manufacturer')  
+    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name', validators=[validate_commas])
+    ship = models.TextField(db_column='Ship', blank=True, null=True, verbose_name='Ship', validators=[validate_commas])  
+    institution = models.TextField(db_column='Institution', blank=True, null=True, verbose_name='Institution', validators=[validate_commas])  
+    manufacturer = models.TextField(db_column='Manufacturer', blank=True, null=True, verbose_name='Manufacturer', validators=[validate_commas])  
     drums = models.ManyToManyField(Drum, through='Drumlocation', related_name='winches', verbose_name='Drum')
-    wiretrainschematicjframe = models.TextField(db_column='WireTrainSchematicJFrame', blank=True, null=True, verbose_name='Wire train schematic Jframe')  
-    wiretrainschematicaframe = models.TextField(db_column='WireTrainSchematicAFrame', blank=True, null=True, verbose_name='Wire train schematic Aframe')  
+    wiretrainschematicjframe = models.TextField(db_column='WireTrainSchematicJFrame', blank=True, null=True, verbose_name='Wire train schematic Jframe', validators=[validate_commas])  
+    wiretrainschematicaframe = models.TextField(db_column='WireTrainSchematicAFrame', blank=True, null=True, verbose_name='Wire train schematic Aframe', validators=[validate_commas])  
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  
 
     class Meta:
@@ -492,9 +493,9 @@ class Winch(models.Model):
 class WinchOperator(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)    
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')  
-    firstname = models.TextField(db_column='FirstName', blank=True, null=True, verbose_name='First name')  
-    lastname = models.TextField(db_column='LastName', blank=True, null=True, verbose_name='Last name')  
-    username = models.TextField(db_column='UserName', blank=True, null=True, verbose_name='User name')  
+    firstname = models.TextField(db_column='FirstName', blank=True, null=True, verbose_name='First name', validators=[validate_commas])  
+    lastname = models.TextField(db_column='LastName', blank=True, null=True, verbose_name='Last name', validators=[validate_commas])  
+    username = models.TextField(db_column='UserName', blank=True, null=True, verbose_name='User name', validators=[validate_commas])  
 
 
     class Meta:
@@ -511,10 +512,10 @@ class WinchOperator(models.Model):
 
 class WireRopeData(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
-    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name')
-    manufacturer = models.TextField(db_column='Manufacturer',blank=True, null=True, verbose_name='Manufacturer')
-    manufacturerpartnumber = models.TextField(db_column='ManufacturerPartNumber', blank=True, null=True, verbose_name='Manufacturer part number')  
-    cabletype = models.TextField(db_column='CableType', blank=True, null=True, verbose_name='Cable type')  
+    name = models.TextField(db_column='Name', blank=True, null=True, verbose_name='Name', validators=[validate_commas])
+    manufacturer = models.TextField(db_column='Manufacturer',blank=True, null=True, verbose_name='Manufacturer', validators=[validate_commas])
+    manufacturerpartnumber = models.TextField(db_column='ManufacturerPartNumber', blank=True, null=True, verbose_name='Manufacturer part number', validators=[validate_commas])  
+    cabletype = models.TextField(db_column='CableType', blank=True, null=True, verbose_name='Cable type', validators=[validate_commas])  
     nominalbreakingload = models.IntegerField(db_column='nominalbreakingload', blank=True, null=True, verbose_name='Nominal breaking load')  
     weightperfoot = models.FloatField(db_column='WeightPerFoot', blank=True, null=True, verbose_name='Weight per foot')  
     
@@ -543,10 +544,10 @@ class Wire(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
     wirerope = models.ForeignKey(WireRopeData, models.DO_NOTHING, db_column='WireRopeId', blank=True, null=True, verbose_name='Wire rope data id')  
     winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch', related_name='reverse_wire')  
-    manufacturerid = models.TextField(db_column='ManufacturerId', blank=True, null=True, verbose_name='Manufacturer id')  
-    nsfid = models.TextField(db_column='NsfId', blank=True, null=True, verbose_name='NSF id')  
+    manufacturerid = models.TextField(db_column='ManufacturerId', blank=True, null=True, verbose_name='Manufacturer id', validators=[validate_commas])  
+    nsfid = models.TextField(db_column='NsfId', blank=True, null=True, verbose_name='NSF id', validators=[validate_commas])  
     dateacquired = models.DateTimeField(db_column='DateAcquired', blank=True, null=True, verbose_name='Date Acquired', validators=[MaxValueValidator(limit_value=datetime.today)])  
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes', validators=[validate_commas])  
     status = models.BooleanField(db_column='Status', blank=True, null=True, verbose_name='Status')
     ownershipstatus = models.ForeignKey(OwnershipStatus, models.DO_NOTHING, db_column='OwnershipStatusId', blank=True, null=True, verbose_name='Ownership status')  
     drums = models.ManyToManyField(Drum, through='WireDrum', related_name='loaded_wires', verbose_name='Drum')
@@ -657,7 +658,7 @@ class DrumLocation(models.Model):
     drumid = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum')  
     winch = models.ForeignKey(Winch, models.DO_NOTHING, db_column='WinchId', blank=True, null=True, verbose_name='Winch')  
     location = models.ForeignKey(Location, models.DO_NOTHING, db_column='LocationId', blank=True, null=True, verbose_name='Location')  
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='notes', validators=[validate_commas])  
     wire = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
 
     class Meta:
@@ -700,7 +701,7 @@ class Wiredrum(models.Model):
     drum = models.ForeignKey(Drum, models.DO_NOTHING, db_column='DrumId', blank=True, null=True, verbose_name='Drum', related_name='reverse_drum')  
     wire = models.ForeignKey(Wire, models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
     date = models.DateField(db_column='Date', blank=True, null=True, verbose_name='Date', validators=[MaxValueValidator(limit_value=date.today)])  
-    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes')  
+    notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes', validators=[validate_commas])  
     
 
     class Meta:

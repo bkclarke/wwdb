@@ -1,0 +1,24 @@
+﻿<!--wwdb/templates/configuration/cruisetablerow.html-->
+{% load static %}
+<tr>
+    <td>{{ cruise.number }}</td>
+    <td>{{ cruise.startdate }}</td>
+    <td>{{ cruise.enddate }}</td>
+    <td>
+        <button class='btn'
+                hx-get="{% url 'cruisetableedit' cruise.pk %}"
+                hx-target="closest tr"
+                hx-swap="outerHTML">
+            Edit
+        </button>
+    </td>
+    <td>
+        <button class='btn'
+                hx-confirm='Are you sure?'
+                hx-target="closest tr"
+                hx-swap="outerHTML swap:1s"
+                hx-delete="{% url 'cruisetabledelete' cruise.pk %}">
+            Delete
+        </button>
+    </td>
+</tr>

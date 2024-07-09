@@ -1,0 +1,35 @@
+﻿<!--wwdb/templates/configuration/cruisetableadd.html-->
+{% load static %}
+<tr>
+    <td>
+        {{ form.number }}
+        {{ form.number.errors}}
+    </td>
+    <td>
+        {{ form.startdate }}
+        {{ form.startdate.errors }}
+    </td>
+    <td>
+        {{ form.enddate }}
+        {{ form.enddate.errors }}
+    </td>
+    <td>
+        <a href="#"
+           hx-post="{% url 'cruisetableaddsubmit' %}"
+           hx-target="closest tr"
+           hx-swap="outerHTML"
+           hx-include="closest tr"
+           class="text-secondary">
+        Submit
+        </a>
+    </td>
+    <td>
+        <a href="#"
+           hx-get="{% url 'cruisetableaddcancel' %}"
+           hx-target="closest tr"
+           hx-swap="outerHTML"
+           class="text-secondary">
+        Cancel
+        </a>
+    </td>
+</tr>

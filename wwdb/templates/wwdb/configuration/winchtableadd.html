@@ -1,0 +1,31 @@
+﻿<!--wwdb/templates/configuration/winchtableadd.html-->
+{% load static %}
+<tr>
+    <td>
+        {{ form.name }}
+        {{ form.name.errors}}
+    </td>
+    <td>
+        {{ form.status }}
+        {{ form.status.errors }}
+    </td>
+    <td>
+        <a href="#"
+           hx-post="{% url 'winchtableaddsubmit' %}"
+           hx-target="closest tr"
+           hx-swap="outerHTML"
+           hx-include="closest tr"
+           class="text-secondary">
+        Submit
+        </a>
+    </td>
+    <td>
+        <a href="#"
+           hx-get="{% url 'cruisetableaddcancel' %}"
+           hx-target="closest tr"
+           hx-swap="outerHTML"
+           class="text-secondary">
+        Cancel
+        </a>
+    </td>
+</tr>

@@ -1,0 +1,19 @@
+﻿<!--wwdb/templates/configuration/deploymenttablelist.html-->
+<!DOCTYPE html>
+<div>
+    <table class="table display">
+        <thead>
+            <th>Name</th>
+            <th>Equipment</th>
+            <th>Status</th>
+            <th>Notes</th>
+            <th> </th>
+            <th> </th>
+        </thead>
+        <tbody>
+            {% for deployment in deployment %}
+            {% include 'wwdb/configuration/deploymenttablerow.html' %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

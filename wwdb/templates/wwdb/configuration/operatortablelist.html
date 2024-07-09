@@ -1,0 +1,19 @@
+﻿<!--wwdb/templates/configuration/operatortablelist.html-->
+<!DOCTYPE html>
+<div>
+    <table class="table display">
+        <thead>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Status</th>
+        <th>Username</th>
+        <th> </th>
+        <th> </th>
+        </thead>
+        <tbody>
+            {% for winchoperator in winchoperator %}
+            {% include 'wwdb/configuration/operatortablerow.html' %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

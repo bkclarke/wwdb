@@ -1,0 +1,16 @@
+﻿<!--wwdb/templates/configuration/swttablelist.html-->
+<!DOCTYPE html>
+<div>
+    <table class="table display">
+        <thead>
+            <th>Winch</th>
+            <th>Factor of safety</th>
+            <th> </th>
+        </thead>
+        <tbody>
+            {% for wire in wire %}
+            {% include 'wwdb/configuration/swttablerow.html' %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

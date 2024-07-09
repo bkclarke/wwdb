@@ -1,0 +1,38 @@
+﻿{% load static %}
+
+<tr>
+    <td>
+        {{ form.firstname }}
+        {{ form.firstname.errors}}
+    </td>
+    <td>
+        {{ form.lastname }}
+        {{ form.lastname.errors }}
+    </td>
+    <td>
+        {{ form.status }}
+        {{ form.status.errors }}
+    </td>
+    <td>
+        {{ form.username }}
+        {{ form.username.errors }}
+    </td>
+    <td>
+        <a href="#"
+           hx-post="{% url 'operatortableeditsubmit' winchoperator.pk %}"
+           hx-target="closest tr"
+           hx-swap="outerHTML"
+           hx-include="closest tr"
+           class="text-secondary">
+        Submit
+    </td>
+    <td>
+        <a href="#"
+           hx-get="{% url 'operatortableeditsubmit' winchoperator.pk %}"
+           hx-target="closest tr"
+           hx-swap="outerHTML"
+           class="text-secondary">
+        Cancel
+        </a>
+    </td>
+</tr>

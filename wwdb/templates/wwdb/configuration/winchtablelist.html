@@ -1,0 +1,17 @@
+﻿<!--wwdb/templates/configuration/winchtablelist.html-->
+<!DOCTYPE html>
+<div>
+    <table class="table display">
+        <thead>
+            <th>Name</th>
+            <th>Status</th>
+            <th> </th>
+            <th> </th>
+        </thead>
+        <tbody>
+            {% for winch in winch %}
+            {% include 'wwdb/configuration/winchtablerow.html' %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

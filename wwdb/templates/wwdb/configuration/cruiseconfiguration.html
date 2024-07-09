@@ -2,14 +2,10 @@
 <!DOCTYPE html>
 {% extends "wwdb/base.html" %}
 
-
-<html>
-
 {% block content %}
 
 <div class="container mt-5 mb-5">
     <div class="container">
-
         <!-- Nav tabs -->
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -32,137 +28,104 @@
         <!-- Tab panes -->
         <div class="tab-content">
             </br>
-            <div class="tab-pane container active" id="cruise">
-                <h2>Cruise</h2>
-                <button type="button" class="btn btn-outline-wwdb">
-                    <a class="btn-link-wwdb" href="{% url 'cruiseadd' %}">Add Cruise</a>
-                </button>
-                </br>
-                </br>
-                <table id="" class="display table">
-                    <thead>
-                        <tr>
-                            <th>Cruise number</th>
-                            <th>Start date</th>
-                            <th>End date</th>
-                        </tr>
-                    </thead>
-                    {% for cruise in cruise %}
-                    <tr>
-                        <td><a href="{% url 'cruiseedit' cruise.pk %}">{{cruise.number}}</a></td>
-                        <td>{{cruise.format_startdate}}</td>
-                        <td>{{cruise.format_enddate}}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
+            <div class="tab-pane container fade show active" id="cruise">
+                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                    <h1>Cruises</h1>
+                    </br>
+                    <button type="button" class="btn btn-outline-wwdb"
+                            hx-get="{% url 'cruisetableadd' %}"
+                            hx-target="next tbody"
+                            hx-swap="afterbegin">
+                        Add cruise
+                    </button>
+                    <div id="query_result"
+                         hx-target="this"
+                         hx-swap="innerHTML"
+                         hx-get="{% url 'cruisetablelistget' %}"
+                         hx-trigger="load delay:0.5s">
+                    </div>
+                </div>
+                <div id="table-content" hx-get="{% url 'cruisetablelistget' %}"></div>
             </div>
             <div class="tab-pane container fade" id="operators">
-                <h2>Operators</h2>
-                <button type="button" class="btn btn-outline-wwdb">
-                    <a class="btn-link-wwdb" href="{% url 'operatoradd' %}">Add Operator</a>
-                </button>
-                </br>
-                </br>
-                <p>Only operators for this cruise should have <i>status: True</i>. To change status, select the operators username and edit status on the following page.</p>
-                <table id="" class="display table">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>First</th>
-                            <th>Last</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    {% for operator in operators %}
-                    <tr>
-                        <td><a href="{% url 'operatoreditstatus' operator.pk %}">{{operator.username}}</a></td>
-                        <td>{{operator.firstname}}</td>
-                        <td>{{operator.lastname}}</td>
-                        <td>{{operator.status}}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
+                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                    <h1>Operators</h1>
+                    </br>
+                    <button type="button" class="btn btn-outline-wwdb"
+                            hx-get="{% url 'operatortableadd' %}"
+                            hx-target="next tbody"
+                            hx-swap="afterbegin">
+                        Add Operator
+                    </button>
+                    <div id="query_result"
+                         hx-target="this"
+                         hx-swap="innerHTML"
+                         hx-get="{% url 'operatortablelistget' %}"
+                         hx-trigger="load delay:0.5s">
+                    </div>
+                </div>
             </div>
             <div class="tab-pane container fade" id="deployments">
-                <h2>Deployments</h2>
-                <button type="button" class="btn btn-outline-wwdb">
-                    <a class="btn-link-wwdb" href="{% url 'deploymentadd' %}">Add Deployment</a>
-                </button>
-                </br>
-                </br>
-                <p>Only deployments for this cruise should have <i>status: True</i>. To change status, select the deployemnt and edit status on the following page.</p>
-                <table id="" class=" display table">
-                    <thead>
-                        <tr>
-                            <th>Deployment</th>
-                            <th>Equipment</th>
-                            <th>Notes</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    {% for deployment in deployments %}
-                    <tr>
-                        <td><a href="{% url 'deploymenteditstatus' deployment.pk %}">{{deployment.name}}</a></td>
-                        <td>{{deployment.equipment}}</td>
-                        <td>{{deployment.notes}}</td>
-                        <td>{{deployment.status}}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
+                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                    <h1>Deployments</h1>
+                    </br>
+                    <button type="button" class="btn btn-outline-wwdb"
+                            hx-get="{% url 'deploymenttableadd' %}"
+                            hx-target="next tbody"
+                            hx-swap="afterbegin">
+                        Add deployment
+                    </button>
+                    <div id="query_result"
+                         hx-target="this"
+                         hx-swap="innerHTML"
+                         hx-get="{% url 'deploymenttablelistget' %}"
+                         hx-trigger="load delay:0.5s">
+                    </div>
+                </div>
             </div>
             <div class="tab-pane container fade" id="winches">
-                <h2>Winches</h2>
-                <button type="button" class="btn btn-outline-wwdb">
-                    <a class="btn-link-wwdb" href="{% url 'winchadd' %}">Add Winch</a>
-                </button>
-                </br>
-                </br>
-                <p>Only winches for this cruise should have <i>status: True</i>. To change status, select the winch id and edit status on the following page.</p>
-                <table id="" class="display table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    {% for winch in winches %}
-                    <tr>
-                        <td><a href="{% url 'wincheditstatus' winch.pk %}">{{winch.name}}</a></td>
-                        <td>{{winch.status}}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
+                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                    <h1>Winches</h1>
+                    </br>
+                    <button type="button" class="btn btn-outline-wwdb"
+                            hx-get="{% url 'winchtableadd' %}"
+                            hx-target="next tbody"
+                            hx-swap="afterbegin">
+                        Add winch
+                    </button>
+                    <div id="query_result"
+                         hx-target="this"
+                         hx-swap="innerHTML"
+                         hx-get="{% url 'winchtablelistget' %}"
+                         hx-trigger="load delay:0.5s">
+                    </div>
+                </div>
             </div>
             <div class="tab-pane container fade" id="wires">
-                <h2>Safe Working Tensions Posting</h2>
-                <p>Confirm that Factor of Safety is correct.  Select factor of safety to change.  If correct, select <i>Go To Posting</i> and print on next page.</p>
-                <button type="button" class="btn btn-outline-wwdb">
-                    <a class="nav-link-wwdb" href="{% url 'safeworkingtensions' %}">Go to Posting</a>
-                </button>
-                </br>
-                </br>
-                <ul>
-                    <li>Select only lowest factor of safety </li>
-                    <li>Assume free end</li>
-                </ul>
-                </br>
-                </br>
-                <table id="" class="display table">
-                    <thead>
-                        <tr>
-                            <th>Winch</th>
-                            <th>Factor of Safety</th>
-                        </tr>
-                    </thead>
-                    {% for wire in active_wire %}
-                    <tr>
-                        <td>{{wire.winch}}</td>
-                        <td><a href="{% url 'wireeditfactorofsafety' wire.pk %}">{{wire.factorofsafety}}</a></td>
-                    </tr>
-                    {% endfor %}
-                </table>
+                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                    <h1>Safe working tensions</h1>
+                    </br>
+                    <div id="query_result"
+                         hx-target="this"
+                         hx-swap="innerHTML"
+                         hx-get="{% url 'swttablelistget' %}"
+                         hx-trigger="load delay:0.5s">
+                    </div>
+                </div>
             </div>
         </div>
-    {% endblock %}
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#cruise a').on('click', function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
 
-</html>
+        // Trigger the click on the active tab on page load
+        var activeTab = $('#cruise .nav-link.active');
+        activeTab.tab('show');
+    });
+</script>
+{% endblock %}

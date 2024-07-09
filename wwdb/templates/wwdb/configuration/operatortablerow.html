@@ -1,0 +1,25 @@
+﻿<!--wwdb/templates/configuration/operatortablerow.html-->
+{% load static %}
+<tr>
+    <td>{{ winchoperator.firstname }}</td>
+    <td>{{ winchoperator.lastname }}</td>
+    <td>{{ winchoperator.status }}</td>
+    <td>{{ winchoperator.username }}</td>
+    <td>
+        <button class='btn'
+                hx-get="{% url 'operatortableedit' winchoperator.pk %}"
+                hx-target="closest tr"
+                hx-swap="outerHTML">
+        Edit
+        </button>
+    </td>
+    <td>
+        <button class='btn'
+                hx-confirm='Are you sure?'
+                hx-target="closest tr"
+                hx-swap="outerHTML swap:1s"
+                hx-delete="{% url 'operatortabledelete' winchoperator.pk %}">
+        Delete
+        </button>
+    </td>
+</tr>

@@ -1,0 +1,18 @@
+﻿<!--wwdb/templates/configuration/cruisetablelist.html-->
+<!DOCTYPE html>
+<div>
+    <table id="cruisetable" class="table display">
+        <thead>
+            <th>Number</th>
+            <th>Start date</th>
+            <th>End date</th>
+            <th> </th>
+            <th> </th>
+        </thead>
+        <tbody>
+            {% for cruise in cruise %}
+            {% include 'wwdb/configuration/cruisetablerow.html' %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

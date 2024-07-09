@@ -1,0 +1,29 @@
+﻿<!--wwdb/templates/configuration/swttableedit.html-->
+{% load static %}
+<tr>
+    <td>
+        {{ form.winch }}
+        {{ form.winch.errors}}
+    </td>
+    <td>
+        {{ form.factorofsafety }}
+        {{ form.factorofsafety.errors }}
+    </td>
+    <td>
+        <a href="#"
+           hx-post="{% url 'swttableeditsubmit' wire.pk %}"
+           hx-target="closest tr"
+           hx-swap="outerHTML"
+           hx-include="closest tr"
+           class="text-secondary">
+        Submit
+</br>
+        <a href="#"
+           hx-get="{% url 'swttableeditsubmit' wire.pk %}"
+           hx-target="closest tr"
+           hx-swap="outerHTML"
+           class="text-secondary">
+        Cancel
+        </a>
+    </td>
+</tr>

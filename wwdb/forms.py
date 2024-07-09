@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from .models import *
 from bootstrap_datepicker_plus.widgets import DatePickerInput, DateTimePickerInput
-from django.forms.widgets import HiddenInput
+from django.forms.widgets import HiddenInput, Widget
 from datetime import datetime
 
 
@@ -21,7 +21,15 @@ class StartCastForm(ModelForm):
             'flagforreview',
         ]
 
-        widgets = {'startdate': DateTimePickerInput()}
+        widgets = {
+            'startdate': DateTimePickerInput(),
+            "notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%; align: center;",
+                    "placeholder": "Notes",
+                }),
+            }
 
 
     def __init__(self, *args, **kwargs):
@@ -68,9 +76,17 @@ class EndCastForm(ModelForm):
             'flagforreview',
         ]
 
-        widgets = {'startdate': DateTimePickerInput(), 
-                    'enddate': DateTimePickerInput(),
-                    'startdate': forms.HiddenInput(),}
+        widgets = {
+            'startdate': DateTimePickerInput(), 
+            'enddate': DateTimePickerInput(),
+            'startdate': forms.HiddenInput(),
+            "notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%; align: center;",
+                    "placeholder": "Notes",
+                }),
+            }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -132,7 +148,96 @@ class EditWinchStatusForm(ModelForm):
         fields = [
             'status',
         ]
-        
+    
+class WinchOperatorTableForm(forms.ModelForm):
+    class Meta:
+        model = WinchOperator
+        exclude = []
+
+        widgets = {
+            "firstname": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "Title",
+                }
+            ),
+            "lastname": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "Title",
+                }
+            ),
+            "username": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "Title",
+                }
+            ),
+        }
+
+class CruiseTableForm(forms.ModelForm):
+    class Meta:
+        model = Cruise
+        exclude = []
+
+        widgets = {
+            "number": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+        }
+
+class DeploymentTableForm(forms.ModelForm):
+    class Meta:
+        model = DeploymentType
+        exclude = []
+
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "name",
+                }),
+            "equipment": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "equipment details",
+                }),
+            "notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "notes",
+                }),
+        }
+
+class WinchTableForm(forms.ModelForm):
+    class Meta:
+        model = Winch
+        exclude = []
+
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "name",
+                }),
+        }
+
+
+class SWTTableForm(forms.ModelForm):
+    class Meta:
+        model = Wire
+        exclude = []
+
 class EditOperatorStatusForm(ModelForm):
   
     class Meta:
