@@ -11,8 +11,7 @@
     <link rel="stylesheet" type="text/css" href={% static 'css/datatables.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/buttons.datatables.min.css' %}>
     <link rel="stylesheet" type="text/css" href={% static 'css/wwdb.css' %}>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-
+    <link rel="stylesheet" type="text/css" href={% static 'css/all.min.css' %}>
     <script type="text/javascript" src={% static 'admin/js/vendor/jquery/jquery.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/Chart.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/highcharts.js' %} crossorigin="anonymous"></script>
@@ -29,47 +28,10 @@
     <script type="text/javascript" src={% static 'js/buttons.html5.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/buttons.print.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/htmx.min.js' %} crossorigin="anonymous"></script>
-    <script type="text/javascript" src={% static 'js/all.min.js' %} crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/daterangepicker"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('table.display').DataTable({
-                autoWidth: false,
-                scrollX: true
-            });
-            // Listen for Bootstrap tab activation event
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                // Get the DataTable instance of the active tab
-                var activeTable = $($(e.target).attr('href')).find('table').DataTable();
-                // Adjust columns when the tab becomes active
-                activeTable.columns.adjust().draw();
-            });
-        });
-    </script>
     <script>
         document.addEventListener('htmx:afterRequest', function (evt) {
             $('table.display').DataTable({
                 retrieve: true,
-            });
-        });
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $.fn.dataTable.moment('DD-MMM-YY');
-            $('table.display_nosearch').DataTable({
-                layout: {
-                    top2Start: 'pageLength',
-                    topStart: 'info',
-                    topEnd: 'paging',
-                    bottomStart: 'pageLength',
-                    bottom2Start: 'info',
-                    bottom2End: 'paging'
-                },
-                buttons: [
-                    'csv', 'print'
-                ],
-                autoWidth: false,
-                scrollX: true
             });
         });
     </script>
