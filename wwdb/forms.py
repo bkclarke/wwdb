@@ -150,6 +150,8 @@ class EditWinchStatusForm(ModelForm):
         ]
     
 class WinchOperatorTableForm(forms.ModelForm):
+    status = forms.BooleanField(required=False)
+
     class Meta:
         model = WinchOperator
         exclude = []
@@ -193,6 +195,8 @@ class CruiseTableForm(forms.ModelForm):
         }
 
 class DeploymentTableForm(forms.ModelForm):
+    status = forms.BooleanField(required=False)
+
     class Meta:
         model = DeploymentType
         exclude = []
@@ -219,6 +223,8 @@ class DeploymentTableForm(forms.ModelForm):
         }
 
 class WinchTableForm(forms.ModelForm):
+    status = forms.BooleanField(required=False)
+
     class Meta:
         model = Winch
         exclude = []
