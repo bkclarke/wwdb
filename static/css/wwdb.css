@@ -209,3 +209,20 @@
         color: white;
         text-decoration: none;
     }
+
+.cast-btn {
+    width: auto;
+    line-height: 20px;
+    padding: 10px;
+    background-color: #ff0000;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    opacity: 1;
+}
+
+    .cast-btn:hover {
+        background-color: #ffd800;
+        opacity: 1;
+    }
