@@ -1,17 +1,16 @@
 ﻿<!--template/castlist.html-->
 {% extends "wwdb/base.html" %}
-
+{% load static %}
 {% block content %}
-
 <div class="container p-5">
     <button type="button" class="btn btn-outline-wwdb">
         <a class="btn-link-wwdb" href="{% url 'castmanualenter' %}">Manually enter cast</a>
-    </button>
+    </button>   <img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered">
     </br>
     </br>
     {% if cast_flag %}
     <h2>Flagged for review</h2>
-    <table class="display_nosearch table-danger">
+    <table id="example" class="display nowrap table-danger" style="width:100%">
         <thead>
             <tr>
                 <th>Start time</th>
@@ -22,14 +21,14 @@
                 <th>End operator</th>
                 <th>Max tension</th>
                 <th>Max payout</th>
-                <th>Payout at max tension</th>
-                <th>meter mark at max tension</th>
-                <th>time of max tension</th>
-                <th>Wet end tag</th>
-                <th>Dry end tag</th>
+                <th>Payout tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
+                <th>Meter mark<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
+                <th>Time tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
+                <th>Wet end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the wet end"></th>
+                <th>Dry end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the dry end"></th>
                 <th>Motor</th>
-                <th>Edit</th>
-                <th>Enter values manually</th>
+                <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
+                <th>Manually enter payout/tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
                 <th>Delete</th>
             </tr>
         </thead>
@@ -62,7 +61,7 @@
     {% if cast_complete %}
     <h2>Completed casts</h2>
     <br />
-    <table class="display_nosearch">
+    <table id="example2" class="display nowrap" style="width:100%">
         <thead>
             <tr>
                 <th>Start time</th>
@@ -73,13 +72,14 @@
                 <th>End operator</th>
                 <th>Max tension</th>
                 <th>Max payout</th>
-                <th>Payout at max tension</th>
-                <th>meter mark at max tension</th>
-                <th>time of max tension</th>
-                <th>Wet end tag</th>
-                <th>Dry end tag</th>
-                <th>Edit</th>
-                <th>Enter values manually</th>
+                <th>Payout tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
+                <th>Meter mark<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
+                <th>Time tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
+                <th>Wet end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the wet end"></th>
+                <th>Dry end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the dry end"></th>
+                <th>Motor</th>
+                <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
+                <th>Manually enter payout/tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
                 <th>Delete</th>
             </tr>
         </thead>
@@ -98,6 +98,7 @@
             <td>{{cast.format_timemaxtension}}</td>
             <td>{{cast.wetendtag}}</td>
             <td>{{cast.dryendtag}}</td>
+            <td>{{cast.motor}}</td>
             <td><a href="{%url 'castedit' cast.pk %}">Edit</a></td>
             <td><a href="{%url 'castmanualedit' cast.pk %}">Manual edit</a></td>
             <td><a href="{%url 'castdelete' cast.pk %}">Delete</a></td>
@@ -108,5 +109,32 @@
     <p>There are no completed casts</p>
     {% endif %}
     <br />
+    <script>
+        $(document).ready(function () {
+            // Initialize DataTables
+            $('#example').DataTable({
+                responsive: true,
+                scrollX: true
+                // Add more options as needed
+            });
+
+            // Initialize tooltips (assuming you're using Bootstrap tooltips)
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Initialize DataTables
+            $('#example2').DataTable({
+                responsive: true,
+                scrollX: true
+                // Add more options as needed
+            });
+
+            // Initialize tooltips (assuming you're using Bootstrap tooltips)
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
 </div>
 {% endblock content %}
+
