@@ -110,6 +110,8 @@ def caststart(request):
             form.save()
             cast=Cast.objects.last()
             cast.refresh_from_db()
+            if cast.startdate == None:
+                cast.startcast_get_datetime()
             cast.save()
             return HttpResponseRedirect("%i/castend" % cast.pk)
     else:
@@ -147,6 +149,8 @@ def castend(request, id):
             form.save()
             cast.refresh_from_db()
             cast.endcastcal()
+            if cast.enddate == None:
+                cast.endcast_get_datetime()
             cast.save()
             return HttpResponseRedirect("/wwdb/casts/%i/castenddetail" % cast.pk)
     context["form"] = form

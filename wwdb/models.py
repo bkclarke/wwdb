@@ -79,7 +79,7 @@ class Cast(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
     startoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='StartOperatorId', null=True, related_name='startoperatorid', verbose_name="Start operator")  
     endoperator = models.ForeignKey('WinchOperator', models.DO_NOTHING, db_column='EndOperatorId', null=True, related_name='endoperatorid', verbose_name='End operator')  
-    startdate = models.DateTimeField(db_column='StartDate', null=False, verbose_name='Start date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  
+    startdate = models.DateTimeField(db_column='StartDate', null=True, verbose_name='Start date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  
     enddate = models.DateTimeField(db_column='EndDate', blank=True, null=True, verbose_name='End date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  
     deploymenttype = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True, verbose_name='Deployment type')  
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
@@ -93,7 +93,8 @@ class Cast(models.Model):
     flagforreview = models.BooleanField(db_column='Flagforreview', blank=True, null=True, verbose_name='Flag for review')  
     dryendtag = models.IntegerField(db_column='DryEndTag', blank=True, null=True, verbose_name='Dry end tag')  
     wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag')  
-    motor = models.ForeignKey('Motor', models.DO_NOTHING, db_column='MotorId', blank=True, null=True, verbose_name='Motor')  
+    motor = models.ForeignKey('Motor', models.DO_NOTHING, db_column='MotorId', blank=True, null=True, verbose_name='Motor')
+    wirerinse = models.BooleanField(db_column='wirerinse', blank=True, null=True, verbose_name='Wire rinse')  
 
 
     class Meta:
@@ -142,9 +143,11 @@ class Cast(models.Model):
 
     @property
     def format_startdate(self):
-        date=self.startdate
-        formatdate=date.strftime("%Y-%m-%d, %H:%M:%S")
-        return formatdate
+        if self.startdate:
+            date=self.startdate
+            formatdate=date.strftime("%Y-%m-%d, %H:%M:%S")
+            return formatdate
+        return
 
     @property
     def format_timemaxtension(self):
@@ -221,6 +224,14 @@ class Cast(models.Model):
 
         else:
             return
+
+    def startcast_get_datetime(self):
+        current_datetime = datetime.now()
+        self.startdate = current_datetime
+
+    def endcast_get_datetime(self):
+        current_datetime = datetime.now()
+        self.enddate = current_datetime
 
 class Cruise(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)   

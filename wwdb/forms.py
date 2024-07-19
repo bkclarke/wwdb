@@ -13,7 +13,6 @@ class StartCastForm(ModelForm):
         model = Cast
         fields = [
             'startoperator',
-            'startdate',
             'deploymenttype',
             'winch',
 			'motor',
@@ -22,7 +21,6 @@ class StartCastForm(ModelForm):
         ]
 
         widgets = {
-            'startdate': DateTimePickerInput(),
             "notes": forms.TextInput(
                 attrs={
                     "class": "form-control",
@@ -43,6 +41,7 @@ class StartCastForm(ModelForm):
 
 
 class ManualCastForm(ModelForm):
+    wirerinse = forms.BooleanField(required=False)
 
     class Meta:
         model = Cast
@@ -57,6 +56,7 @@ class ManualCastForm(ModelForm):
             'notes',
             'maxtension',
             'maxpayout',
+            'wirerinse',
         ]
 
         widgets = {'startdate': DateTimePickerInput(), 
@@ -64,22 +64,20 @@ class ManualCastForm(ModelForm):
 
 class EndCastForm(ModelForm):
     flagforreview = forms.BooleanField(required=False)
+    wirerinse = forms.BooleanField(required=False)
+
   
     class Meta:
         model = Cast
   
         fields = [
             'endoperator',
-            'startdate',
-            'enddate',
             'notes',
+            'wirerinse',
             'flagforreview',
         ]
 
         widgets = {
-            'startdate': DateTimePickerInput(), 
-            'enddate': DateTimePickerInput(),
-            'startdate': forms.HiddenInput(),
             "notes": forms.TextInput(
                 attrs={
                     "class": "form-control",
@@ -93,7 +91,7 @@ class EndCastForm(ModelForm):
         active_operators = WinchOperator.objects.filter(status=True)
         self.fields['endoperator'].queryset  = active_operators
 
-        
+"""       
     def is_valid(self):
         valid = super().is_valid()
 
@@ -108,10 +106,11 @@ class EndCastForm(ModelForm):
                 self.add_error('enddate', 'End date must be greater than start date')
                 valid = False
         return valid     
-
+"""
 
 class EditCastForm(ModelForm):
     flagforreview = forms.BooleanField(required=False)
+    wirerinse = forms.BooleanField(required=False)
   
     class Meta:
         model = Cast
@@ -124,6 +123,7 @@ class EditCastForm(ModelForm):
             'deploymenttype',
             'winch',
             'notes',
+            'wirerinse',
             'flagforreview',
         ]
 
@@ -309,7 +309,80 @@ class EditCruiseForm(ModelForm):
                    'enddate': DatePickerInput(
                     options={
                     "format": "YYYY-MM-DD"}
-                    )}
+                    ),
+                "number": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "number",
+                }),
+                "winch1blockarrangement": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "winch1blockarrangement",
+                }),
+                "winch2blockarrangement": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "winch2blockarrangement",
+                }),
+                "winch3blockarrangement": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "winch3blockarrangement",
+                }),
+                "winch1termination": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "winch1termination",
+                }),
+                "winch2termination": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "winch2termination",
+                }),
+                "winch3termination": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "winch3termination",
+                }),
+                "winch1notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "winch1notes",
+                }),
+                "winch2notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "winch2notes",
+                }),
+                "winch3notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "winch3notes",
+                }),
+                "winch2spindirection": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "winch2spindirection",
+                }),
+                "scienceprovidedwinch": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "scienceprovidedwinch",
+                }),
+                }
 
 
 class EditCruiseMetaForm(ModelForm):
