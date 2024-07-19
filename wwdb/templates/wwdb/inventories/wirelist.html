@@ -2,10 +2,10 @@
 <!DOCTYPE html>
 {% extends "wwdb/base.html" %}
 
-<html>
+
 {% block content %}
 <h2>Tension Member Inventory</h2>
-<table id="tableexport" class="display table">
+<table id="table" class="display nowrap table">
     <thead>
         <tr>
             <th>NSF-ID</th>
@@ -37,4 +37,18 @@
     </tr>
     {% endfor %}
 </table>
+<script>
+    $(document).ready(function () {
+        // Initialize DataTables
+        $('#table').DataTable({
+            responsive: true,
+            scrollX: true,
+            order: [[0, "desc"]]
+            // Add more options as needed
+        });
+
+        // Initialize tooltips (assuming you're using Bootstrap tooltips)
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
 {% endblock content %}
