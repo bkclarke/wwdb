@@ -10,20 +10,16 @@
 
 .btn-startcast {
     width: 100%;
-    background-color: #001933;
+    background-color: #ff0000;
     padding: 0.1rem 0.1rem;
-    font-size: 2vw;
+    font-weight: bold;
+    font-size: 2rem;
     float: right;
 }
 
-.button-link-startcast {
-    color: white;
-    text-decoration: none;
-}
-
-    .button-link-startcast:hover {
-        color: white;
-        text-decoration: none;
+    .btn-startcast:hover {
+        background-color: #ffd800;
+        opacity: 1;
     }
 
 .btn-configure, .btn-group-sm > .btn {
@@ -40,7 +36,7 @@
 .home-btn-startcast {
     width: auto;
     padding: 10px;
-    background-color: #FFFFFF;
+    background-color: #dee2e6;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -49,7 +45,7 @@
 }
 
     .home-btn-startcast:hover {
-        background-color: white;
+        background-color: #ffd800;
         opacity: 1;
     }
 

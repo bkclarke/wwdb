@@ -1373,7 +1373,51 @@ def breaktestlist(request):
         'break_test': break_test, 
         }
 
-    return render(request, 'wwdb/maintenance/breaktestlist.html', context=context)
+    return render(request, 'wwdb/maintenance/breaktestlist.html', context)
+
+def breaktestadd(request):
+    context ={}
+    form = BreaktestAddForm(request.POST or None)
+    if request.method == "POST":
+        form = BreaktestAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/maintenance/breaktestlist')
+    else:
+        form = BreaktestAddForm
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/maintenance/breaktestadd.html', {'form':form, 'submitted':submitted, 'id':id})
+ 
+    context['form']= form
+
+    return render(request, "wwdb/maintenance/breaktestadd.html", context)
+
+def breaktestedit(request, id):
+    context ={}
+    obj = get_object_or_404(Breaktest, id = id)
+
+    if request.method == 'POST':
+        form = BreaktestEditForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            breaktestid=Breaktest.objects.get(id=id)
+            return HttpResponseRedirect("/wwdb/maintenance/breaktestlist")
+    else:
+        form = BreaktestEditForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/maintenance/breaktest/%i/edit" % breaktestid.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/maintenance/lubricationedit.html", context)
+
+class BreaktestDelete(DeleteView):
+    model = Breaktest
+    template_name="wwdb/maintenance/breaktestdelete.html"
+    success_url= reverse_lazy('breaktestlist')
+
+
 
 """
 CUTBACKRETERMINATION

@@ -6,12 +6,10 @@
 {% block content %}
 <h2>Lubrications</h2>
 </br>
-<button type="button" class="btn btn-outline-wwdb">
-    <a class="btn-link-wwdb" href="{% url 'lubricationadd' %}">Add Lubrication</a>
-</button>
+<button id="lubricationadd" class="btn btn-outline-wwdb">Add Lubrication</button>
 </br>
 </br>
-<table id="" class="display table">
+<table id="table" class="display table">
     <thead>
         <tr>
             <th>Date</th>
@@ -39,4 +37,25 @@
 </table>
 </br>
 </br>
+<script>
+    $(document).ready(function () {
+        // Initialize DataTables
+        $('#table').DataTable({
+            responsive: true,
+            scrollX: true,
+            order: [[0, "desc"]]
+            // Add more options as needed
+        });
+
+        // Initialize tooltips (assuming you're using Bootstrap tooltips)
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#lubricationadd').click(function () {
+            window.location.href = "{% url 'lubricationadd' %}";
+        });
+    });
+</script>
 {% endblock %}

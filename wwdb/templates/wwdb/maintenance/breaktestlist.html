@@ -2,28 +2,51 @@
 <!DOCTYPE html>
 {% extends "wwdb/base.html" %}
 
-<html>
 {% block content %}
 <h2>Breaktests</h2>
 </br>
+<button id="breaktestadd" class="btn btn-outline-wwdb">Add Breaktest</button>
 </br>
-<table id="" class="display table">
+</br>
+<table id="table" class="display" style="width:100%">
     <thead>
         <tr>
             <th>Date</th>
             <th>Wire</th>
             <th>Tested Breaking Load</th>
             <th>Notes</th>
+            <th>Delete</th>
         </tr>
     </thead>
     {% for breaktest in break_test %}
     <tr>
-        <td>{{breaktest.format_date}}</td>
+        <td><a href="{% url 'breaktestedit' breaktest.pk %}">{{breaktest.format_date}}</td>
         <td>{{breaktest.wire}}</td>
         <td>{{breaktest.testedbreakingload}}</td>
         <td>{{breaktest.notes}}</td>
+        <td><a href="{%url 'breaktestdelete' breaktest.pk %}">Delete</a></td>
     </tr>
     {% endfor %}
 </table>
+<script>
+    $(document).ready(function () {
+        // Initialize DataTables
+        $('#table').DataTable({
+            responsive: true,
+            scrollX: true,
+            order: [[0, "desc"]]
+            // Add more options as needed
+        });
+
+        // Initialize tooltips (assuming you're using Bootstrap tooltips)
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#breaktestadd').click(function () {
+            window.location.href = "{% url 'breaktestadd' %}";
+        });
+    });
+</script>
 {% endblock %}
-</html>

@@ -94,6 +94,9 @@ urlpatterns = [
 
     #URLS related to maintenance
     path('maintenance/breaktestlist/', views.breaktestlist, name='breaktestlist'),
+    path('maintenance/breaktest/<int:id>/edit/', views.breaktestedit, name='breaktestedit'),
+    path('maintenance/breaktestadd/', views.breaktestadd, name='breaktestadd'),
+    path('maintenance/breaktest/<int:pk>/delete/', BreaktestDelete.as_view(), name='breaktestdelete'),
     path('maintenance/cutbackreterminationlist/', views.cutbackreterminationlist, name='cutbackreterminationlist'),
     path('maintenance/cutbackretermination/<int:pk>/deploymentdetail', CutbackReterminationDetail.as_view(), name='cutbackreterminationdetail'),
     path('maintenance/cutbackretermination/<int:id>/edit/', views.cutbackreterminationedit, name='cutbackreterminationedit'),

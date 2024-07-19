@@ -3,9 +3,7 @@
 {% load static %}
 {% block content %}
 <div class="container p-5">
-    <button type="button" class="btn btn-outline-wwdb">
-        <a class="btn-link-wwdb" href="{% url 'castmanualenter' %}">Manually enter cast</a>
-    </button>   <img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered">
+    <button id="castmanualenter" class="btn btn-outline-wwdb">Manually enter cast</button> <img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered">
     </br>
     </br>
     {% if cast_flag %}
@@ -138,5 +136,13 @@
         });
     </script>
 </div>
+<script>
+    $(document).ready(function () {
+        $('#castmanualenter').click(function () {
+            window.location.href = "{% url 'castmanualenter' %}";
+        });
+    });
+</script>
 {% endblock content %}
+
 

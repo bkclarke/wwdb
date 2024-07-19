@@ -459,10 +459,17 @@ class AddCutbackReterminationForm(ModelForm):
             'notes',
         ]
 
-        widgets = {'date': DatePickerInput(
+        widgets = {
+                'date': DatePickerInput(
                     options={
-                    "format": "YYYY-MM-DD"}
-        )}
+                    "format": "YYYY-MM-DD"}),
+                "notes": forms.TextInput(
+                    attrs={
+                        "class": "form-control",
+                        "style": "max-width: 100%; align: center;",
+                        "placeholder": "notes",
+                }),
+            }
 
 class EditCutbackReterminationForm(ModelForm):
   
@@ -478,7 +485,14 @@ class EditCutbackReterminationForm(ModelForm):
         widgets = {'date': DatePickerInput(
                     options={
                     "format": "YYYY-MM-DD"}
-                    )}
+                    ),
+                    "notes": forms.TextInput(
+                    attrs={
+                        "class": "form-control",
+                        "style": "max-width: 100%; align: center;",
+                        "placeholder": "notes",
+                }),
+                }
 
 
 class EditWireDrumForm(ModelForm):
@@ -662,3 +676,80 @@ class UnolsWireReportForm(ModelForm):
 
         widgets = {'startdate': DateTimePickerInput(), 
                    'enddate': DateTimePickerInput()}
+
+
+class LubricationAddForm(ModelForm):
+
+    class Meta:
+        model = Lubrication
+        fields = [
+            'wire',
+            'lubetype',
+            'date',
+            'lubelength',
+            'lubestartmetermark',
+            'lubeendmetermark',
+            'notes',
+        ]
+
+        widgets = {'date': DatePickerInput(), 
+                "lubetype": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%; align: center;",
+                    "placeholder": "lubetype",
+                }),
+                "notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%; align: center;",
+                    "placeholder": "notes",
+                }),
+                   }
+
+class BreaktestEditForm(ModelForm):
+
+    class Meta:
+        model = Breaktest
+        fields = [
+            'date',
+            'wire',
+            'testedbreakingload',
+            'notes',
+        ]
+
+        widgets = {
+                'date': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}),
+                "notes": forms.TextInput(
+                    attrs={
+                        "class": "form-control",
+                        "style": "max-width: 100%; align: center;",
+                        "placeholder": "notes",
+                }),
+            }
+
+class BreaktestAddForm(ModelForm):
+  
+    class Meta:
+        model = Breaktest
+  
+        fields = [
+            'date',
+            'wire',
+            'testedbreakingload',
+            'notes',
+        ]
+
+        widgets = {'date': DatePickerInput(
+                    options={
+                    "format": "YYYY-MM-DD"}
+                    ),
+                    "notes": forms.TextInput(
+                    attrs={
+                        "class": "form-control",
+                        "style": "max-width: 100%; align: center;",
+                        "placeholder": "notes",
+                }),
+                }
