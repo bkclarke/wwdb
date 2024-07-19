@@ -1,5 +1,6 @@
 ﻿<!--templates/caststart.html-->
 {% extends "wwdb/base_startendcast.html" %}
+{% load static %}
 {% load bootstrap4 %}
 {{ form.media }}
 
@@ -8,10 +9,76 @@
 <div class="container pt-2 pb-2 pl-5 pr-5">
     <form action="" method="post">
         {% csrf_token %}
-        {% bootstrap_form form %}
+        {{ form.non_field_errors }}
+        <p>Operator</p>
+        <div class="fieldWrapper">
+            {{ form.startoperator.errors }}
+            {{ form.startoperator }}
+        </div>
+        </br>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="startdatecheck">
+            <label class="form-check-label" for="defaultCheck1">
+                Enter date manually
+            </label> <img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Only enter date if the cast has already started.  Use date icon to select date.">
+        </div>
+        <div id="startdatefield" style="display:none;">
+            <p>Start Date</p>
+            <div class="fieldWrapper">
+                {{ form.startdate.errors }}
+                {{ form.startdate }}
+            </div>
+        </div>
+        </br>
+        <p>Deployment type</p>
+        <div>
+            {{ form.deploymenttype.errors }}
+            {{ form.deploymenttype }}
+        </div>
+        </br>
+        <p>Winch</p>
+        <div class="fieldWrapper">
+            {{ form.winch.errors }}
+            {{ form.winch }}
+        </div>
+        </br>
+        <p>Motor</p>
+        <div class="fieldWrapper">
+            {{ form.motor.errors }}
+            {{ form.motor }}
+        </div>
+        </br>
+        <p>Notes</p>
+        <div class="">
+            {{ form.notes.errors }}
+            {{ form.notes }}
+        </div>
+        </br>
+        <p>Flag for review</p>
+        <div class="fieldWrapper">
+            {{ form.flagforreview.errors }}
+            {{ form.flagforreview }}
+        </div>
+        </br>
+
         <button class="cast-btn" type="submit" value="save">START CAST</button>
     </form>
 </div>
+<script>
+    // Wait for the DOM to be fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize tooltips
+        var tooltips = document.querySelectorAll('[data-toggle="tooltip"]');
+        var tooltipInstances = new bootstrap.Tooltip(tooltips);
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $("#startdatecheck").click(function () {
+            $("#startdatefield").toggle();
+        });
+    });
+</script>
 <script>
     $(document).ready(function () {
         $("form").on("submit", function () {
@@ -20,4 +87,24 @@
         });
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $('#datetimepicker').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm:ss',  // Specify the format of the datetime
+            icons: {
+                time: 'fas fa-clock',   // Use Font Awesome icons for the datetime picker
+                date: 'fas fa-calendar',
+                up: 'fas fa-chevron-up',
+                down: 'fas fa-chevron-down',
+                previous: 'fas fa-chevron-left',
+                next: 'fas fa-chevron-right',
+                today: 'fas fa-calendar-check-o',
+                clear: 'fas fa-trash',
+                close: 'fas fa-times'
+            }
+        });
+    });
+</script>
 {% endblock content %}
+
+

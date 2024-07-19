@@ -1,15 +1,77 @@
 ﻿<!--templates/castend.html-->
 {% extends "wwdb/base_startendcast.html" %}
+{% load static %}
 {% load bootstrap4 %}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery='full' %}
 {{ form.media }}
 
 {% block content %}
 <h1>End Cast</h1>
 <form action="" method="post">
     {% csrf_token %}
-    {% bootstrap_form form %}
+    {{ form.non_field_errors }}
+    <p>Operator</p>
+    <div class="fieldWrapper">
+        {{ form.endoperator.errors }}
+        {{ form.endoperator }}
+    </div>
+    </br>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="enddatecheck">
+        <label class="form-check-label" for="defaultCheck1">
+            Enter date manually
+        </label> <img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Only enter date if the cast has already started.  Use date icon to select date.">
+    </div>
+    <div id="enddatefield" style="display:none;">
+        <p>End Date</p>
+        <div class="fieldWrapper">
+            {{ form.enddate.errors }}
+            {{ form.enddate }}
+        </div>
+    </div>
+    </br>
+    <p>Notes</p>
+    <div class="">
+        {{ form.notes.errors }}
+        {{ form.notes }}
+    </div>
+    </br>
+    <p>Wire rinse</p>
+    <div class="">
+        {{ form.wirerinse.errors }}
+        {{ form.wirerinse }}
+    </div>
+    </br>
+    <p>Flag for review</p>
+    <div class="fieldWrapper">
+        {{ form.flagforreview.errors }}
+        {{ form.flagforreview }}
+    </div>
+    </br>
+
     <button class="cast-btn" type="submit" value="save">END CAST</button>
 </form>
+</div>
+<script>
+    // Wait for the DOM to be fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize tooltips
+        var tooltips = document.querySelectorAll('[data-toggle="tooltip"]');
+        var tooltipInstances = new bootstrap.Tooltip(tooltips);
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $("#enddatecheck").click(function () {
+            $("#enddatefield").toggle();
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $("form").on("submit", function () {
+            $("input[type=submit]").attr("disabled", true);
+            return true;
+        });
+    });
+</script>
 {% endblock content %}

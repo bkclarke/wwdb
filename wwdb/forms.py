@@ -8,11 +8,17 @@ from datetime import datetime
 
 class StartCastForm(ModelForm):
     flagforreview = forms.BooleanField(required=False)
+    deploymenttype = forms.ModelChoiceField(DeploymentType.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
+    winch = forms.ModelChoiceField(Winch.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
+    motor = forms.ModelChoiceField(Motor.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+    startoperator = forms.ModelChoiceField(WinchOperator.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
+
 
     class Meta:
         model = Cast
         fields = [
             'startoperator',
+            'startdate',
             'deploymenttype',
             'winch',
 			'motor',
@@ -21,6 +27,7 @@ class StartCastForm(ModelForm):
         ]
 
         widgets = {
+            'startdate': DateTimePickerInput(),
             "notes": forms.TextInput(
                 attrs={
                     "class": "form-control",
@@ -29,7 +36,7 @@ class StartCastForm(ModelForm):
                 }),
             }
 
-
+"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         active_operators = WinchOperator.objects.filter(status=True)
@@ -38,7 +45,7 @@ class StartCastForm(ModelForm):
         self.fields['startoperator'].queryset  = active_operators
         self.fields['winch'].queryset  = active_winches
         self.fields['deploymenttype'].queryset  = active_deployments
-
+"""
 
 class ManualCastForm(ModelForm):
     wirerinse = forms.BooleanField(required=False)
@@ -65,6 +72,7 @@ class ManualCastForm(ModelForm):
 class EndCastForm(ModelForm):
     flagforreview = forms.BooleanField(required=False)
     wirerinse = forms.BooleanField(required=False)
+    endoperator = forms.ModelChoiceField(WinchOperator.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
 
   
     class Meta:
@@ -72,12 +80,14 @@ class EndCastForm(ModelForm):
   
         fields = [
             'endoperator',
+            'enddate',
             'notes',
             'wirerinse',
             'flagforreview',
         ]
 
         widgets = {
+            'enddate': DateTimePickerInput(),
             "notes": forms.TextInput(
                 attrs={
                     "class": "form-control",
@@ -86,10 +96,12 @@ class EndCastForm(ModelForm):
                 }),
             }
 
+"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         active_operators = WinchOperator.objects.filter(status=True)
         self.fields['endoperator'].queryset  = active_operators
+"""
 
 """       
     def is_valid(self):
