@@ -32,9 +32,12 @@ logger = logging.getLogger(__name__)
 
 
 def home(request):
-    template = loader.get_template('wwdb/home.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
+    template_name = 'home.html'
+    context = {
+        'template_name': template_name,
+        }
+
+    return render(request, "wwdb/home.html", context)
 
 '''
 Test reactive HTMX tables
@@ -120,8 +123,11 @@ def caststart(request):
             submitted = True
             return render(request, 'wwdb/casts/caststart.html', {'form':form, 'submitted':submitted, 'id':id})
 
-    context['form']= form
+    template_name = 'caststart.html'
 
+    context = {
+        'form':form,
+        'template_name':template_name}
     return render(request, "wwdb/casts/caststart.html", context)
 
 def castlist(request):
@@ -154,6 +160,13 @@ def castend(request, id):
             cast.save()
             return HttpResponseRedirect("/wwdb/casts/%i/castenddetail" % cast.pk)
     context["form"] = form
+
+    template_name = 'castend.html'
+
+    context = {
+        'form':form,
+        'template_name':template_name}
+
     return render(request, "wwdb/casts/castend.html", context)
 
 def castedit(request, id):
@@ -234,7 +247,7 @@ PRECRUISE CONFIGURATION
 Classes related to starting a cruise including updating WinchOperators and DeploymentType models
 """
 
-def cruiseconfigurehome(request):
+def castconfigurehome(request):
     operators = WinchOperator.objects.all()
     deployments = DeploymentType.objects.all()
     active_wire = Wire.objects.filter(status=True)
@@ -249,7 +262,17 @@ def cruiseconfigurehome(request):
         'cruise' : cruise,
        }
 
+    return render(request, 'wwdb/configuration/castconfiguration.html', context=context)
+
+def cruiseconfigurehome(request):
+    cruise = Cruise.objects.all()
+
+    context = {
+        'cruise' : cruise,
+       }
+
     return render(request, 'wwdb/configuration/cruiseconfiguration.html', context=context)
+
 
 def wireeditfactorofsafety(request, id):
     context ={}
@@ -260,7 +283,7 @@ def wireeditfactorofsafety(request, id):
         if form.is_valid():
             form.save()
             wireid=Wire.objects.get(id=id)
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration")
+            return HttpResponseRedirect("/wwdb/configuration/castconfiguration")
     else:
         form = EditFactorofSafetyForm(instance = obj)
         if form.is_valid():
@@ -1118,7 +1141,7 @@ def wincheditstatus(request, id):
         if form.is_valid():
             form.save()
             winchid=Winch.objects.get(id=id)
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration")
+            return HttpResponseRedirect("/wwdb/configuration/castconfiguration")
     else:
         form = EditWinchStatusForm(instance = obj)
         if form.is_valid():
@@ -1135,7 +1158,7 @@ def winchadd(request):
         form = WinchAddForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/wwdb/configuration/cruiseconfiguration')
+            return HttpResponseRedirect('/wwdb/configuration/castconfiguration')
     else:
         form = WinchAddForm 
         if 'submitted' in request.GET:
@@ -1225,7 +1248,7 @@ def operatoreditstatus(request, id):
         if form.is_valid():
             form.save()
             operatorid=WinchOperator.objects.get(id=id)
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration")
+            return HttpResponseRedirect("/wwdb/configuration/castconfiguration")
     else:
         form = EditOperatorStatusForm(instance = obj)
         if form.is_valid():
@@ -1247,7 +1270,7 @@ def operatoradd(request):
         form = AddOperatorForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration")
+            return HttpResponseRedirect("/wwdb/configuration/castconfiguration")
     else:
         form = AddOperatorForm 
         if 'submitted' in request.GET:
@@ -1337,7 +1360,7 @@ def deploymenteditstatus(request, id):
         if form.is_valid():
             form.save()
             deploymentid=DeploymentType.objects.get(id=id)
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration")
+            return HttpResponseRedirect("/wwdb/configuration/castconfiguration")
     else:
         form = EditDeploymentStatusForm(instance = obj)
         if form.is_valid():
@@ -1354,7 +1377,7 @@ def deploymentadd(request):
         form = AddDeploymentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration")
+            return HttpResponseRedirect("/wwdb/configuration/castconfiguration")
     else:
         form = AddDeploymentForm 
         if 'submitted' in request.GET:
@@ -1605,7 +1628,7 @@ def cruiseedit(request, id):
         form = EditCruiseForm(request.POST, instance = obj)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration/#cruise")
+            return HttpResponseRedirect("/wwdb/configuration/castconfiguration/#cruise")
     else:
         form = EditCruiseForm(instance = obj)
         if form.is_valid():
@@ -1624,7 +1647,7 @@ def cruiseadd(request):
         if form.is_valid():
             form.save()
             cruiseid=Cruise.objects.last()
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration/#cruise")
+            return HttpResponseRedirect("/wwdb/configuration/castconfiguration/#cruise")
     else:
         form = EditCruiseForm 
         if 'submitted' in request.GET:
@@ -1647,7 +1670,7 @@ def cruiseeditmeta(request, pk):
         if form.is_valid():
             form.save()
             cruiseid=Cruise.objects.get(id=pk)
-            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration")
+            return HttpResponseRedirect("/wwdb/configuration/castconfiguration")
     else:
         form = EditCruiseMetaForm(instance = obj)
         if form.is_valid():

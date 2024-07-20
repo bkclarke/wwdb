@@ -198,7 +198,69 @@ class CruiseTableForm(forms.ModelForm):
         exclude = []
 
         widgets = {
+            'startdate': DatePickerInput(), 
+            'enddate': DatePickerInput(),
             "number": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+            "winch1termination": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+            "winch1blockarrangement": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+            "winch1notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+            "winch2termination": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+            "winch2blockarrangement": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+            "winch2notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+            "winch3termination": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+            "winch3blockarrangement": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+            "winch3notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 450px; align: center;",
+                    "placeholder": "cruise number",
+                }),
+            "scienceprovidedwinch": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "style": "max-width: 450px; align: center;",

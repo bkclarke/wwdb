@@ -1,131 +1,36 @@
 ﻿<!--template/cruiseconfiguration.html-->
 <!DOCTYPE html>
 {% extends "wwdb/base.html" %}
-
 {% block content %}
-
 <div class="container mt-5 mb-5">
-    <div class="container">
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" href="#cruise">Cruise</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#operators">Operators</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#deployments">Deployments</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#winches">Winches</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#wires">SWT</a>
-            </li>
-        </ul>
+    <button id="cruiseadd" class="btn btn-outline-wwdb">Add cruise</button>
+    <table id="table" class="display nowrap" data-paging="false">
+        <thead>
+        <th>Number</th>
+        <th>Start date</th>
+        <th>End date</th>
+        </thead>
+        {% for cruise in cruise %}
+        <tr>
+            <td>{{ cruise.number }}</td>
+            <td>{{ cruise.startdate }}</td>
+            <td>{{ cruise.enddate }}</td>
+        </tr>
+        {% endfor %}
 
-        <!-- Tab panes -->
-        <div class="tab-content">
-            </br>
-            <div class="tab-pane container fade show active" id="cruise">
-                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    <h1>Cruises</h1>
-                    </br>
-                    <button type="button" class="btn btn-outline-wwdb"
-                            hx-get="{% url 'cruisetableadd' %}"
-                            hx-target="next tbody"
-                            hx-swap="afterbegin">
-                        Add cruise
-                    </button>
-                    <div id="query_result"
-                         hx-target="this"
-                         hx-swap="innerHTML"
-                         hx-get="{% url 'cruisetablelistget' %}"
-                         hx-trigger="load delay:0.5s">
-                    </div>
-                </div>
-                <div id="table-content" hx-get="{% url 'cruisetablelistget' %}"></div>
-            </div>
-            <div class="tab-pane container fade" id="operators">
-                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    <h1>Operators</h1>
-                    </br>
-                    <button type="button" class="btn btn-outline-wwdb"
-                            hx-get="{% url 'operatortableadd' %}"
-                            hx-target="next tbody"
-                            hx-swap="afterbegin">
-                        Add Operator
-                    </button>
-                    <div id="query_result"
-                         hx-target="this"
-                         hx-swap="innerHTML"
-                         hx-get="{% url 'operatortablelistget' %}"
-                         hx-trigger="load delay:0.5s">
-                    </div>
-                </div>
-            </div>
-            <div class="tab-pane container fade" id="deployments">
-                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    <h1>Deployments</h1>
-                    </br>
-                    <button type="button" class="btn btn-outline-wwdb"
-                            hx-get="{% url 'deploymenttableadd' %}"
-                            hx-target="next tbody"
-                            hx-swap="afterbegin">
-                        Add deployment
-                    </button>
-                    <div id="query_result"
-                         hx-target="this"
-                         hx-swap="innerHTML"
-                         hx-get="{% url 'deploymenttablelistget' %}"
-                         hx-trigger="load delay:0.5s">
-                    </div>
-                </div>
-            </div>
-            <div class="tab-pane container fade" id="winches">
-                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    <h1>Winches</h1>
-                    </br>
-                    <button type="button" class="btn btn-outline-wwdb"
-                            hx-get="{% url 'winchtableadd' %}"
-                            hx-target="next tbody"
-                            hx-swap="afterbegin">
-                        Add winch
-                    </button>
-                    <div id="query_result"
-                         hx-target="this"
-                         hx-swap="innerHTML"
-                         hx-get="{% url 'winchtablelistget' %}"
-                         hx-trigger="load delay:0.5s">
-                    </div>
-                </div>
-            </div>
-            <div class="tab-pane container fade" id="wires">
-                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    <h1>Safe working tensions</h1>
-                    </br>
-                    <div id="query_result"
-                         hx-target="this"
-                         hx-swap="innerHTML"
-                         hx-get="{% url 'swttablelistget' %}"
-                         hx-trigger="load delay:0.5s">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    </table>
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table').DataTable();
+    });
+</script>
 <script>
     $(document).ready(function () {
-        $('#cruise a').on('click', function (e) {
-            e.preventDefault();
-            $(this).tab('show');
+        $('#cruiseadd').click(function () {
+            window.location.href = "{% url 'cruiseadd' %}";
         });
-
-        // Trigger the click on the active tab on page load
-        var activeTab = $('#cruise .nav-link.active');
-        activeTab.tab('show');
     });
 </script>
 {% endblock %}
+

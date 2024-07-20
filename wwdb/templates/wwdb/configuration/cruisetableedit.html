@@ -14,13 +14,53 @@
         {{ form.enddate.errors }}
     </td>
     <td>
+        {{ form.winch1termination }}
+        {{ form.winch1termination.errors}}
+    </td>
+    <td>
+        {{ form.winch1blockarrangement }}
+        {{ form.winch1blockarrangement.errors }}
+    </td>
+    <td>
+        {{ form.winch1notes }}
+        {{ form.winch1notes.errors }}
+    </td>
+    <td>
+        {{ form.winch2termination }}
+        {{ form.winch2termination.errors}}
+    </td>
+    <td>
+        {{ form.winch2blockarrangement }}
+        {{ form.winch2blockarrangement.errors }}
+    </td>
+    <td>
+        {{ form.winch2notes }}
+        {{ form.winch2notes.errors }}
+    </td>
+    <td>
+        {{ form.winch3termination }}
+        {{ form.winch3termination.errors}}
+    </td>
+    <td>
+        {{ form.winch3blockarrangement }}
+        {{ form.winch3blockarrangement.errors }}
+    </td>
+    <td>
+        {{ form.winch3notes }}
+        {{ form.winch3notes.errors }}
+    </td>
+    <td>
+        {{ form.scienceprovidedwinch }}
+        {{ form.scienceprovidedwinch.errors }}
+    </td>
+    <td>
         <a href="#"
            hx-post="{% url 'cruisetableeditsubmit' cruise.pk %}"
            hx-target="closest tr"
            hx-swap="outerHTML"
            hx-include="closest tr"
            class="text-secondary">
-        Submit
+            Submit
     </td>
     <td>
         <a href="#"
@@ -28,7 +68,7 @@
            hx-target="closest tr"
            hx-swap="outerHTML"
            class="text-secondary">
-        Cancel
+            Cancel
         </a>
     </td>
 </tr>

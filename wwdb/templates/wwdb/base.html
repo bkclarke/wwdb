@@ -28,36 +28,18 @@
     <script type="text/javascript" src={% static 'js/buttons.html5.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/buttons.print.min.js' %} crossorigin="anonymous"></script>
     <script type="text/javascript" src={% static 'js/htmx.min.js' %} crossorigin="anonymous"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $.fn.dataTable.moment('DD-MMM-YY');
-            $('table.display_nosearch').DataTable({
-                layout: {
-                    top2Start: 'pageLength',
-                    topStart: 'info',
-                    topEnd: 'paging',
-                    bottomStart: 'pageLength',
-                    bottom2Start: 'info',
-                    bottom2End: 'paging'
-                },
-                buttons: [
-                    'csv', 'print'
-                ],
-                autoWidth: false,
-                scrollX: true,
-            });
-        });
-    </script>
     <script>
         document.addEventListener('htmx:afterRequest', function (evt) {
             $('table.display').DataTable({
                 retrieve: true,
+                responsive: true
             });
         });
     </script>
     {{form.media}}
 </head>
 <body>
+    {% if template_name != 'caststart.html' and template_name != 'castend.html' and template_name != 'home.html' %}
     <div class="top-button-container stickey-top">
         {% if last.enddate %}
         <button id="startcast" class="btn btn-startcast">Click here to start cast</button>
@@ -65,6 +47,7 @@
         <button id="endcast" class="btn btn-startcast">Cast in progess - click here to End Cast</button>
         {% endif %}
     </div>
+    {% endif %}
     <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
         <a href="{% url 'home' %}">
             <img src='/static/img/wire_logo.png' alt="Logo" class="logo" />
@@ -76,10 +59,14 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'cruiseconfigurehome' %}">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Configuration
                     </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'castconfigurehome' %}">Cast forms</a>
+                        <a class="dropdown-item" href="{% url 'cruiseconfigurehome' %}">Cruises</a>
+                    </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

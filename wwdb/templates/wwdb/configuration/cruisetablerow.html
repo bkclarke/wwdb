@@ -4,6 +4,16 @@
     <td>{{ cruise.number }}</td>
     <td>{{ cruise.startdate }}</td>
     <td>{{ cruise.enddate }}</td>
+    <td>{{ cruise.winch1blockarrangement }}</td>
+    <th>{{ cruise.winch1termination }}</th>
+    <th>{{ cruise.winch1notes }}</th>
+    <th>{{ cruise.winch2blockarrangement }}</th>
+    <th>{{ cruise.winch2termination }}</th>
+    <th>{{ cruise.winch2notes }}</th>
+    <th>{{ cruise.winch3blockarrangement }}</th>
+    <th>{{ cruise.winch3termination }}</th>
+    <th>{{ cruise.winch3notes }}</th>
+    <th>{{ cruise.scienceprovidedwinch }}</th>
     <td>
         <button class='btn'
                 hx-get="{% url 'cruisetableedit' cruise.pk %}"
