@@ -1,87 +1,273 @@
-{% extends "wwdb/base.html" %}
 <!doctype html>
+{% extends "wwdb/base.html" %}
+{% load static %}
 
-<html>
+
 {% block content %}
-<div>
-    <div class="cast-form-container">
-        <form method="GET" action=".">
-            <label for="startdate">Start date:</label>
-            <input type="date" class="form-control" id="startdate" name="date_min" placeholder="Start Date:">
-            </br>
-            <label for="enddate">End date:</label>
-            <input type="date" class="form-control" id="enddate" name="date_max" placeholder="End Date:">
-            </br>
-            <select id="wire" class="form-control" name="wire_nsfid">
-                <option selected>Wire</option>
-                {% for w in wire %}
-                <option value="{{ w.nsfid }}">{{ w.nsfid }}</option>
-                {% endfor %}
-            </select>
-            </br>
-            <select id="winch" class="form-control" name="winch_id">
-                <option selected>Winch</option>
-                {% for w in winch %}
-                <option value="{{ w.name }}">{{ w.name }}</option>
-                {% endfor %}
-            </select>
-            </br>
-            <select id="deploymenttype" class="form-control" name="deployment_id">
-                <option selected>Deployment</option>
-                {% for d in deployment %}
-                <option value="{{ d.name }}">{{ d.name }}</option>
-                {% endfor %}
-            </select>
-            </br>
-            <div class="">
-                <button type="submit" class="btn btn-outline-dark">Search</button>
-            </div>
-        </form>
-    </div>
-    <div>
-        <hr />
-        <table id="" class="display_nosearch">
-            <thead>
-                <tr>
-                    <th>Start time</th>
-                    <th>Winch</th>
-                    <th>Wire</th>
-                    <th>Deployment type</th>
-                    <th>Start operator</th>
-                    <th>End operator</th>
-                    <th>Max tension</th>
-                    <th>Max payout</th>
-                    <th>Payout at max tension</th>
-                    <th>meter mark at max tension</th>
-                    <th>time of max tension</th>
-                    <th>Wet end tag</th>
-                    <th>Dry end tag</th>
-                </tr>
-            </thead>
-            {% for cast in qs %}
-            <tr>
-                <td>{{cast.format_startdate}}</td>
-                <td>{{cast.winch}}</td>
-                <td>{{cast.wire}}</td>
-                <td>{{cast.deploymenttype}}</td>
-                <td>{{cast.startoperator}}</td>
-                <td>{{cast.endoperator}}</td>
-                <td>{{cast.maxtension}}</td>
-                <td>{{cast.maxpayout}}</td>
-                <td>{{cast.payoutmaxtension}}</td>
-                <td>{{cast.metermaxtension}}</td>
-                <td>{{cast.format_timemaxtension}}</td>
-                <td>{{cast.wetendtag}}</td>
-                <td>{{cast.dryendtag}}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-    <button type="button" class="btn btn-outline-wwdb">
-        <a class="btn-link-wwdb" href="{% url 'unols_report_csv' %}">Unols wire report</a>
-    </button>
-    <button type="button" class="btn btn-outline-wwdb">
-        <a class="btn-link-wwdb" href="{% url 'cast_table_csv' %}">Print table</a>
-    </button>
-    {% endblock content %}
-</html>
+<form method="get">
+    {{ form.winch }}
+    </br>
+    </br>
+    {{ form.wire }}
+    </br>
+    </br>
+    {{ form.deploymenttype }}
+    </br>
+    </br>
+    {{ form.operator }}
+    </br>
+    </br>
+    <button type="submit">Filter</button>
+    </br>
+    </br>
+</form>
+<table id="table" class="display nowrap">
+    <thead>
+        <tr>
+            <th>Start time</th>
+            <th>Winch</th>
+            <th>Wire</th>
+            <th>Deployment type</th>
+            <th>Start operator</th>
+            <th>End operator</th>
+            <th>Max tension</th>
+            <th>Max payout</th>
+            <th>Payout tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
+            <th>Meter mark<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
+            <th>Time tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
+            <th>Wet end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the wet end"></th>
+            <th>Dry end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the dry end"></th>
+            <th>Motor</th>
+            <th>Ship</th>
+            <th>Institution</th>
+            <th>Winch manufacturer</th>
+            <th>Wire type</th>
+            <th>Wire length (m)</th>
+            <th>factor of Safety</th>
+            <th>Safe working tension (lbs)</th>
+        </tr>
+    </thead>
+    {% for cast in casts %}
+    <tr>
+        <td>{{cast.format_startdate}}</td>
+        <td>{{cast.winch.name}}</td>
+        <td>{{cast.wire}}</td>
+        <td>{{cast.deploymenttype}}</td>
+        <td>{{cast.startoperator}}</td>
+        <td>{{cast.endoperator}}</td>
+        <td>{{cast.maxtension}}</td>
+        <td>{{cast.maxpayout}}</td>
+        <td>{{cast.payoutmaxtension}}</td>
+        <td>{{cast.metermaxtension}}</td>
+        <td>{{cast.format_timemaxtension}}</td>
+        <td>{{cast.wetendtag}}</td>
+        <td>{{cast.dryendtag}}</td>
+        <td>{{cast.motor}}</td>
+        <td>{{cast.winch.ship}}</td>
+        <td>{{cast.winch.institution}}</td>
+        <td>{{cast.winch.manufacturer}}</td>
+        <td>{{cast.wire.wirerope.name}}</td>
+        <td>{{cast.wirelength}}</td>
+        <td>{{cast.factorofsafety}}</td>
+        <td>{{cast.safeworkingtension}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</br>
+<button id="unolsButton">Download UNOLS report</button>
+<button id="tableButton">Download table</button>
+
+
+<script>
+    $(document).ready(function () {
+        var table = $('#table').DataTable({
+            responsive: true,
+            scrollX: true,
+            order: [[0, "desc"]]
+            // Add more options as needed
+        });
+
+        // Function to count unique values in a column
+        function verifyCountUniqueValues(columnIndex) {
+            var values = [];
+            table.column(columnIndex, { search: 'applied' }).data().each(function (value) {
+                if (values.indexOf(value) === -1) {
+                    values.push(value);
+                }
+            });
+            return values.length;
+        }
+
+        function getUniqueValues(columnIndex) {
+            var values = [];
+            table.column(columnIndex, { search: 'applied' }).data().each(function (value) {
+                if (values.indexOf(value) === -1) {
+                    values.push(value);
+                }
+            });
+            return values.join(', ');
+        }
+
+        function countUniqueValues(columnIndex) {
+            var values = {};
+            table.column(columnIndex, { search: 'applied' }).data().each(function (value) {
+                if (values[value]) {
+                    values[value]++;
+                } else {
+                    values[value] = 1;
+                }
+            });
+            return values;
+        }
+
+        function getMaxValues(columnIndex) {
+            var values = null;
+            table.column(columnIndex, { search: 'applied' }).data().each(function (value) {
+                value = parseFloat(value); // Assuming values are numeric
+                if (values === null || value > values) {
+                    values = value; // Update max if current value is greater
+                }
+            });
+            return values;
+        }
+
+        var minDate = null;
+        var maxDate = null;
+
+        // Function to get unique values from a foreign key field
+        function getUniqueForeignKeyValues(columnIndex) {
+            var values = {};
+            table.column(columnIndex, { search: 'applied' }).data().each(function (value) {
+                values[value] = true;
+            });
+            return Object.keys(values).join(', ');  // Join unique values with comma and space
+        }
+
+        // Button click handler
+        $('#unolsButton').on('click', function () {
+            // Check if DataTable is initialized
+            if ($.fn.DataTable.isDataTable('#table')) {
+                var uniqueCount = verifyCountUniqueValues(2);
+                var uniqueValues2 = getUniqueValues(2);
+                var uniqueValues14 = getUniqueValues(14);
+                var uniqueValues15 = getUniqueValues(15);
+                var uniqueValues16 = getUniqueValues(16);
+                var uniqueValues17 = getUniqueValues(17);
+                var uniqueValueCounts = countUniqueValues(3);
+                var uniqueForeignKeyValues = getUniqueForeignKeyValues(1);
+                var getMaxValsTension = getMaxValues(6);
+                var getMaxValsPayout = getMaxValues(7);
+
+                // Calculate min and max date from DataTable
+                var minDate = null;
+                var maxDate = null;
+
+                // Iterate over data to find min and max dates
+                table.rows().every(function () {
+                    var data = this.data();
+                    var currentDate = new Date(data[0]); // Assuming date is in the second column
+                    if (minDate === null || currentDate < minDate) {
+                        minDate = currentDate;
+                    }
+                    if (maxDate === null || currentDate > maxDate) {
+                        maxDate = currentDate;
+                    }
+                });
+
+                if (uniqueCount > 1) {
+                    alert('Multiple tension members selected. Cannot download UNOLS wire report.');
+                } else {
+                    // Proceed with CSV download logic
+                    var data = table.rows({ search: 'applied' }).data();
+                    var totalRows = table.rows().count();
+
+                    var csv = [];
+
+                    //add metadata
+                    csv.push('#UNOLS TENSION MEMBER REPORT')
+                    csv.push('#Dates ' + (minDate ? minDate.toLocaleDateString() : '') + ' Through ' + (maxDate ? maxDate.toLocaleDateString() : ''))
+                    csv.push('#Vessel: ' + uniqueValues14)
+                    csv.push('#Institution: ' + uniqueValues15)
+                    csv.push('#')
+                    csv.push('#nsfid: ' + uniqueValues2)
+                    csv.push('#number of casts: ' + totalRows);
+                    csv.push('#max tension: ' + getMaxValsTension);
+                    csv.push('#max payout: ' + getMaxValsPayout);
+                    csv.push('#')
+                    csv.push('#Casts per deployment:');
+                    for (var value in uniqueValueCounts) {
+                        if (uniqueValueCounts.hasOwnProperty(value)) {
+                            csv.push('#' + value + ': ' + uniqueValueCounts[value]);
+                        }
+                    }
+                    csv.push('#')
+                    // Add headers
+                    var headers = [];
+                    table.columns().every(function () {
+                        headers.push(this.header().innerText.trim());
+                    });
+                    csv.push(headers.join(','));
+
+                    // Add data rows
+                    data.each(function (row) {
+                        csv.push(row.join(','));
+                    });
+
+                    // Create download link
+                    var csvContent = csv.join('\n');
+                    var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    var link = document.createElement('a');
+                    var url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', uniqueValues2 + "-" + (minDate ? minDate.toLocaleDateString() : '') + '-' + (maxDate ? maxDate.toLocaleDateString() : '') + '.csv');
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            } else {
+                alert('DataTable is not initialized.');
+            }
+        });
+        // Button click handler
+        $('#tableButton').on('click', function () {
+            // Check if DataTable is initialized
+            if ($.fn.DataTable.isDataTable('#table')) {
+
+                    // Proceed with CSV download logic
+                    var data = table.rows({ search: 'applied' }).data();
+                    var totalRows = table.rows().count();
+
+                    var csv = [];
+
+                    // Add headers
+                    var headers = [];
+                    table.columns().every(function () {
+                        headers.push(this.header().innerText.trim());
+                    });
+                    csv.push(headers.join(','));
+
+                    // Add data rows
+                    data.each(function (row) {
+                        csv.push(row.join(','));
+                    });
+
+                    // Create download link
+                    var csvContent = csv.join('\n');
+                    var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    var link = document.createElement('a');
+                    var url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', 'filtered_cast_table.csv');
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+            } else {
+                alert('DataTable is not initialized.');
+            }
+        });
+    });
+</script>
+
+{% endblock content %}

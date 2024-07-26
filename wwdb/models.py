@@ -83,7 +83,7 @@ class Cast(models.Model):
     enddate = models.DateTimeField(db_column='EndDate', blank=True, null=True, verbose_name='End date and time', validators=[MaxValueValidator(limit_value=datetime.today)])  
     deploymenttype = models.ForeignKey('Deploymenttype', models.DO_NOTHING, db_column='DeploymentTypeId', null=True, verbose_name='Deployment type')  
     wire = models.ForeignKey('Wire', models.DO_NOTHING, db_column='WireId', blank=True, null=True, verbose_name='Wire')  
-    winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', null=True, verbose_name='Winch')  
+    winch = models.ForeignKey('Winch', models.DO_NOTHING, db_column='WinchId', related_name='cast_winch', null=True, verbose_name='Winch')  
     notes = models.TextField(db_column='Notes', blank=True, null=True, verbose_name='Notes', validators=[validate_commas])  
     maxtension = models.IntegerField(db_column='MaxTension', blank=True, null=True, verbose_name='Max tension')  
     maxpayout = models.IntegerField(db_column='MaxPayout', blank=True, null=True, verbose_name='Max payout')  
@@ -95,6 +95,9 @@ class Cast(models.Model):
     wetendtag = models.IntegerField(db_column='WetEndTag', blank=True, null=True, verbose_name='Wet end tag')  
     motor = models.ForeignKey('Motor', models.DO_NOTHING, db_column='MotorId', blank=True, null=True, verbose_name='Motor')
     wirerinse = models.BooleanField(db_column='wirerinse', blank=True, null=True, verbose_name='Wire rinse')  
+    wirelength = models.IntegerField(db_column='WireLength', blank=True, null=True, verbose_name='Wire length')  
+    factorofsafety = models.FloatField(db_column='FactorofSafety', blank=False, null=True, verbose_name='Factor of safety')  
+    safeworkingtension = models.FloatField(db_column='SafeWorkingTension', blank=False, null=True, verbose_name='Safe Working tension')  
 
 
     class Meta:
@@ -133,6 +136,24 @@ class Cast(models.Model):
         if self.winch:
             d=self.winch.active_wire.wireid
         return d
+
+    @property
+    def active_wire_length(self):
+        if self.active_wire:
+            d=self.active_wire.active_length
+        return d
+
+    @property
+    def active_wire_safeworkingtension(self):
+        if self.active_wire:
+            d=self.active_wire.safe_working_tension
+        return d
+
+    @property
+    def active_wire_factorofsafety(self):
+        if self.active_wire:
+            d=self.active_wire.factorofsafety 
+        return d
 		
     @property
     def active_motor(self):
@@ -145,7 +166,7 @@ class Cast(models.Model):
     def format_startdate(self):
         if self.startdate:
             date=self.startdate
-            formatdate=date.strftime("%Y-%m-%d, %H:%M:%S")
+            formatdate=date.strftime("%Y-%m-%d %H:%M:%S")
             return formatdate
         return
 
@@ -154,7 +175,7 @@ class Cast(models.Model):
         if not self.timemaxtension:
             return
         date=self.timemaxtension
-        formatdate=date.strftime("%Y-%m-%d, %H:%M:%S")
+        formatdate=date.strftime("%Y-%m-%d %H:%M:%S")
         return formatdate
 
     @property
@@ -166,6 +187,21 @@ class Cast(models.Model):
     def get_active_wire(self):
         if self.active_wire:
             self.wire=self.active_wire
+        return
+
+    def get_active_length(self):
+        if self.active_wire_length:
+            self.wirelength=self.active_wire_length
+        return
+
+    def get_active_factorofsafety(self):
+        if self.active_wire_factorofsafety:
+            self.factorofsafety=self.active_wire_factorofsafety.factorofsafety
+        return
+
+    def get_active_safeworkingtension(self):
+        if self.active_wire_safeworkingtension:
+            self.safeworkingtension=self.active_wire_safeworkingtension
         return
 
     def endcastcal(self):

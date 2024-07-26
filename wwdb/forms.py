@@ -827,3 +827,11 @@ class BreaktestAddForm(ModelForm):
                         "placeholder": "notes",
                 }),
                 }
+
+class CastFilterForm(forms.Form):
+    winch = forms.ModelChoiceField(queryset=Winch.objects.all(), empty_label='All winches', required=False)
+    deploymenttype = forms.ModelChoiceField(queryset=DeploymentType.objects.all(), empty_label='All deployments', required=False)
+    operator = forms.ModelChoiceField(queryset=WinchOperator.objects.all(), empty_label='All operators', required=False)
+    wire = forms.ModelChoiceField(queryset=Wire.objects.all(), empty_label='All wires', required=False)
+    startdate = forms.DateTimeField(required=False, widget=forms.DateTimeInput())
+    enddate = forms.DateTimeField(required=False, widget=forms.DateTimeInput())

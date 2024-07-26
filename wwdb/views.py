@@ -26,10 +26,20 @@ from reportlab.platypus import Table, TableStyle, Paragraph
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 import io
 from datetime import datetime
+from django.db.models import Q
+from django.http import JsonResponse
 
 
 logger = logging.getLogger(__name__)
 
+
+def get_winch_manufacturer(request, value):
+    try:
+        winch = get_object_or_404(Winch, id=value)
+        manufacturer = winch.manufacturer
+        return JsonResponse({'manufacturer': manufacturer})
+    except Winch.DoesNotExist:
+        return JsonResponse({'error': 'Winch not found'}, status=404)
 
 def home(request):
     template_name = 'home.html'
@@ -155,6 +165,10 @@ def castend(request, id):
             form.save()
             cast.refresh_from_db()
             cast.endcastcal()
+            cast.get_active_length()
+            cast.get_active_wire()
+            cast.get_active_safeworkingtension()
+            cast.get_active_factorofsafety()
             if cast.enddate == None:
                 cast.endcast_get_datetime()
             cast.save()
@@ -326,8 +340,41 @@ def cruiselist(request):
 
     return render(request, 'wwdb/reports/cruiselist.html', context=context)
 
+def castreport(request):
+    # Initialize form with data from GET request (if any)
+    form = CastFilterForm(request.GET)
+    casts = Cast.objects.all()
+
+    # Handle form submission and filtering
+    if form.is_valid():
+        casts = Cast.objects.all()
+        deploymenttype = form.cleaned_data.get('deploymenttype')
+        winch = form.cleaned_data.get('winch')
+        startdate = form.cleaned_data.get('startdate')
+        enddate = form.cleaned_data.get('enddate')
+        wire = form.cleaned_data.get('wire')
+        operator = form.cleaned_data.get('operator')
+        if deploymenttype:
+            casts = casts.filter(deploymenttype=deploymenttype)
+        if winch:
+            casts = casts.filter(winch=winch)
+        if startdate:    
+            casts = casts.filter(startdate__gte=date_min)
+        if enddate:
+            casts = casts.filter(enddate__gte=date_max)
+        if wire:
+            casts = casts.filter(wire=wire)
+        if operator:
+            casts = casts.filter(Q(startoperator=operator) | Q(endoperator=operator))
+
+
+    # Render the template with form and filtered products
+    return render(request, 'wwdb/reports/castreport.html', {'form': form, 'casts': casts})
+
+"""
 def is_valid_queryparam(param):
     return param != '' and param is not None
+
 
 def cast_table_filter(request):
     
@@ -367,6 +414,8 @@ def castreport(request):
     deployment=DeploymentType.objects.all()
     qs = cast_table_filter(request)
 
+
+
     context = {
         'qs':qs,
         'wire':wire,
@@ -375,6 +424,7 @@ def castreport(request):
         }
 
     return render(request, "wwdb/reports/castreport.html", context)
+"""
 
 def cast_table_csv(request):
     cast = cast_table_filter(request)

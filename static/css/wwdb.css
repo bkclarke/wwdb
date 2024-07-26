@@ -206,7 +206,7 @@
         text-decoration: none;
     }
 
-.cast-btn {
+.cast-end-btn {
     width: auto;
     line-height: 20px;
     padding: 10px;
@@ -218,7 +218,24 @@
     opacity: 1;
 }
 
-    .cast-btn:hover {
+    .cast-end-btn:hover {
         background-color: #ffd800;
         opacity: 1;
     }
+
+.cast-start-btn {
+    width: auto;
+    line-height: 20px;
+    padding: 10px;
+    background-color: #00ff21;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    opacity: 1;
+}
+
+.cast-start-btn:hover {
+    background-color: #ffd800;
+    opacity: 1;
+}
