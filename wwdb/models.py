@@ -98,6 +98,7 @@ class Cast(models.Model):
     wirelength = models.IntegerField(db_column='WireLength', blank=True, null=True, verbose_name='Wire length')  
     factorofsafety = models.FloatField(db_column='FactorofSafety', blank=False, null=True, verbose_name='Factor of safety')  
     safeworkingtension = models.FloatField(db_column='SafeWorkingTension', blank=False, null=True, verbose_name='Safe Working tension')  
+    duration = models.IntegerField(db_column='Duration', blank=True, null=True, verbose_name='Duration')  
 
 
     class Meta:
@@ -270,6 +271,14 @@ class Cast(models.Model):
         if self.enddate is None:
             current_datetime = datetime.now()
             self.enddate = current_datetime
+
+    def get_cast_duration(self):
+        if self.enddate and self.startdate:
+            start = self.startdate
+            end = self.enddate
+            duration = (end - start)
+            duration_in_minutes = round(duration.total_seconds() / 60)
+            self.duration = duration_in_minutes
 
 class Cruise(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)   

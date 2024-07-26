@@ -172,6 +172,11 @@ def castend(request, id):
             if cast.enddate == None:
                 cast.endcast_get_datetime()
             cast.save()
+
+            cast.refresh_from_db()
+            cast.get_cast_duration
+            cast.save()
+
             return HttpResponseRedirect("/wwdb/casts/%i/castenddetail" % cast.pk)
     context["form"] = form
 
@@ -192,8 +197,9 @@ def castedit(request, id):
             form.save()
             obj.get_active_wire()
             obj.endcastcal()
+            obj.get_cast_duration
             obj.save()
-            return HttpResponseRedirect('/wwdb/reports/castlist')
+            return HttpResponseRedirect('/wwdb/reports/castreport')
     else:
         form = EditCastForm(instance = obj)
         if form.is_valid():
@@ -230,7 +236,7 @@ def castmanualedit(request, id):
         if form.is_valid():
             form.save()
             obj.save()
-            return HttpResponseRedirect('/wwdb/reports/castlist')
+            return HttpResponseRedirect('/wwdb/reports/castreport')
     else:
         form = ManualCastForm(instance = obj)
         if form.is_valid():
@@ -249,7 +255,7 @@ def castdetail(request, id):
 class CastDelete(DeleteView):
     model = Cast
     template_name="wwdb/casts/castdelete.html"
-    success_url= reverse_lazy('castlist')
+    success_url= reverse_lazy('castreport')
 
 def castenddetail(request, id):
     context ={}
@@ -344,6 +350,8 @@ def castreport(request):
     # Initialize form with data from GET request (if any)
     form = CastFilterForm(request.GET)
     casts = Cast.objects.all()
+    cast_complete = Cast.objects.filter(flagforreview=False, maxpayout__isnull=False, payoutmaxtension__isnull=False, maxtension__isnull=False) 
+    cast_flag = Cast.objects.filter((Q(winch=1) | Q(winch=2) | Q(winch=3)), (Q(flagforreview=True) | Q(maxpayout__isnull=True) | Q(payoutmaxtension__isnull=True) | Q(maxtension__isnull=True)))
 
     # Handle form submission and filtering
     if form.is_valid():
@@ -367,9 +375,14 @@ def castreport(request):
         if operator:
             casts = casts.filter(Q(startoperator=operator) | Q(endoperator=operator))
 
-
+    context = {
+        'cast_complete': cast_complete,
+        'cast_flag': cast_flag,
+        'casts': casts,
+        'form': form,
+       }
     # Render the template with form and filtered products
-    return render(request, 'wwdb/reports/castreport.html', {'form': form, 'casts': casts})
+    return render(request, 'wwdb/reports/castreport.html', context)
 
 """
 def is_valid_queryparam(param):
