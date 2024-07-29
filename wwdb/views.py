@@ -25,21 +25,79 @@ from reportlab.lib.enums import TA_LEFT
 from reportlab.platypus import Table, TableStyle, Paragraph
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 import io
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db.models import Q
 from django.http import JsonResponse
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 
 logger = logging.getLogger(__name__)
 
+def get_data_from_external_db(start_date, end_date, winch):
 
-def get_winch_manufacturer(request, value):
-    try:
-        winch = get_object_or_404(Winch, id=value)
-        manufacturer = winch.manufacturer
-        return JsonResponse({'manufacturer': manufacturer})
-    except Winch.DoesNotExist:
-        return JsonResponse({'error': 'Winch not found'}, status=404)
+    conn_str = 'Driver={SQL Server};Server=192.168.1.90, 1433;Database=WinchDb;Trusted_Connection=no;UID=remoteadmin;PWD=eris.2003;'
+
+    query = f"""
+        SELECT DateTime, Tension, Payout
+        FROM {winch}
+        WHERE DateTime BETWEEN '{start_date}' AND '{end_date}'
+        """
+
+    with pyodbc.connect(conn_str) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+    if len(rows) > 1000:
+        bin_size = len(rows) // 1000
+        binned_data = {}
+        for row in rows:
+            dt = row[0]
+            if dt not in binned_data:
+                binned_data[dt] = {'max_tension': row[1], 'max_payout': row[2]}
+            else:
+                binned_data[dt]['max_tension'] = max(binned_data[dt]['max_tension'], row[1])
+                binned_data[dt]['max_payout'] = max(binned_data[dt]['max_payout'], row[2])
+        
+        rows = sorted(binned_data.items())
+    
+    return rows
+
+def charts(request):
+    form = DataFilterForm(request.GET or None)
+    data_tension = []
+    data_payout = []
+    
+    if not form.is_valid():
+        end_date_initial = datetime.utcnow().date()
+        end_date = end_date_initial + timedelta(days=1)
+        start_date = end_date_initial - timedelta(days=1)
+    else:
+        start_date = form.cleaned_data['start_date']
+        end_date = form.cleaned_data['end_date']
+        end_date = end_date + timedelta(days=1)
+
+    if form.is_valid():
+        winch = form.cleaned_data['winch']
+    else:
+        winch = Winch.objects.last()  # Get the first winch or handle as appropriate
+        winch = winch.id 
+
+    winch_obj = Winch.objects.filter(id=winch).first()
+    if winch_obj:
+        winch = winch_obj.id
+
+    winch = winch_obj.name
+    data_points = get_data_from_external_db(start_date, end_date, winch)
+    data_tension = [{'date': row[0].strftime('%Y-%m-%d %H:%M:%S'), 'value': row[1]['max_tension']} for row in data_points]
+    data_payout = [{'date': row[0].strftime('%Y-%m-%d %H:%M:%S'), 'value': row[1]['max_payout']} for row in data_points]
+
+    # Serialize the data to JSON
+    data_json_tension = json.dumps(data_tension)
+    data_json_payout = json.dumps(data_payout)
+
+    return render(request, 'wwdb/reports/charts.html', {'form': form, 'data_json_tension': data_json_tension, 'data_json_payout': data_json_payout })
 
 def home(request):
     template_name = 'home.html'
@@ -174,7 +232,7 @@ def castend(request, id):
             cast.save()
 
             cast.refresh_from_db()
-            cast.get_cast_duration
+            cast.get_cast_duration()
             cast.save()
 
             return HttpResponseRedirect("/wwdb/casts/%i/castenddetail" % cast.pk)
@@ -197,14 +255,18 @@ def castedit(request, id):
             form.save()
             obj.get_active_wire()
             obj.endcastcal()
-            obj.get_cast_duration
             obj.save()
+
+            obj.refresh_from_db()
+            obj.get_cast_duration()
+            obj.save()
+
             return HttpResponseRedirect('/wwdb/reports/castreport')
     else:
         form = EditCastForm(instance = obj)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/wwdb/casts/%i/edit' % cast.pk)
+            return HttpResponseRedirect('/wwdb/casts/%i/edit' % obj.pk)
 
     context["form"] = form
     return render(request, "wwdb/casts/castedit.html", context)

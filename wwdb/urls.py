@@ -6,7 +6,6 @@ from .views import *
 
 urlpatterns = [
     path('home/', views.home, name='home'),
-    path('api/winch/<str:value>/manufacturer/', views.get_winch_manufacturer, name='get_winch_manufacturer'),
 
     #URLS related to cast reporting
     path('casts/<int:pk>/', views.castdetail, name='castdetail'),
@@ -123,4 +122,5 @@ urlpatterns = [
     path('reports/castreport/', views.castreport, name='castreport'),
     path('reports/unols_report_csv/', views.unols_report_csv, name='unols_report_csv'),
     path('reports/cast_table_csv/', views.cast_table_csv, name='cast_table_csv'),
+    path('reports/charts/', charts, name='charts'),
 ]

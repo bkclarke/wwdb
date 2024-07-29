@@ -835,3 +835,12 @@ class CastFilterForm(forms.Form):
     wire = forms.ModelChoiceField(queryset=Wire.objects.all(), empty_label='All wires', required=False)
     startdate = forms.DateTimeField(required=False, widget=forms.DateTimeInput())
     enddate = forms.DateTimeField(required=False, widget=forms.DateTimeInput())
+
+class DataFilterForm(forms.Form):
+    start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    winch = forms.ChoiceField(choices=[])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['winch'].choices = [(winch.id, winch.name) for winch in Winch.objects.all()]

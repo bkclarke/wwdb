@@ -31,6 +31,7 @@
             <th>Motor</th>
             <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
             <th>Manually enter payout/tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
+            <th>Plot</th>
             <th>Delete</th>
         </tr>
     </thead>
@@ -53,13 +54,14 @@
         <td>{{cast.motor}}</td>
         <td><a href="{%url 'castedit' cast.pk %}">Edit</a></td>
         <td><a href="{%url 'castmanualedit' cast.pk %}">Manual edit</a></td>
+        <td><a href="{%url 'castplot' cast.pk %}">Plot</a></td>
         <td><a href="{%url 'castdelete' cast.pk %}">Delete</a></td>
     </tr>
     {% endfor %}
 </table>
 {% endif %}
 <br />
-<h3>Completed casts</h3>
+<h3>All casts</h3>
 <br />
 <form method="get">
     {{ form.winch }}
@@ -99,6 +101,7 @@
             <th>Safe working tension (lbs)</th>
             <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
             <th>Manually enter payout/tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
+            <th>Plot</th>
             <th>Delete</th>
         </tr>
     </thead>
@@ -128,6 +131,7 @@
         <td>{{cast.safeworkingtension}}</td>
         <td><a href="{%url 'castedit' cast.pk %}">Edit</a></td>
         <td><a href="{%url 'castmanualedit' cast.pk %}">Manual edit</a></td>
+        <td><a href="{%url 'castplot' cast.pk %}">Plot</a></td>
         <td><a href="{%url 'castdelete' cast.pk %}">Delete</a></td>
     </tr>
     {% endfor %}

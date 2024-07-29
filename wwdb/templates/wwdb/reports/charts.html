@@ -1,0 +1,144 @@
+<!doctype html>
+{% extends "wwdb/base.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<h1>Winch Plots</h1>
+</br>
+<form method="get">
+    {{ form.start_date }}
+    {{ form.end_date }}
+    {{ form.winch }}
+    <button type="submit">Filter Data</button>
+</form>
+<div id="container" style="width: 100%; height: 400px;"></div>
+</br>
+</br>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var startDateInput = document.getElementById('id_start_date');
+        var endDateInput = document.getElementById('id_end_date');
+
+        var currentDate = new Date();
+        var currentDateString = currentDate.toISOString().split('T')[0];
+        var oneDayAgo = new Date();
+        oneDayAgo.setDate(currentDate.getDate() - 1);
+        var oneDayAgoString = oneDayAgo.toISOString().split('T')[0];
+
+        if (startDateInput && endDateInput) {
+            startDateInput.value = oneDayAgoString;
+            endDateInput.value = currentDateString;
+        }
+
+        try {
+            var data_tension = JSON.parse('{{ data_json_tension|escapejs }}');
+            var data_payout = JSON.parse('{{ data_json_payout|escapejs }}');
+
+            var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'line',
+                    zoomType: 'x',
+                    events: {
+                        load: function() {
+                            updateMaxTensionPlotLine(this);
+                        }
+                    }
+                },
+                title: {
+                    text: 'Tension, Payout vs. Time'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    title: {
+                        text: 'Date'
+                    },
+                    events: {
+                        afterSetExtremes: function (e) {
+                            updateMaxTensionPlotLine(this.chart);
+                        }
+                    }
+                },
+                yAxis: [{
+                    title: {
+                        text: 'Tension lbs'
+                    },
+                    labels: {
+                        format: '{value} lbs'
+                    }
+                }, {
+                    title: {
+                        text: 'Payout (m)'
+                    },
+                    labels: {
+                        format: '{value} m'
+                    },
+                    opposite: true
+                }],
+                series: [{
+                    name: 'Tension',
+                    type: 'line',
+                    yAxis: 0,
+                    data: data_tension.map(function (point) {
+                        return [new Date(point.date).getTime(), point.value];
+                    })
+                }, {
+                    name: 'Payout',
+                    type: 'line',
+                    yAxis: 1,
+                    data: data_payout.map(function (point) {
+                        return [new Date(point.date).getTime(), point.value];
+                    })
+                }]
+            });
+
+            function updateMaxTensionPlotLine(chart) {
+                var xAxis = chart.xAxis[0];
+                var min = xAxis.min;
+                var max = xAxis.max;
+
+                var visibleTensionData = data_tension.filter(function(point) {
+                    var pointTime = new Date(point.date).getTime();
+                    return pointTime >= min && pointTime <= max;
+                });
+
+                if (visibleTensionData.length > 0) {
+                    var maxTensionData = visibleTensionData.reduce(function(prev, current) {
+                        return (prev.value > current.value) ? prev : current;
+                    });
+
+                    var maxTensionValue = maxTensionData.value;
+                    var maxTensionDate = new Date(maxTensionData.date).getTime();
+
+                    xAxis.update({
+                        plotLines: [{
+                            color: 'rgba(255, 0, 0, 0.8)',
+                            width: 2,
+                            value: maxTensionDate,
+                            label: {
+                                text: 'Max Tension: ' + maxTensionValue,
+                                style: {
+                                    color: 'red'
+                                },
+                                align: 'left', // Horizontally aligned to the left of the line
+                                verticalAlign: 'bottom', // Vertically aligned in the middle
+                                x: 10, // Horizontal offset from the line
+                                y: -20, // Vertical offset from the line
+                                rotation: 0 // Horizontal text
+                            }
+                        }]
+                    });
+                } else {
+                    // If no data is visible, remove the plot line
+                    xAxis.update({
+                        plotLines: []
+                    });
+                }
+            }
+        } catch (e) {
+            console.error('Error parsing or plotting data:', e);
+        }
+    });
+</script>
+{% endblock content %}
