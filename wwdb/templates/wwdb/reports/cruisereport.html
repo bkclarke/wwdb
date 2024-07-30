@@ -98,7 +98,7 @@
 <div class="container p-5">
     <h2>Casts</h2>
     </br>
-    <table id="" class="display">
+    <table id="table" class="display">
         <thead>
             <tr>
                 <th>Start time</th>
@@ -139,4 +139,18 @@
         <a class="btn-link-wwdb" href="{% url 'cruise_report_file' pk=c.id %}">download cruise report</a>
     </button>
     {% endfor %}
+    <script>
+        $(document).ready(function () {
+            // Initialize DataTables
+            $('#table').DataTable({
+                responsive: true,
+                scrollX: true,
+                order: [[0, "desc"]]
+                // Add more options as needed
+            });
+
+            // Initialize tooltips (assuming you're using Bootstrap tooltips)
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
     {% endblock content %}

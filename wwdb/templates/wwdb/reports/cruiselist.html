@@ -5,7 +5,7 @@
 <div class="container p-5">
     <h2>Cruises</h2>
     <br />
-    <table id="" class="display_nosearch">
+    <table id="table" class="display" style="width:100%">
         <thead class="thead-light">
             <tr>
                 <th>Cruise number</th>
@@ -22,4 +22,18 @@
         {% endfor %}
     </table>
 </div>
+<script>
+        $(document).ready(function () {
+            // Initialize DataTables
+            $('#table').DataTable({
+                responsive: true,
+                scrollX: true,
+                order: [[0, "desc"]]
+                // Add more options as needed
+            });
+
+            // Initialize tooltips (assuming you're using Bootstrap tooltips)
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+</script>
 {% endblock content %}
