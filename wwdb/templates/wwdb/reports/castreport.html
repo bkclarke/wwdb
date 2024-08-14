@@ -68,13 +68,15 @@
     {{ form.wire }}
     {{ form.deploymenttype }}
     {{ form.operator }}
+    {{ form.startdate }}
+    {{ form.enddate }}
     </br>
     </br>
     <button type="submit">Filter</button>
     </br>
     </br>
 </form>
-<table id="table3" class="display nowrap">
+<table id="table2" class="display nowrap">
     <thead>
         <tr>
             <th>Start time</th>
@@ -155,20 +157,6 @@
 </script>
 <script>
     $(document).ready(function () {
-        // Initialize DataTables
-        $('#table2').DataTable({
-            responsive: true,
-            scrollX: true,
-            order: [[0, "desc"]]
-            // Add more options as needed
-        });
-
-        // Initialize tooltips (assuming you're using Bootstrap tooltips)
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-</script>
-<script>
-    $(document).ready(function () {
         $('#castmanualenter').click(function () {
             window.location.href = "{% url 'castmanualenter' %}";
         });
@@ -176,7 +164,7 @@
 </script>
 <script>
     $(document).ready(function () {
-        var table = $('#table3').DataTable({
+        var table = $('#table2').DataTable({
             responsive: true,
             scrollX: true,
             order: [[0, "desc"]]
@@ -206,28 +194,22 @@
         function countUniqueValues(columnIndex) {
             var values = {};
             table.column(columnIndex, { search: 'applied' }).data().each(function (value) {
-                if (values[value]) {
-                    values[value]++;
-                } else {
-                    values[value] = 1;
-                }
+                values[value] = (values[value] || 0) + 1;
             });
             return values;
         }
 
         function getMaxValues(columnIndex) {
-            var values = null;
+            var values = [];
             table.column(columnIndex, { search: 'applied' }).data().each(function (value) {
-                value = parseFloat(value); // Assuming values are numeric
-                if (values === null || value > values) {
-                    values = value; // Update max if current value is greater
+                var numValue = parseFloat(value);
+                if (!isNaN(numValue)) {
+                    values.push(numValue);
                 }
             });
-            return values;
+            return values.length ? Math.max.apply(null, values) : 'N/A';
         }
 
-        var minDate = null;
-        var maxDate = null;
 
         // Function to get unique values from a foreign key field
         function getUniqueForeignKeyValues(columnIndex) {
@@ -241,10 +223,10 @@
         // Button click handler
         $('#unolsButton').on('click', function () {
             // Check if DataTable is initialized
-            if ($.fn.DataTable.isDataTable('#table')) {
+            if ($.fn.DataTable.isDataTable('#table2')) {
                 var uniqueCount = verifyCountUniqueValues(3);
                 var uniqueValues3 = getUniqueValues(3);
-                var uniqueValues14 = getUniqueValues(14);
+                var uniqueValues16 = getUniqueValues(16);
                 var uniqueValues15 = getUniqueValues(15);
                 var uniqueValueCounts = countUniqueValues(4);
                 var uniqueForeignKeyValues = getUniqueForeignKeyValues(1);
@@ -258,12 +240,16 @@
                 // Iterate over data to find min and max dates
                 table.rows().every(function () {
                     var data = this.data();
-                    var currentDate = new Date(data[0]); // Assuming date is in the second column
-                    if (minDate === null || currentDate < minDate) {
-                        minDate = currentDate;
-                    }
-                    if (maxDate === null || currentDate > maxDate) {
-                        maxDate = currentDate;
+                    if (data[0]) {
+                        var currentDate = new Date(data[0]); // Assuming date is in the first column
+                        if (!isNaN(currentDate.getTime())) {
+                            if (minDate === null || currentDate < minDate) {
+                                minDate = currentDate;
+                            }
+                            if (maxDate === null || currentDate > maxDate) {
+                                maxDate = currentDate;
+                            }
+                        }
                     }
                 });
 
@@ -325,7 +311,7 @@
         // Button click handler
         $('#tableButton').on('click', function () {
             // Check if DataTable is initialized
-            if ($.fn.DataTable.isDataTable('#table')) {
+            if ($.fn.DataTable.isDataTable('#table2')) {
 
                 // Proceed with CSV download logic
                 var data = table.rows({ search: 'applied' }).data();

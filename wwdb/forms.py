@@ -833,8 +833,9 @@ class CastFilterForm(forms.Form):
     deploymenttype = forms.ModelChoiceField(queryset=DeploymentType.objects.all(), empty_label='All deployments', required=False)
     operator = forms.ModelChoiceField(queryset=WinchOperator.objects.all(), empty_label='All operators', required=False)
     wire = forms.ModelChoiceField(queryset=Wire.objects.all(), empty_label='All wires', required=False)
-    startdate = forms.DateTimeField(required=False, widget=forms.DateTimeInput())
-    enddate = forms.DateTimeField(required=False, widget=forms.DateTimeInput())
+    startdate = forms.DateTimeField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+    enddate = forms.DateTimeField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+
 
 class DataFilterForm(forms.Form):
     start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))

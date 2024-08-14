@@ -50,7 +50,6 @@ def get_data_from_external_db(start_date, end_date, winch):
             rows = cursor.fetchall()
 
     if len(rows) > 1000:
-        bin_size = len(rows) // 1000
         binned_data = {}
         for row in rows:
             dt = row[0]
@@ -59,9 +58,11 @@ def get_data_from_external_db(start_date, end_date, winch):
             else:
                 binned_data[dt]['max_tension'] = max(binned_data[dt]['max_tension'], row[1])
                 binned_data[dt]['max_payout'] = max(binned_data[dt]['max_payout'], row[2])
-        
         rows = sorted(binned_data.items())
-    
+    else:
+        # For the non-binned case, directly use rows as is.
+        rows = [(row[0], {'max_tension': row[1], 'max_payout': row[2]}) for row in rows]
+
     return rows
 
 def charts(request):
@@ -86,13 +87,14 @@ def charts(request):
 
     winch_obj = Winch.objects.filter(id=winch).first()
     if winch_obj:
-        winch = winch_obj.id
+        winch = winch_obj.name
 
-    winch = winch_obj.name
     data_points = get_data_from_external_db(start_date, end_date, winch)
-    data_tension = [{'date': row[0].strftime('%Y-%m-%d %H:%M:%S'), 'value': row[1]['max_tension']} for row in data_points]
-    data_payout = [{'date': row[0].strftime('%Y-%m-%d %H:%M:%S'), 'value': row[1]['max_payout']} for row in data_points]
-
+    
+    if data_points:
+        for dt, values in data_points:
+            data_tension.append({'date': dt.strftime('%Y-%m-%d %H:%M:%S'), 'value': values['max_tension']})
+            data_payout.append({'date': dt.strftime('%Y-%m-%d %H:%M:%S'), 'value': values['max_payout']})
     # Serialize the data to JSON
     data_json_tension = json.dumps(data_tension)
     data_json_payout = json.dumps(data_payout)
@@ -429,9 +431,9 @@ def castreport(request):
         if winch:
             casts = casts.filter(winch=winch)
         if startdate:    
-            casts = casts.filter(startdate__gte=date_min)
+            casts = casts.filter(startdate__gte=startdate)
         if enddate:
-            casts = casts.filter(enddate__gte=date_max)
+            casts = casts.filter(enddate__lte=enddate)
         if wire:
             casts = casts.filter(wire=wire)
         if operator:
