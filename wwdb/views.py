@@ -217,27 +217,21 @@ def cast_end(request):
 	
 def castend(request, id):
     context ={}
-    obj = get_object_or_404(Cast, id = id)
+    obj = Cast.objects.get(id=id)
     form = EndCastForm(request.POST or None, instance = obj)
     if request.method == 'POST':
-        cast=Cast.objects.last()
         if form.is_valid():
             form.save()
-            cast.refresh_from_db()
-            cast.endcastcal()
-            cast.get_active_length()
-            cast.get_active_wire()
-            cast.get_active_safeworkingtension()
-            cast.get_active_factorofsafety()
-            if cast.enddate == None:
-                cast.endcast_get_datetime()
-            cast.save()
+            if obj.enddate == None:
+                obj.endcast_get_datetime()
+            obj.save()
+            obj.refresh_from_db()
+            obj.get_active_wire()
+            obj.endcastcal()
+            obj.get_cast_duration()
+            obj.save()
 
-            cast.refresh_from_db()
-            cast.get_cast_duration()
-            cast.save()
-
-            return HttpResponseRedirect("/wwdb/casts/%i/castenddetail" % cast.pk)
+            return HttpResponseRedirect("/wwdb/casts/%i/castenddetail" % obj.pk)
     context["form"] = form
 
     template_name = 'castend.html'
@@ -292,8 +286,6 @@ def castedit(request, id):
             obj.refresh_from_db()
             obj.get_cast_duration()
             obj.save()
-
-
 
             return HttpResponseRedirect('/wwdb/reports/castreport')
     else:
