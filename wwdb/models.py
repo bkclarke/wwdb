@@ -218,9 +218,10 @@ class Cast(models.Model):
 
                 winch=(self.winch.name)
                 startcal=str(self.startdate)
+                startcal=startcal[:19]
                 endcal=str(self.enddate)
+                endcal=endcal[:19]
                 df=pd.read_sql_query("SELECT * FROM " + winch + " WHERE DateTime BETWEEN '" + startcal + "' AND '" + endcal + "'", conn)
-
                 castmaxtensiondf=df[df.Tension==df.Tension.max()]
                 castmaxtension=castmaxtensiondf['Tension'].max()
                 castmaxpayout=df['Payout'].max()
@@ -310,9 +311,10 @@ class Cruise(models.Model):
 
     @property
     def format_startdate(self):
-        date=self.startdate
-        formatdate=date.strftime("%Y-%m-%d")
-        return formatdate
+        if self.startdate:
+            date=self.startdate
+            formatdate=date.strftime("%Y-%m-%d")
+            return formatdate
 
     @property
     def format_enddate(self):

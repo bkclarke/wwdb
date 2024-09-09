@@ -248,8 +248,38 @@ def castend(request, id):
 
     return render(request, "wwdb/casts/castend.html", context)
 
+def updateallcasts(request):
+    if request.method == 'POST':
+        casts = Cast.objects.all()
+        updated_count = 0
+
+        for cast in casts:
+            winch=cast.winch.name
+            if winch=='winch1' or winch=='winch2' or winch=='winch3':
+                if cast.enddate and cast.startdate:
+                    print(cast)
+                    start = cast.startdate
+                    end = cast.enddate   
+                    duration = (end - start)          
+                    duration_in_minutes = round(duration.total_seconds() / 60)
+                    cast.duration = duration_in_minutes
+                    print(cast.duration)
+                    cast.save()
+                    updated_count += 1
+                    print(updated_count)
+
+
+        # You could use messages to notify about the result
+        # from django.contrib import messages
+        # messages.success(request, f'Successfully updated {updated_count} casts.')
+
+        return redirect('/wwdb/reports/castreport')  # Or another page
+
+    return render(request, 'wwdb/casts/updateallcasts.html')
+
 def castedit(request, id):
     context ={}
+        
     obj = Cast.objects.get(id=id)
     if request.method == 'POST':
         form = EditCastForm(request.POST, instance = obj)
@@ -262,6 +292,8 @@ def castedit(request, id):
             obj.refresh_from_db()
             obj.get_cast_duration()
             obj.save()
+
+
 
             return HttpResponseRedirect('/wwdb/reports/castreport')
     else:
@@ -1774,7 +1806,7 @@ def cruiseadd(request):
         if form.is_valid():
             form.save()
             cruiseid=Cruise.objects.last()
-            return HttpResponseRedirect("/wwdb/configuration/castconfiguration/#cruise")
+            return HttpResponseRedirect("/wwdb/configuration/cruiseconfiguration/")
     else:
         form = EditCruiseForm 
         if 'submitted' in request.GET:
