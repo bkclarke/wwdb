@@ -5,6 +5,7 @@ from .views import *
 
 
 urlpatterns = [
+    path('updateallcasts/', views.updateallcasts, name='updateallcasts'),
     path('home/', views.home, name='home'),
 
     #URLS related to cast reporting

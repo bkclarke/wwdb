@@ -83,11 +83,14 @@
     });
 </script>
 -->
+
 <script>
     $(document).ready(function () {
+        // Attach submit event handler to the form
         $("form").on("submit", function () {
-            $("input[type=submit]").attr("disabled", true);
-            return true;
+            // Disable all submit buttons within the form
+            $(this).find("button[type=submit]").attr("disabled", true);
+            return true; // Allow form submission
         });
     });
 </script>

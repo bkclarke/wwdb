@@ -2,90 +2,88 @@
 <!DOCTYPE html>
 {% extends "wwdb/base.html" %}
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="container">
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#operators">Operators</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#deployments">Deployments</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#winches">Winches</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#wires">SWT</a>
-            </li>
-        </ul>
-        <!-- Tab panes -->
-        <div class="tab-content">
-            </br>
-            <div class="tab-pane container fade show active" id="operators">
-                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    <h1>Operators</h1>
-                    </br>
-                    <button type="button" class="btn btn-outline-wwdb"
-                            hx-get="{% url 'operatortableadd' %}"
-                            hx-target="next tbody"
-                            hx-swap="afterbegin">
-                        Add Operator
-                    </button>
-                    <div id="query_result"
-                         hx-target="this"
-                         hx-swap="innerHTML"
-                         hx-get="{% url 'operatortablelistget' %}"
-                         hx-trigger="load delay:0.5s">
-                    </div>
+<div class="table-container">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#operators">Operators</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#deployments">Deployments</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#winches">Winches</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#wires">SWT</a>
+        </li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="table-tab-content">
+        </br>
+        <div class="table-tab-pane container fade show active" id="operators">
+            <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                <h1>Operators</h1>
+                </br>
+                <button type="button" class="btn btn-outline-wwdb"
+                        hx-get="{% url 'operatortableadd' %}"
+                        hx-target="next tbody"
+                        hx-swap="afterbegin">
+                    Add Operator
+                </button>
+                <div id="query_result"
+                        hx-target="this"
+                        hx-swap="innerHTML"
+                        hx-get="{% url 'operatortablelistget' %}"
+                        hx-trigger="load delay:0.5s">
                 </div>
             </div>
-            <div class="tab-pane container fade" id="deployments">
-                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    <h1>Deployments</h1>
-                    </br>
-                    <button type="button" class="btn btn-outline-wwdb"
-                            hx-get="{% url 'deploymenttableadd' %}"
-                            hx-target="next tbody"
-                            hx-swap="afterbegin">
-                        Add deployment
-                    </button>
-                    <div id="query_result"
-                         hx-target="this"
-                         hx-swap="innerHTML"
-                         hx-get="{% url 'deploymenttablelistget' %}"
-                         hx-trigger="load delay:0.5s">
-                    </div>
+        </div>
+        <div class="table-tab-pane container fade" id="deployments">
+            <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                <h1>Deployments</h1>
+                </br>
+                <button type="button" class="btn btn-outline-wwdb"
+                        hx-get="{% url 'deploymenttableadd' %}"
+                        hx-target="next tbody"
+                        hx-swap="afterbegin">
+                    Add deployment
+                </button>
+                <div id="query_result"
+                        hx-target="this"
+                        hx-swap="innerHTML"
+                        hx-get="{% url 'deploymenttablelistget' %}"
+                        hx-trigger="load delay:0.5s">
                 </div>
             </div>
-            <div class="tab-pane container fade" id="winches">
-                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    <h1>Winches</h1>
-                    </br>
-                    <button type="button" class="btn btn-outline-wwdb"
-                            hx-get="{% url 'winchtableadd' %}"
-                            hx-target="next tbody"
-                            hx-swap="afterbegin">
-                        Add winch
-                    </button>
-                    <div id="query_result"
-                         hx-target="this"
-                         hx-swap="innerHTML"
-                         hx-get="{% url 'winchtablelistget' %}"
-                         hx-trigger="load delay:0.5s">
-                    </div>
+        </div>
+        <div class="table-tab-pane container fade" id="winches">
+            <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                <h1>Winches</h1>
+                </br>
+                <button type="button" class="btn btn-outline-wwdb"
+                        hx-get="{% url 'winchtableadd' %}"
+                        hx-target="next tbody"
+                        hx-swap="afterbegin">
+                    Add winch
+                </button>
+                <div id="query_result"
+                        hx-target="this"
+                        hx-swap="innerHTML"
+                        hx-get="{% url 'winchtablelistget' %}"
+                        hx-trigger="load delay:0.5s">
                 </div>
             </div>
-            <div class="tab-pane container fade" id="wires">
-                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    <h1>Safe working tensions</h1>
-                    </br>
-                    <div id="query_result"
-                         hx-target="this"
-                         hx-swap="innerHTML"
-                         hx-get="{% url 'swttablelistget' %}"
-                         hx-trigger="load delay:0.5s">
-                    </div>
+        </div>
+        <div class="table-tab-pane container fade" id="wires">
+            <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                <h1>Safe working tensions</h1>
+                </br>
+                <div id="query_result"
+                        hx-target="this"
+                        hx-swap="innerHTML"
+                        hx-get="{% url 'swttablelistget' %}"
+                        hx-trigger="load delay:0.5s">
                 </div>
             </div>
         </div>
