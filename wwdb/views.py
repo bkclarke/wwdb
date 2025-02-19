@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 def get_data_from_external_db(start_date, end_date, winch):
 
-    conn_str = 'Driver={SQL Server};Server=192.168.1.90, 1433;Database=WinchDb;Trusted_Connection=no;UID=remoteadmin;PWD=eris.2003;'
+    conn_str = 'Driver={SQL Server};Server=EN-WINCH\MSSQLSERVER01, 1433;Database=WinchDb;Trusted_Connection=no;UID=remoteadmin;PWD=eris.2003;'
 
     query = f"""
         SELECT DateTime, Tension, Payout

@@ -210,7 +210,7 @@ class Cast(models.Model):
         if winch=='winch1' or winch=='winch2' or winch=='winch3':
             try:
                 conn = pyodbc.connect('Driver={SQL Server};'
-                                        'Server=192.168.1.90, 1433;'
+                                        'Server=EN-WINCH\MSSQLSERVER01, 1433;'
                                         'Database=WinchDb;'
                                         'Trusted_Connection=no;'
 			                    'UID=remoteadmin;'
