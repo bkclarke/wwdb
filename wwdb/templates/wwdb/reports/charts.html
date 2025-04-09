@@ -1,0 +1,174 @@
+<!doctype html>
+{% extends "wwdb/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<h1>Winch Plots</h1>
+</br>
+<form method="get" id="dateRangeForm">
+    <div>
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ form.start_date.value|date:'Y-m-d'|default_if_none:'' }}" required>
+    </div>
+
+    <div>
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ form.end_date.value|date:'Y-m-d'|default_if_none:'' }}" required>
+    </div>
+    {{ form.winch }}
+    <button type="submit">Filter Data</button>
+</form>
+<div id="container" style="width: 100%; height: 400px;"></div>
+</br>
+</br>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var startDateInput = document.getElementById('start_date');
+        var endDateInput = document.getElementById('end_date');
+
+        var currentDate = new Date();
+        var currentDateString = currentDate.toISOString().split('T')[0];
+        var oneDayAgo = new Date();
+        oneDayAgo.setDate(currentDate.getDate() - 1);
+        var oneDayAgoString = oneDayAgo.toISOString().split('T')[0];
+
+        if (startDateInput && endDateInput) {
+            startDateInput.value = oneDayAgoString;
+            endDateInput.value = currentDateString;
+
+            // Set max date for the end date to be the current date
+            endDateInput.setAttribute('max', currentDateString);
+            // Set the min date for the end date based on the start date
+            startDateInput.addEventListener('change', function () {
+                var startDate = new Date(startDateInput.value);
+                var endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + 14); // 2 weeks later
+                endDateInput.setAttribute('min', startDateInput.value);
+                endDateInput.setAttribute('max', endDate.toISOString().split('T')[0]);
+                endDateInput.value = ''; // Reset end date
+            });
+
+            endDateInput.addEventListener('change', function () {
+                validateDateRange();
+            });
+        }
+
+        function validateDateRange() {
+            var startDate = new Date(startDateInput.value);
+            var endDate = new Date(endDateInput.value);
+            if (startDate >= endDate) {
+                alert('Start date must be before end date.');
+                endDateInput.value = ''; // Reset end date
+            }
+        }
+
+        try {
+            var data_tension = JSON.parse('{{ data_json_tension|escapejs }}');
+            var data_payout = JSON.parse('{{ data_json_payout|escapejs }}');
+
+            var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'line',
+                    zoomType: 'x',
+                    events: {
+                        load: function() {
+                            updateMaxTensionPlotLine(this);
+                        }
+                    }
+                },
+                title: {
+                    text: 'Tension, Payout vs. Time'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    title: {
+                        text: 'Date'
+                    },
+                    events: {
+                        afterSetExtremes: function (e) {
+                            updateMaxTensionPlotLine(this.chart);
+                        }
+                    }
+                },
+                yAxis: [{
+                    title: {
+                        text: 'Tension lbs'
+                    },
+                    labels: {
+                        format: '{value} lbs'
+                    }
+                }, {
+                    title: {
+                        text: 'Payout (m)'
+                    },
+                    labels: {
+                        format: '{value} m'
+                    },
+                    opposite: true
+                }],
+                series: [{
+                    name: 'Tension',
+                    type: 'line',
+                    yAxis: 0,
+                    data: data_tension.map(function (point) {
+                        return [new Date(point.date).getTime(), point.value];
+                    })
+                }, {
+                    name: 'Payout',
+                    type: 'line',
+                    yAxis: 1,
+                    data: data_payout.map(function (point) {
+                        return [new Date(point.date).getTime(), point.value];
+                    })
+                }]
+            });
+
+            function updateMaxTensionPlotLine(chart) {
+                var xAxis = chart.xAxis[0];
+                var min = xAxis.min;
+                var max = xAxis.max;
+
+                var visibleTensionData = data_tension.filter(function(point) {
+                    var pointTime = new Date(point.date).getTime();
+                    return pointTime >= min && pointTime <= max;
+                });
+
+                if (visibleTensionData.length > 0) {
+                    var maxTensionData = visibleTensionData.reduce(function(prev, current) {
+                        return (prev.value > current.value) ? prev : current;
+                    });
+
+                    var maxTensionValue = maxTensionData.value;
+                    var maxTensionDate = new Date(maxTensionData.date).getTime();
+
+                    xAxis.update({
+                        plotLines: [{
+                            color: 'rgba(255, 0, 0, 0.8)',
+                            width: 2,
+                            value: maxTensionDate,
+                            label: {
+                                text: 'Max Tension: ' + maxTensionValue,
+                                style: {
+                                    color: 'red'
+                                },
+                                align: 'left',
+                                verticalAlign: 'bottom',
+                                x: 10,
+                                y: -20,
+                                rotation: 0
+                            }
+                        }]
+                    });
+                } else {
+                    xAxis.update({
+                        plotLines: []
+                    });
+                }
+            }
+        } catch (e) {
+            console.error('Error parsing or plotting data:', e);
+        }
+    });
+</script>
+{% endblock content %}
