@@ -1126,7 +1126,8 @@ def safeworkingtensions_file(request):
     return FileResponse(buffer, as_attachment=True, filename='safe_working_tension_%s.pdf' %date_time_filename)
 
 """
-Maintenance
+WIRES
+Classes related to create, update, view Wire model
 """
 
 def wirelist(request):
@@ -1144,10 +1145,55 @@ def wirelist(request):
 
     return render(request, 'wwdb/inventories/wirelist.html', context=context)
 
-"""
-WIRES
-Classes related to create, update, view Wire model
-"""
+def wireropedatalist(request):
+    wireropes = WireRopeData.objects.all()
+    
+    context = {
+        'wireropes': wireropes,
+        }
+
+    return render(request, 'wwdb/inventories/wireropedatalist.html', context=context)
+
+def wireropedataedit(request, id):
+    context ={}
+    obj = get_object_or_404(WireRopeData, id = id)
+
+    if request.method == 'POST':
+        form = WireRopeDataEditForm(request.POST, instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/inventories/wireropedatalist")
+    else:
+        form = WireRopeDataEditForm(instance = obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/wwdb/inventories/wireropedata/%i/edit" % obj.pk)
+
+    context["form"] = form
+    return render(request, "wwdb/inventories/wireropedataedit.html", context)
+
+def wireropedataadd(request):
+    context ={}
+    form = WireRopeDataAddForm(request.POST or None)
+    if request.method == "POST":
+        form = WireRopeDataAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/wwdb/inventories/wireropedatalist')
+    else:
+        form = WireRopeDataAddForm 
+        if 'submitted' in request.GET:
+            submitted = True
+            return render(request, 'wwdb/inventories/wireropedataadd.html', {'form':form, 'submitted':submitted, 'id':id})
+ 
+    context['form']= form
+
+    return render(request, "wwdb/inventories/wireropedataadd.html", context)
+
+def wireropedatadelete(request, id):
+    wireropedata = WireRopeData.objects.get(pk=id)
+    wireropedata.delete()
+    return HttpResponse()
 
 class WireDetail(DetailView):
     model = Wire

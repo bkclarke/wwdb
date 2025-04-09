@@ -845,3 +845,85 @@ class DataFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['winch'].choices = [(winch.id, winch.name) for winch in Winch.objects.all()]
+
+class WireRopeDataEditForm(ModelForm):
+
+    class Meta:
+        model = WireRopeData
+        fields = [
+            'name',
+            'manufacturer',
+            'manufacturerpartnumber',
+            'cabletype',
+            'nominalbreakingload',
+            'weightperfoot',
+
+        ]
+
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: ;100% align: center;",
+                    "placeholder": "name",
+                }),
+            "manufacturer": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: ;100% align: center;",
+                    "placeholder": "name",
+                }),
+            "manufacturerpartnumber": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%; align: center;",
+                    "placeholder": "name",
+                }),
+            "cabletype": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%; align: center;",
+                    "placeholder": "name",
+                }),
+        }
+
+class WireRopeDataAddForm(ModelForm):
+
+    class Meta:
+        model = WireRopeData
+        fields = [
+            'name',
+            'manufacturer',
+            'manufacturerpartnumber',
+            'cabletype',
+            'nominalbreakingload',
+            'weightperfoot',
+
+        ]
+
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: ;100% align: center;",
+                    "placeholder": "name",
+                }),
+            "manufacturer": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: ;100% align: center;",
+                    "placeholder": "manufacturer",
+                }),
+            "manufacturerpartnumber": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%; align: center;",
+                    "placeholder": "manufacturer part number",
+                }),
+            "cabletype": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%; align: center;",
+                    "placeholder": "cable type",
+                }),
+        }

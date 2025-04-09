@@ -7,24 +7,15 @@
     body {
         margin: 0;
         padding: 0;
-        background-image: url("/static/img/home_background.jpg");
-        background-size: cover;
-        background-position: center;
-        height: 100vh;
+        overflow: hidden; /* Prevent vertical scrolling */
+        height: 100vh; /* Full viewport height */
+        width: 100vw; /* Full viewport width */
+        background-image: url("/static/img/endeavor_banner.jpg");
+        background-size: cover; /* Cover the entire screen */
+        background-position: bottom right; /* Center the image */
         position: relative;
     }
 </style>
 <body>
-    <div class="home-container">
-        {% if last.enddate %}
-        <button type="button" class="btn home-btn-startcast">
-            <a class="button-link" href="{% url 'caststart' %}">Start Cast</a>
-        </button>
-        {% else %}
-        <button type="button" class="btn home-btn-startcast">
-            <a class="button-link" href="{% url 'cast_end' %}">Cast in progess - click here to End Cast</a>
-        </button>
-        {% endif %}
-    </div>
 </body>
 {% endblock content %}

@@ -1,0 +1,81 @@
+<!--template/breaktestlist.html-->
+<!DOCTYPE html>
+{% extends "wwdb/base.html" %}
+
+
+{% block content %}
+<h2>Wire Types</h2>
+</br>
+<button id="wireropedataadd" class="btn btn-secondary btn-sm">Add wire type</button>
+</br>
+</br>
+<table id="table" class="display nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>Edit</th>
+            <th>Name</th>
+            <th>Manufacturer</th>
+            <th>Manufacturer part number</th>
+            <th>Cable type</th>
+            <th>Nominal breaking load</th>
+            <th>Weight per foot</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    {% for wire in wireropes %}
+    <tr>
+        <td>
+            <a href="{% url 'wireropedataedit' wire.pk %}" class="btn btn-primary btn-sm">Edit</a>
+        </td>
+        <td>{{wire.name}}</td>
+        <td>{{wire.manufacturer}}</td>
+        <td>{{wire.manufacturerpartnumber}}</td>
+        <td>{{wire.cabletype}}</td>
+        <td>{{wire.nominalbreakingload}}</td>
+        <td>{{wire.weightperfoot}}</td>
+        <td>
+            <a href="{% url 'wireropedatadelete' wire.pk %}" class="btn btn-danger btn-sm delete-button">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<script>
+    $(document).ready(function () {
+        $('#table').DataTable({
+            responsive: true,
+            scrollX: true,
+            order: [[1, "desc"]]
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+
+    $(document).ready(function () {
+        $('#wireropedataadd').click(function () {
+            window.location.href = "{% url 'wireropedataadd' %}";
+        });
+    });
+
+    $(document).ready(function () {
+        $('#wireropedatalist').click(function () {
+            window.location.href = "{% url 'wireropedatalist' %}";
+        });
+    });
+
+    $(document).ready(function () {
+        $('.delete-button').click(function (event) {
+            // Check if the user is a superuser
+            const isSuperUser = '{{ user.is_superuser|yesno:"true,false" }}' === 'true';
+
+            if (!isSuperUser) {
+                event.preventDefault(); // Prevent the default action (link click)
+                alert('You must be logged in as an admin to delete this wire type.');
+            }
+        });
+    });
+</script>
+<br>
+<br>
+
+{% endblock %}
