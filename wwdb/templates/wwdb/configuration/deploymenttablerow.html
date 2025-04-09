@@ -6,7 +6,7 @@
     <td>{{ deployment.status }}</td>
     <td>{{ deployment.notes }}</td>
     <td>
-        <button class='btn'
+        <button class='btn btn-primary btn-sm'
                 hx-get="{% url 'deploymenttableedit' deployment.pk %}"
                 hx-target="closest tr"
                 hx-swap="outerHTML">
@@ -14,7 +14,7 @@
         </button>
     </td>
     <td>
-        <button class='btn'
+        <button class='btn btn-danger btn-sm'
                 hx-confirm='Are you sure?'
                 hx-target="closest tr"
                 hx-swap="outerHTML swap:1s"

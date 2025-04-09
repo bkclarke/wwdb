@@ -15,7 +15,7 @@
     <th>{{ cruise.winch3notes }}</th>
     <th>{{ cruise.scienceprovidedwinch }}</th>
     <td>
-        <button class='btn'
+        <button class='btn btn-primary btn-sm'
                 hx-get="{% url 'cruisetableedit' cruise.pk %}"
                 hx-target="closest tr"
                 hx-swap="outerHTML">
@@ -23,7 +23,7 @@
         </button>
     </td>
     <td>
-        <button class='btn'
+        <button class='btn btn-danger btn-sm'
                 hx-confirm='Are you sure?'
                 hx-target="closest tr"
                 hx-swap="outerHTML swap:1s"

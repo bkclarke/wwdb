@@ -1,28 +1,154 @@
 ﻿<!--template/cruiseconfiguration.html-->
 <!DOCTYPE html>
 {% extends "wwdb/base.html" %}
-{% block content %}
-<div class="container mt-5 mb-5">
-    <button id="cruiseadd" class="btn btn-outline-wwdb">Add cruise</button>
-    <table id="table" class="display nowrap" data-paging="false">
-        <thead>
-        <th>Number</th>
-        <th>Start date</th>
-        <th>End date</th>
-        </thead>
-        {% for cruise in cruise %}
-        <tr>
-            <td><a href="{%url 'cruiseedit' cruise.pk %}">{{ cruise.number }}</a></td>
-            <td>{{ cruise.startdate }}</td>
-            <td>{{ cruise.enddate }}</td>
-        </tr>
-        {% endfor %}
 
-    </table>
+
+<html>
+
+{% block content %}
+<h1>Configuration</h1>
+<div class="container mt-5 mb-5">
+    <div class="container">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#cruise">Cruise</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#operators">Operators</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#deployments">Deployments</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#winches">Winches</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#wires">SWT</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            </br>
+            <div class="tab-pane container fade show active" id="cruise">
+                <h1>Cruises</h1>
+                <br />
+                </br>
+                <button id="cruiseadd" class="btn btn-secondary btn-sm">Add Cruise</button>
+                </br>
+                </br>
+                <table id="table" class="display nowrap" style="width:100%">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Cruise number</th>
+                            <th>Start date</th>
+                            <th>End date</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    {% for cruise in cruises %}
+                    <tr>
+                        <td>{{ cruise.number }}</td>
+                        <td>{{cruise.format_startdate}}</td>
+                        <td>{{cruise.format_enddate}}</td>
+                        <td>
+                            <a href="{% url 'cruiseedit' cruise.pk %}" class="btn btn-primary btn-sm">Edit</a>
+                        </td>
+                        <td>
+                            <form action="{% url 'cruisedelete' cruise.pk %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-danger btn-sm delete-button-cruise" value="Delete">
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="tab-pane container fade" id="operators">
+                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                    <h1>Operators</h1>
+                    </br>
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            hx-get="{% url 'operatortableadd' %}"
+                            hx-target="next tbody"
+                            hx-swap="afterbegin">
+                        Add Operator
+                    </button>
+                    <div id="query_result"
+                         hx-target="this"
+                         hx-swap="innerHTML"
+                         hx-get="{% url 'operatortablelistget' %}"
+                         hx-trigger="load delay:0.5s">
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane container fade" id="deployments">
+                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                    <h1>Deployments</h1>
+                    </br>
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            hx-get="{% url 'deploymenttableadd' %}"
+                            hx-target="next tbody"
+                            hx-swap="afterbegin">
+                        Add deployment
+                    </button>
+                    <div id="query_result"
+                         hx-target="this"
+                         hx-swap="innerHTML"
+                         hx-get="{% url 'deploymenttablelistget' %}"
+                         hx-trigger="load delay:0.5s">
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane container fade" id="winches">
+                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                    <h1>Winches</h1>
+                    </br>
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            hx-get="{% url 'winchtableadd' %}"
+                            hx-target="next tbody"
+                            hx-swap="afterbegin">
+                        Add winch
+                    </button>
+                    <div id="query_result"
+                         hx-target="this"
+                         hx-swap="innerHTML"
+                         hx-get="{% url 'winchtablelistget' %}"
+                         hx-trigger="load delay:0.5s">
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane container fade" id="wires">
+                <div hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                    <h1>Factors of Safety</h1>
+                    </br>
+                    <div id="query_result"
+                         hx-target="this"
+                         hx-swap="innerHTML"
+                         hx-get="{% url 'swttablelistget' %}"
+                         hx-trigger="load delay:0.5s">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<script type="text/javascript">
+<script>
     $(document).ready(function () {
-        $('#table').DataTable();
+        // Allow the Edit button to function normally
+        $('.nav-tabs a').on('click', function (e) {
+            // Prevent the default action only if it's not an Edit link
+            if (!$(this).hasClass('edit-link')) {
+                e.preventDefault();
+                $(this).tab('show');
+            }
+        });
+
+        // Trigger the click on the active tab on page load
+        var activeTab = $('.nav-tabs .nav-link.active');
+        activeTab.tab('show');
     });
 </script>
 <script>
@@ -32,5 +158,26 @@
         });
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $('.delete-button-cruise').click(function (event) {
+            // Check if the user is a superuser
+            const isSuperUser = '{{ user.is_superuser|yesno:"true,false" }}' === 'true';
+
+            if (!isSuperUser) {
+                event.preventDefault(); // Prevent the default action (link click)
+                alert('You must be logged in as an admin to delete');
+            } else {
+                // Ask for confirmation before deletion
+                const confirmDelete = confirm('Are you sure you want to delete?');
+                if (!confirmDelete) {
+                    event.preventDefault(); // Prevent the deletion if the user cancels
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}
+
+</html>
 
