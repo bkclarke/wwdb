@@ -172,12 +172,47 @@ class Cast(models.Model):
         return
 
     @property
+    def format_startdate_csv(self):
+        if self.startdate:
+            date=self.startdate
+            formatdate=date.strftime("%Y-%m-%d %H:%M:%S")
+            return formatdate
+
+    @property
+    def format_startdate_url(self):
+        if self.startdate:
+            date=self.startdate
+            formatdate=date.strftime("%Y-%m-%d")
+            return formatdate
+
+    @property
+    def format_timemaxtension(self):
+        if not self.timemaxtension:
+            return
+        date=self.timemaxtension
+        formatdate=date.strftime("%Y-%m-%d, %H:%M:%S")
+        return formatdate
+
+    @property
+    def format_enddate_url(self):
+        if self.enddate:
+            date=self.enddate
+            formatdate=date.strftime("%Y-%m-%d")
+            return formatdate
+
+    @property
     def format_timemaxtension(self):
         if not self.timemaxtension:
             return
         date=self.timemaxtension
         formatdate=date.strftime("%Y-%m-%d %H:%M:%S")
         return formatdate
+
+    @property
+    def wire_in(self):
+        if self.wirelength and self.payoutmaxtension:
+            wirein=self.wirelength-self.payoutmaxtension
+            return wirein
 
     @property
     def active_wire(self):

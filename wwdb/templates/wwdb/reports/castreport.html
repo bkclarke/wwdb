@@ -4,7 +4,9 @@
 
 
 {% block content %}
-<button id="castmanualenter" class="btn btn-outline-wwdb">Manually enter cast</button>
+<button id="caststartend" class="btn btn-secondary btn-sm">Enter Past Cast</button>
+<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use to retroactively enter a cast and calculate payout and tension from the database">
+<button id="castmanualenter" class="btn btn-primary btn-sm">Enter cast without calculation</button>
 <img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered">
 </br>
 </br>
@@ -14,6 +16,7 @@
 <table id="table1" class="display table-danger nowrap" style="width:100%">
     <thead>
         <tr>
+            <th>View Plot</th>
             <th>Start time</th>
             <th>Duration (min)</th>
             <th>Winch</th>
@@ -23,20 +26,22 @@
             <th>End operator</th>
             <th>Max tension</th>
             <th>Max payout</th>
-            <th>Payout tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
-            <th>Meter mark<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
-            <th>Time tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
+            <th>Payout at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
+            <th>Meter mark at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
+            <th>Time at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
             <th>Wet end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the wet end"></th>
             <th>Dry end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the dry end"></th>
-            <th>Motor</th>
+            <th>Wire in at max tension</th>
             <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
-            <th>Manually enter payout/tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
-            <th>Plot</th>
+            <th>Manual edit<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
             <th>Delete</th>
         </tr>
     </thead>
     {% for cast in cast_flag %}
     <tr>
+        <td>
+            <a href="{% url 'charts' %}?start_date={{ cast.format_startdate_url }}&end_date={{ cast.format_enddate_url }}&winch={{ cast.winch.id }}" class="btn btn-info btn-sm">View Plot</a>
+        </td>
         <td>{{cast.format_startdate}}</td>
         <td>{{cast.duration}}</td>
         <td>{{cast.winch}}</td>
@@ -51,11 +56,16 @@
         <td>{{cast.format_timemaxtension}}</td>
         <td>{{cast.wetendtag}}</td>
         <td>{{cast.dryendtag}}</td>
-        <td>{{cast.motor}}</td>
-        <td><a href="{%url 'castedit' cast.pk %}">Edit</a></td>
-        <td><a href="{%url 'castmanualedit' cast.pk %}">Manual edit</a></td>
-        <td><a href="{%url 'castplot' cast.pk %}">Plot</a></td>
-        <td><a href="{%url 'castdelete' cast.pk %}">Delete</a></td>
+        <td>{{cast.wire_in}}</td>
+        <td>
+            <a href="{% url 'castedit' cast.pk %}" class="btn btn-primary btn-sm">Edit</a>
+        </td>
+        <td>
+            <a href="{% url 'castmanualedit' cast.pk %}" class="btn btn-secondary btn-sm">Manual Edit</a>
+        </td>
+        <td>
+            <a href="{% url 'castdelete' cast.pk %}" class="btn btn-danger btn-sm delete-button" data-cast-id="{{ cast.pk }}">Delete</a>
+        </td>
     </tr>
     {% endfor %}
 </table>
@@ -79,6 +89,7 @@
 <table id="table2" class="display nowrap">
     <thead>
         <tr>
+            <th>View Plot</th>
             <th>Start time</th>
             <th>Duration (min)</th>
             <th>Winch</th>
@@ -88,12 +99,12 @@
             <th>End operator</th>
             <th>Max tension</th>
             <th>Max payout</th>
-            <th>Payout tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
-            <th>Meter mark<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
-            <th>Time tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
+            <th>Wire out at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
+            <th>Meter mark at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
+            <th>Time of max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
             <th>Wet end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the wet end"></th>
             <th>Dry end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the dry end"></th>
-            <th>motor</th>
+            <th>Wire rinse</th>
             <th>Ship</th>
             <th>Institution</th>
             <th>Winch manufacturer</th>
@@ -101,17 +112,21 @@
             <th>Wire length (m)</th>
             <th>factor of Safety</th>
             <th>Safe working tension (lbs)</th>
+            <th>Wire in at max tension</th>
             <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
-            <th>Manually enter payout/tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
-            <th>Plot</th>
+            <th>Manual edit<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
             <th>Delete</th>
         </tr>
     </thead>
+
     {% for cast in casts %}
     <tr>
-        <td>{{cast.format_startdate}}</td>
+        <td>
+            <a href="{% url 'charts' %}?start_date={{ cast.format_startdate_url }}&end_date={{ cast.format_enddate_url }}&winch={{ cast.winch.id }}" class="btn btn-info btn-sm">View Plot</a>
+        </td>
+        <td>{{cast.format_startdate_csv}}</td>
         <td>{{cast.duration}}</td>
-        <td>{{cast.winch.name}}</td>
+        <td>{{cast.winch}}</td>
         <td>{{cast.wire}}</td>
         <td>{{cast.deploymenttype}}</td>
         <td>{{cast.startoperator}}</td>
@@ -123,7 +138,7 @@
         <td>{{cast.format_timemaxtension}}</td>
         <td>{{cast.wetendtag}}</td>
         <td>{{cast.dryendtag}}</td>
-        <td>{{cast.motor}}</td>
+        <td>{{cast.wirerinse}}</td>
         <td>{{cast.winch.ship}}</td>
         <td>{{cast.winch.institution}}</td>
         <td>{{cast.winch.manufacturer}}</td>
@@ -131,10 +146,16 @@
         <td>{{cast.wirelength}}</td>
         <td>{{cast.factorofsafety}}</td>
         <td>{{cast.safeworkingtension}}</td>
-        <td><a href="{%url 'castedit' cast.pk %}">Edit</a></td>
-        <td><a href="{%url 'castmanualedit' cast.pk %}">Manual edit</a></td>
-        <td><a href="{%url 'castplot' cast.pk %}">Plot</a></td>
-        <td><a href="{%url 'castdelete' cast.pk %}">Delete</a></td>
+        <td>{{cast.wire_in}}</td>
+        <td>
+            <a href="{% url 'castedit' cast.pk %}" class="btn btn-primary btn-sm">Edit</a>
+        </td>
+        <td>
+            <a href="{% url 'castmanualedit' cast.pk %}" class="btn btn-secondary btn-sm">Manual Edit</a>
+        </td>
+        <td>
+            <a href="{% url 'castdelete' cast.pk %}" class="btn btn-danger btn-sm delete-button" data-cast-id="{{ cast.pk }}">Delete</a>
+        </td>
     </tr>
     {% endfor %}
 </table>
@@ -164,10 +185,17 @@
 </script>
 <script>
     $(document).ready(function () {
+        $('#caststartend').click(function () {
+            window.location.href = "{% url 'caststartend' %}";
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
         var table = $('#table2').DataTable({
             responsive: true,
             scrollX: true,
-            order: [[0, "desc"]]
+            order: [[1, "desc"]]
         });
 
         // Function to count unique values in a column
@@ -224,14 +252,14 @@
         $('#unolsButton').on('click', function () {
             // Check if DataTable is initialized
             if ($.fn.DataTable.isDataTable('#table2')) {
-                var uniqueCount = verifyCountUniqueValues(3);
-                var uniqueValues3 = getUniqueValues(3);
-                var uniqueValues16 = getUniqueValues(16);
-                var uniqueValues15 = getUniqueValues(15);
-                var uniqueValueCounts = countUniqueValues(4);
-                var uniqueForeignKeyValues = getUniqueForeignKeyValues(1);
-                var getMaxValsTension = getMaxValues(7);
-                var getMaxValsPayout = getMaxValues(8);
+                var uniqueCount = verifyCountUniqueValues(4);
+                var uniqueValues3 = getUniqueValues(4);
+                var uniqueValues16 = getUniqueValues(17);
+                var uniqueValues15 = getUniqueValues(16);
+                var uniqueValueCounts = countUniqueValues(5);
+                var uniqueForeignKeyValues = getUniqueForeignKeyValues(2);
+                var getMaxValsTension = getMaxValues(8);
+                var getMaxValsPayout = getMaxValues(9);
 
                 // Calculate min and max date from DataTable
                 var minDate = null;
@@ -240,8 +268,8 @@
                 // Iterate over data to find min and max dates
                 table.rows().every(function () {
                     var data = this.data();
-                    if (data[0]) {
-                        var currentDate = new Date(data[0]); // Assuming date is in the first column
+                    if (data[1]) {
+                        var currentDate = new Date(data[1]); // Assuming date is in the first column
                         if (!isNaN(currentDate.getTime())) {
                             if (minDate === null || currentDate < minDate) {
                                 minDate = currentDate;
@@ -280,16 +308,18 @@
                         }
                     }
                     csv.push('#')
-                    // Add headers
-                    var headers = [];
-                    table.columns().every(function () {
-                        headers.push(this.header().innerText.trim());
-                    });
+
+                    // Define the column indexes to keep
+                    var selectedColumns = [1, 3, 18, 4, 5, 8, 9, 10, 23, 11, 15, 20, 21, 22];
+
+                    // Add headers correctly
+                    var headers = selectedColumns.map(index => table.column(index).header().innerText.trim());
                     csv.push(headers.join(','));
 
-                    // Add data rows
+                    // Add data rows with selected columns only
                     data.each(function (row) {
-                        csv.push(row.join(','));
+                        var filteredRow = selectedColumns.map(index => row[index]); // Select only the desired columns
+                        csv.push(filteredRow.join(','));
                     });
 
                     // Create download link
@@ -344,6 +374,19 @@
                 document.body.removeChild(link);
             } else {
                 alert('DataTable is not initialized.');
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('.delete-button').click(function (event) {
+            // Check if the user is a superuser
+            const isSuperUser = '{{ user.is_superuser|yesno:"true,false" }}' === 'true';
+
+            if (!isSuperUser) {
+                event.preventDefault(); // Prevent the default action (link click)
+                alert('You must be logged in as an admin to delete this cast.');
             }
         });
     });

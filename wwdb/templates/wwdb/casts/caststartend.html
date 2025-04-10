@@ -1,0 +1,73 @@
+﻿<!--templates/caststart.html-->
+{% extends "wwdb/base.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{{ form.media }}
+
+{% block content %}
+<h1>Enter a Cast</h1>
+<div class="container pt-2 pb-2 pl-5 pr-5">
+    <form action="{% url 'caststartend' %}" method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <p>Start Date</p>
+        <div class="fieldWrapper">
+            {{ form.startdate.errors }}
+            {{ form.startdate }}
+        </div>
+        </br>
+        <p>End Date</p>
+        <div class="fieldWrapper">
+            {{ form.enddate.errors }}
+            {{ form.enddate }}
+        </div>
+        </br>
+        <p>Start operator</p>
+        <div class="fieldWrapper">
+            {{ form.startoperator.errors }}
+            {{ form.startoperator }}
+        </div>
+        </br>
+        <p>End operator</p>
+        <div class="fieldWrapper">
+            {{ form.endoperator.errors }}
+            {{ form.endoperator }}
+        </div>
+        </br>
+        <p>Deployment type</p>
+        <div>
+            {{ form.deploymenttype.errors }}
+            {{ form.deploymenttype }}
+        </div>
+        </br>
+        <p>Winch</p>
+        <div class="fieldWrapper">
+            {{ form.winch.errors }}
+            {{ form.winch }}
+        </div>
+        </br>
+        <p>Notes</p>
+        <div class="">
+            {{ form.notes.errors }}
+            {{ form.notes }}
+        </div>
+        </br>
+        <p>Flag for review</p>
+        <div class="fieldWrapper">
+            {{ form.flagforreview.errors }}
+            {{ form.flagforreview }}
+        </div>
+        </br>
+
+        <button class="cast-start-btn" type="submit" value="save">SUBMIT CAST</button>
+    </form>
+</div>
+<script>
+    $(document).ready(function () {
+        $("form").on("submit", function () {
+            $("input[type=submit]").attr("disabled", true);
+            return true;
+        });
+    });
+</script>
+{% endblock content %}

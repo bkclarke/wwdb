@@ -200,6 +200,26 @@ def caststart(request):
         'template_name':template_name}
     return render(request, "wwdb/casts/caststart.html", context)
 
+def caststartend(request):
+    form = StartEndCastForm(request.POST or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            cast = form.save()
+            cast.refresh_from_db()
+            cast.get_active_wire()
+            cast.endcastcal()
+            cast.get_active_length()
+            cast.get_active_safeworkingtension()
+            cast.get_active_factorofsafety()
+            cast.save()
+            cast.refresh_from_db()
+            cast.get_cast_duration()
+            cast.save()
+            return HttpResponseRedirect('/wwdb/reports/castreport')  # This should redirect to the cast report
+        else:
+            print(form.errors)
+
 def castlist(request):
     cast_complete = Cast.objects.filter(flagforreview=False, maxpayout__isnull=False, payoutmaxtension__isnull=False, maxtension__isnull=False) 
     cast_flag = Cast.objects.filter((Q(winch=1) | Q(winch=2) | Q(winch=3)), (Q(flagforreview=True) | Q(maxpayout__isnull=True) | Q(payoutmaxtension__isnull=True) | Q(maxtension__isnull=True)))
@@ -349,6 +369,41 @@ def castenddetail(request, id):
     context ={}
     context["cast"] = Cast.objects.get(id = id)
     return render(request, "wwdb/casts/castenddetail.html", context)
+
+class StartEndCastForm(ModelForm):
+    flagforreview = forms.BooleanField(required=False)
+    wirerinse = forms.BooleanField(required=False)
+    deploymenttype = forms.ModelChoiceField(DeploymentType.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
+    winch = forms.ModelChoiceField(Winch.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
+    startoperator = forms.ModelChoiceField(WinchOperator.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
+    endoperator = forms.ModelChoiceField(WinchOperator.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Cast
+        fields = [
+            'startoperator',
+            'endoperator',
+            'startdate',
+            'enddate',
+            'deploymenttype',
+            'winch',
+            'wire',
+            'notes',
+            'maxtension',
+            'maxpayout',
+        ]
+
+        widgets = {
+            "notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%; align: center;",
+                    "placeholder": "Notes",
+                }
+            ),
+            'startdate': DateTimePickerInput(), 
+            'enddate': DateTimePickerInput()
+            }
 
 """
 PRECRUISE CONFIGURATION

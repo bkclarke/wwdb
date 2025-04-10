@@ -13,6 +13,7 @@ urlpatterns = [
     path('casts/<id>/castenddetail', views.castenddetail, name='castenddetail'),
     path('casts/', views.caststart, name='caststart'),
     path('casts/manualenter/', views.castmanualenter, name='castmanualenter'),
+    path('casts/caststartend/', views.caststartend, name='caststartend'),
     path('casts/<int:id>/manualedit/', views.castmanualedit, name='castmanualedit'),
     path('casts/<int:id>/edit/', views.castedit, name='castedit'),
     path('casts/<int:pk>/delete/', CastDelete.as_view(), name='castdelete'),

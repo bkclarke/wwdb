@@ -15,7 +15,7 @@
         </thead>
         {% for cruise in cruises %}
         <tr>
-            <td><a href="{% url 'cruisereport' cruise.pk %}">{{cruise.number}}</a></td>
+            <td><a href="{% url 'cruisereport' cruise.pk %}" class="btn btn-primary btn-sm">{{cruise.number}}</a></td>
             <td>{{cruise.format_startdate}}</td>
             <td>{{cruise.format_enddate}}</td>
         </tr>
