@@ -544,6 +544,12 @@ class Lubrication(models.Model):
     def __str__(self):
         return str(self.date)
 
+    @property
+    def format_date(self):
+        date=self.date
+        formatdate=date.strftime("%Y-%m-%d")
+        return formatdate
+
 class FactorOfSafety(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True, blank=True, null=False)  
     factorofsafety = models.FloatField(db_column='FactorofSafety', blank=False, null=False, default=5.0, verbose_name='Factor of safety')  

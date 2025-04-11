@@ -131,7 +131,29 @@
             </div>
         </div>
     </nav>
-    <nav class="navbar fixed-bottom navbar-expand-sm navbar-light">
+    <nav class="navbar fixed-bottom navbar-expand-sm navbar-light" style="background-color: rgba(255, 255, 255, 0.75);">
+        <div class="menu-right">
+            <ul class="navbar-nav login-control">
+                <div class="nav-item-bottom">
+                    </li>
+                    {% if user.is_authenticated %}
+                    <span>
+                        <button id="logout" class="btn btn-secondary btn-sm">Log out</button>
+                    </span>
+                    {% else %}
+                    <span>
+                        <button id="login" class="btn btn-secondary btn-sm">log in</button>
+                    </span>
+                    <span>
+                        <span>
+                            <button id="signup" class="btn btn-secondary btn-sm">Sign up</button>
+                        </span>
+                    </span>
+                    {% endif %}
+                    </li>
+                </div>
+            </ul>
+        </div>
     </nav>
     <div class="container mt-5 mb-5">
         {% block content %}
@@ -147,11 +169,24 @@
             window.location.href = "{% url 'caststart' %}";
         });
     });
-</script>
-<script>
     $(document).ready(function () {
         $('#endcast').click(function () {
             window.location.href = "{% url 'caststart' %}";
+        });
+    });
+    $(document).ready(function () {
+        $('#login').click(function () {
+            window.location.href = "{% url 'login' %}";
+        });
+    });
+    $(document).ready(function () {
+        $('#signup').click(function () {
+            window.location.href = "{% url 'signup' %}";
+        });
+    });
+    $(document).ready(function () {
+        $('#logout').click(function () {
+            window.location.href = "{% url 'logout' %}";  // Uses GET request
         });
     });
 </script>

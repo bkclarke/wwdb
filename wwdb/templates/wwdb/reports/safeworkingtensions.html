@@ -33,8 +33,14 @@
 </script>
 </br>
 </br>
-<button type="button" class="btn btn-outline-dark">
-    <a class="nav-link" href="{% url 'safeworkingtensions_file' %}">Download</a>
-</button>
+<button id="safeworkingtensions_file" class="btn btn-info btn-sm">Download</button>
+<script>
+    $(document).ready(function () {
+        $('#safeworkingtensions_file').click(function () {
+            window.location.href = "{% url 'safeworkingtensions_file' %}";
+        });
+    });
+</script>
 {% endblock %}
 </html>
+

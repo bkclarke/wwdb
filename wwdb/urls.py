@@ -7,6 +7,7 @@ from .views import *
 urlpatterns = [
     path('updateallcasts/', views.updateallcasts, name='updateallcasts'),
     path('home/', views.home, name='home'),
+    path('accounts/logout/', views.custom_logout, name='logout'),
 
     #URLS related to cast reporting
     path('casts/<int:pk>/', views.castdetail, name='castdetail'),
@@ -108,6 +109,7 @@ urlpatterns = [
     path('maintenance/cutbackretermination/<int:pk>/deploymentdetail', CutbackReterminationDetail.as_view(), name='cutbackreterminationdetail'),
     path('maintenance/cutbackretermination/<int:id>/edit/', views.cutbackreterminationedit, name='cutbackreterminationedit'),
     path('maintenance/cutbackreterminationadd/', views.cutbackreterminationadd, name='cutbackreterminationadd'),
+    path('maintenance/cutbackretermination/<int:pk>/delete/', CutbackreterminationDelete.as_view(), name='cutbackreterminationdelete'),
     path('maintenance/lubricationadd/', views.lubricationadd, name='lubricationadd'),
     path('maintenance/lubrication/<int:id>/edit/', views.lubricationedit, name='lubricationedit'),
     path('maintenance/lubricationlist', views.lubricationlist, name='lubricationlist'),

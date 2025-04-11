@@ -5,28 +5,36 @@
 {% block content %}
 <h2>Cutbacks and reterminations</h2>
 </br>
-<button id="cutbackreterminationadd" class="btn btn-outline-wwdb">Add Cutback or retermination</button>
+<button id="cutbackreterminationadd" class="btn btn-secondary btn-sm">Add Cutback or retermination</button>
 </br>
 </br>
 <table id="table" class="display nowrap table">
     <thead>
         <tr>
+            <th>Edit</th>
             <th>Date</th>
             <th>Wire</th>
             <th>Wet end tag</th>
             <th>Dry end tag</th>
             <th>Length after cutback</th>
             <th>Notes</th>
+            <th>Delete</th>
         </tr>
     </thead>
     {% for cutbackretermination in cutbacks_reterminations %}
     <tr>
-        <td><a href="{% url 'cutbackreterminationedit' cutbackretermination.pk %}">{{cutbackretermination.format_date}}</a></td>
+        <td>
+            <a href="{% url 'cutbackreterminationedit' cutbackretermination.pk %}" class="btn btn-primary btn-sm delete-button">Edit</a>
+        </td>
+        <td>{{cutbackretermination.format_date}}</a></td>
         <td>{{cutbackretermination.wire}}</td>
         <td>{{cutbackretermination.wetendtag}}</td>
         <td>{{cutbackretermination.dryendtag}}</td>
         <td>{{cutbackretermination.lengthaftercutback}}</td>
         <td>{{cutbackretermination.notes}}</td>
+        <td>
+            <a href="{% url 'cutbackreterminationdelete' cutbackretermination.pk %}" class="btn btn-danger btn-sm delete-button">Delete</a>
+        </td>
     </tr>
     {% endfor %}
 </table>
@@ -36,18 +44,27 @@
         $('#table').DataTable({
             responsive: true,
             scrollX: true,
-            order: [[0, "desc"]]
+            order: [[1, "desc"]]
             // Add more options as needed
         });
 
         // Initialize tooltips (assuming you're using Bootstrap tooltips)
         $('[data-toggle="tooltip"]').tooltip();
     });
-</script>
-<script>
     $(document).ready(function () {
         $('#cutbackreterminationadd').click(function () {
             window.location.href = "{% url 'cutbackreterminationadd' %}";
+        });
+    });
+    $(document).ready(function () {
+        $('.delete-button').click(function (event) {
+            // Check if the user is a superuser
+            const isSuperUser = '{{ user.is_superuser|yesno:"true,false" }}' === 'true';
+
+            if (!isSuperUser) {
+                event.preventDefault(); // Prevent the default action (link click)
+                alert('You must be logged in as an admin to edit or delete this cutback.');
+            }
         });
     });
 </script>

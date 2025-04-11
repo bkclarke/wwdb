@@ -5,11 +5,17 @@
 
 {% block content %}
 <h2>Tension Member Inventory</h2>
+</br>
+<button id="wireadd" class="btn btn-secondary btn-sm edit-button">Add tension member</button>
+</br>
+</br>
 <table id="table" class="display nowrap table">
     <thead>
         <tr>
+            <th>Edit</th>
             <th>NSF-ID</th>
             <th>Wire Type</th>
+            <th>Location</th>
             <th>Manufacturer id</th>
             <th>Dry End Tag</th>
             <th>Wet End Tag</th>
@@ -18,13 +24,14 @@
             <th>Tested Breaking Load</th>
             <th>Absolute Breaking Load</th>
             <th>Drum</th>
-            <th>Location</th>
         </tr>
     </thead>
     {% for wire in wires %}
     <tr>
-        <td><a href="{% url 'wirereport' wire.pk %}">{{wire.nsfid}}</a></td>
+        <td><a href="{% url 'wireedit' wire.pk %}" class="btn btn-primary btn-sm edit-button">Edit</a></td>
+        <td>{{wire.nsfid}}</td>
         <td>{{wire.wirerope}}</td>
+        <td>{{wire.active_drum_location}}</td>
         <td>{{wire.manufacturerid}}</td>
         <td>{{wire.dryendtag}}</td>
         <td>{{wire.active_wetendtag}}</td>
@@ -33,7 +40,6 @@
         <td>{{wire.tested_breaking_load}}</td>
         <td>{{wire.absolute_breaking_load}}</td>
         <td>{{wire.active_drum}}</td>
-        <td>{{wire.active_drum_location}}</td>
     </tr>
     {% endfor %}
 </table>
@@ -43,12 +49,28 @@
         $('#table').DataTable({
             responsive: true,
             scrollX: true,
-            order: [[0, "desc"]]
+            order: [[1, "desc"]]
             // Add more options as needed
         });
 
         // Initialize tooltips (assuming you're using Bootstrap tooltips)
         $('[data-toggle="tooltip"]').tooltip();
+    });
+    $(document).ready(function () {
+        $('#wireadd').click(function () {
+            window.location.href = "{% url 'wireadd' %}";
+        });
+    });
+    $(document).ready(function () {
+        $('.edit-button').click(function (event) {
+            // Check if the user is a superuser
+            const isSuperUser = '{{ user.is_superuser|yesno:"true,false" }}' === 'true';
+
+            if (!isSuperUser) {
+                event.preventDefault(); // Prevent the default action (link click)
+                alert('You must be logged in as an admin to edit this tension member.');
+            }
+        });
     });
 </script>
 {% endblock content %}

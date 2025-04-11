@@ -5,12 +5,13 @@
 {% block content %}
 <h2>Breaktests</h2>
 </br>
-<button id="breaktestadd" class="btn btn-outline-wwdb">Add Breaktest</button>
+<button id="breaktestadd" class="btn btn-secondary btn-sm">Add Breaktest</button>
 </br>
 </br>
 <table id="table" class="display nowrap" style="width:100%">
     <thead>
         <tr>
+            <th>Edit</th>
             <th>Date</th>
             <th>Wire</th>
             <th>Tested Breaking Load</th>
@@ -20,11 +21,16 @@
     </thead>
     {% for breaktest in break_test %}
     <tr>
-        <td><a href="{% url 'breaktestedit' breaktest.pk %}">{{breaktest.format_date}}</td>
+        <td>
+            <a href="{% url 'breaktestedit' breaktest.pk %}" class="btn btn-primary btn-sm delete-button">Edit</a>
+        </td>
+        <td>{{breaktest.format_date}}</td>
         <td>{{breaktest.wire}}</td>
         <td>{{breaktest.testedbreakingload}}</td>
         <td>{{breaktest.notes}}</td>
-        <td><a href="{%url 'breaktestdelete' breaktest.pk %}">Delete</a></td>
+        <td>
+            <a href="{% url 'breaktestdelete' breaktest.pk %}" class="btn btn-danger btn-sm delete-button">Delete</a>
+        </td>
     </tr>
     {% endfor %}
 </table>
@@ -34,7 +40,7 @@
         $('#table').DataTable({
             responsive: true,
             scrollX: true,
-            order: [[0, "desc"]]
+            order: [[1, "desc"]]
             // Add more options as needed
         });
 
@@ -46,6 +52,17 @@
     $(document).ready(function () {
         $('#breaktestadd').click(function () {
             window.location.href = "{% url 'breaktestadd' %}";
+        });
+    });
+    $(document).ready(function () {
+        $('.delete-button').click(function (event) {
+            // Check if the user is a superuser
+            const isSuperUser = '{{ user.is_superuser|yesno:"true,false" }}' === 'true';
+
+            if (!isSuperUser) {
+                event.preventDefault(); // Prevent the default action (link click)
+                alert('You must be logged in as an admin to edit or delete this break test.');
+            }
         });
     });
 </script>

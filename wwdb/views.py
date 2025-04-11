@@ -30,6 +30,8 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 import json
+from django.contrib.auth import logout
+
 
 
 logger = logging.getLogger(__name__)
@@ -100,6 +102,10 @@ def charts(request):
     data_json_payout = json.dumps(data_payout)
 
     return render(request, 'wwdb/reports/charts.html', {'form': form, 'data_json_tension': data_json_tension, 'data_json_payout': data_json_payout })
+
+def custom_logout(request):
+    logout(request)  # Logs out the user
+    return redirect('home')  # Redirects to the homepage
 
 def home(request):
     template_name = 'home.html'
@@ -1760,6 +1766,11 @@ def cutbackreterminationadd(request):
     context['form']= form
 
     return render(request, 'wwdb/maintenance/cutbackreterminationadd.html', context)
+
+class CutbackreterminationDelete(DeleteView):
+    model = CutbackRetermination
+    template_name="wwdb/maintenance/cutbackreterminationdelete.html"
+    success_url= reverse_lazy('cutbackreterminationlist')
 
 
 """

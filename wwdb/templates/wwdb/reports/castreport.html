@@ -148,10 +148,10 @@
         <td>{{cast.safeworkingtension}}</td>
         <td>{{cast.wire_in}}</td>
         <td>
-            <a href="{% url 'castedit' cast.pk %}" class="btn btn-primary btn-sm">Edit</a>
+            <a href="{% url 'castedit' cast.pk %}" class="btn btn-primary btn-sm delete-button">Edit</a>
         </td>
         <td>
-            <a href="{% url 'castmanualedit' cast.pk %}" class="btn btn-secondary btn-sm">Manual Edit</a>
+            <a href="{% url 'castmanualedit' cast.pk %}" class="btn btn-secondary btn-sm delete-button">Manual Edit</a>
         </td>
         <td>
             <a href="{% url 'castdelete' cast.pk %}" class="btn btn-danger btn-sm delete-button" data-cast-id="{{ cast.pk }}">Delete</a>
@@ -168,29 +168,23 @@
         $('#table1').DataTable({
             responsive: true,
             scrollX: true,
-            order: [[0, "desc"]]
+            order: [[1, "desc"]]
             // Add more options as needed
         });
 
         // Initialize tooltips (assuming you're using Bootstrap tooltips)
         $('[data-toggle="tooltip"]').tooltip();
     });
-</script>
-<script>
     $(document).ready(function () {
         $('#castmanualenter').click(function () {
             window.location.href = "{% url 'castmanualenter' %}";
         });
     });
-</script>
-<script>
     $(document).ready(function () {
         $('#caststartend').click(function () {
             window.location.href = "{% url 'caststartend' %}";
         });
     });
-</script>
-<script>
     $(document).ready(function () {
         var table = $('#table2').DataTable({
             responsive: true,
@@ -377,8 +371,6 @@
             }
         });
     });
-</script>
-<script>
     $(document).ready(function () {
         $('.delete-button').click(function (event) {
             // Check if the user is a superuser
@@ -386,7 +378,7 @@
 
             if (!isSuperUser) {
                 event.preventDefault(); // Prevent the default action (link click)
-                alert('You must be logged in as an admin to delete this cast.');
+                alert('You must be logged in as an admin to edit or delete this cast.');
             }
         });
     });
