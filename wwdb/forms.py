@@ -533,17 +533,25 @@ class AddCutbackReterminationForm(ModelForm):
             'notes',
         ]
 
+
         widgets = {
-                'date': DatePickerInput(
+            "notes": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%; align: center;",
+                    "placeholder": "Notes",
+                }
+            ),
+            'date': DatePickerInput(
                     options={
-                    "format": "YYYY-MM-DD"}),
-                "notes": forms.TextInput(
-                    attrs={
-                        "class": "form-control",
-                        "style": "max-width: 100%; align: center;",
-                        "placeholder": "notes",
-                }),
-            }
+                    "format": "YYYY-MM-DD"}
+        )}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['wetendtag'].required = True
+        self.fields['date'].required = True
 
 class EditCutbackReterminationForm(ModelForm):
   
