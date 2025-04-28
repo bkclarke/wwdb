@@ -31,6 +31,7 @@ from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from django.contrib.auth import logout
+from django.core.exceptions import ValidationError
 
 
 
