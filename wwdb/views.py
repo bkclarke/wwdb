@@ -404,10 +404,10 @@ def castconfigurehome(request):
     return render(request, 'wwdb/configuration/castconfiguration.html', context=context)
 
 def cruiseconfigurehome(request):
-    cruise = Cruise.objects.all()
+    cruises = Cruise.objects.all()
 
     context = {
-        'cruise' : cruise,
+        'cruises' : cruises,
        }
 
     return render(request, 'wwdb/configuration/cruiseconfiguration.html', context=context)
