@@ -223,9 +223,13 @@ def caststartend(request):
             cast.refresh_from_db()
             cast.get_cast_duration()
             cast.save()
-            return HttpResponseRedirect('/wwdb/reports/castreport')  # This should redirect to the cast report
+            return HttpResponseRedirect('/wwdb/reports/castreport')
         else:
             print(form.errors)
+
+    # Add this line to handle GET or invalid POST
+    return render(request, 'wwdb/casts/caststartend.html', {'form': form})
+
 
 def castlist(request):
     cast_complete = Cast.objects.filter(flagforreview=False, maxpayout__isnull=False, payoutmaxtension__isnull=False, maxtension__isnull=False) 
@@ -377,41 +381,6 @@ def castenddetail(request, id):
     context["cast"] = Cast.objects.get(id = id)
     return render(request, "wwdb/casts/castenddetail.html", context)
 
-class StartEndCastForm(ModelForm):
-    flagforreview = forms.BooleanField(required=False)
-    wirerinse = forms.BooleanField(required=False)
-    deploymenttype = forms.ModelChoiceField(DeploymentType.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
-    winch = forms.ModelChoiceField(Winch.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
-    startoperator = forms.ModelChoiceField(WinchOperator.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
-    endoperator = forms.ModelChoiceField(WinchOperator.objects.filter(status=True), widget=forms.Select(attrs={'class': 'form-control'}))
-
-    class Meta:
-        model = Cast
-        fields = [
-            'startoperator',
-            'endoperator',
-            'startdate',
-            'enddate',
-            'deploymenttype',
-            'winch',
-            'wire',
-            'notes',
-            'maxtension',
-            'maxpayout',
-        ]
-
-        widgets = {
-            "notes": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "style": "max-width: 100%; align: center;",
-                    "placeholder": "Notes",
-                }
-            ),
-            'startdate': DateTimePickerInput(), 
-            'enddate': DateTimePickerInput()
-            }
-
 """
 PRECRUISE CONFIGURATION
 Classes related to starting a cruise including updating WinchOperators and DeploymentType models
@@ -422,14 +391,14 @@ def castconfigurehome(request):
     deployments = DeploymentType.objects.all()
     active_wire = Wire.objects.filter(status=True)
     winches = Winch.objects.all()
-    cruise = Cruise.objects.all()
+    cruises = Cruise.objects.all()
 
     context = {
         'operators': operators,
         'deployments': deployments,
         'active_wire': active_wire,
         'winches': winches,
-        'cruise' : cruise,
+        'cruises' : cruises,
        }
 
     return render(request, 'wwdb/configuration/castconfiguration.html', context=context)
@@ -443,6 +412,11 @@ def cruiseconfigurehome(request):
 
     return render(request, 'wwdb/configuration/cruiseconfiguration.html', context=context)
 
+
+class CruiseDelete(DeleteView):
+    model = Cruise
+    template_name="wwdb/cruiseconfiguration/cruisedelete.html"
+    success_url= reverse_lazy('cruiseconfigurehome')
 
 def wireeditfactorofsafety(request, id):
     context ={}
