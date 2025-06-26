@@ -6,9 +6,9 @@
     <button id="castmanualenter" class="btn btn-outline-wwdb">Manually enter cast</button> <img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered">
     </br>
     </br>
-    {% if cast_flag %}
-    <h2>Flagged for review</h2>
-    <table id="example" class="display nowrap table-danger" style="width:100%">
+    {% if casts %}
+    <h2>All Casts</h2>
+    <table id="castTable" class="display nowrap" style="width:100%">
         <thead>
             <tr>
                 <th>Start time</th>
@@ -19,119 +19,54 @@
                 <th>End operator</th>
                 <th>Max tension</th>
                 <th>Max payout</th>
-                <th>Payout tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
-                <th>Meter mark<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
-                <th>Time tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
-                <th>Wet end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the wet end"></th>
-                <th>Dry end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the dry end"></th>
+                <th>Payout tension</th>
+                <th>Meter mark</th>
+                <th>Time tension</th>
+                <th>Wet end</th>
+                <th>Dry end</th>
                 <th>Motor</th>
-                <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
-                <th>Manually enter payout/tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
+                <th>Edit</th>
+                <th>Manual Edit</th>
                 <th>Delete</th>
             </tr>
         </thead>
-        {% for cast in cast_flag %}
-        <tr>
-            <td>{{cast.format_startdate}}</td>
-            <td>{{cast.winch}}</td>
-            <td>{{cast.wire}}</td>
-            <td>{{cast.deploymenttype}}</td>
-            <td>{{cast.startoperator}}</td>
-            <td>{{cast.endoperator}}</td>
-            <td>{{cast.maxtension}}</td>
-            <td>{{cast.maxpayout}}</td>
-            <td>{{cast.payoutmaxtension}}</td>
-            <td>{{cast.metermaxtension}}</td>
-            <td>{{cast.format_timemaxtension}}</td>
-            <td>{{cast.wetendtag}}</td>
-            <td>{{cast.dryendtag}}</td>
-            <td>{{cast.active_motor}}</td>
-            <td><a href="{%url 'castedit' cast.pk %}">Edit</a></td>
-            <td><a href="{%url 'castmanualedit' cast.pk %}">Manual edit</a></td>
-            <td><a href="{%url 'castdelete' cast.pk %}">Delete</a></td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    <p>There are no flagged casts</p>
-    {% endif %}
-    <br />
-    {% if cast_complete %}
-    <h2>Completed casts</h2>
-    <br />
-    <table id="example2" class="display nowrap" style="width:100%">
-        <thead>
-            <tr>
-                <th>Start time</th>
-                <th>Winch</th>
-                <th>Wire</th>
-                <th>Deployment type</th>
-                <th>Start operator</th>
-                <th>End operator</th>
-                <th>Max tension</th>
-                <th>Max payout</th>
-                <th>Payout tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
-                <th>Meter mark<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
-                <th>Time tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
-                <th>Wet end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the wet end"></th>
-                <th>Dry end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the dry end"></th>
-                <th>Motor</th>
-                <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
-                <th>Manually enter payout/tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
-                <th>Delete</th>
+        <tbody>
+            {% for cast in casts %}
+            <tr {% if cast.flagforreview or cast.maxtension= =None or cast.maxpayout= =None %}
+                class="table-danger"
+                {% endif %}>
+                <td>{{ cast.format_startdate }}</td>
+                <td>{{ cast.winch }}</td>
+                <td>{{ cast.wire }}</td>
+                <td>{{ cast.deploymenttype }}</td>
+                <td>{{ cast.startoperator }}</td>
+                <td>{{ cast.endoperator }}</td>
+                <td>{{ cast.maxtension }}</td>
+                <td>{{ cast.maxpayout }}</td>
+                <td>{{ cast.payoutmaxtension }}</td>
+                <td>{{ cast.metermaxtension }}</td>
+                <td>{{ cast.format_timemaxtension }}</td>
+                <td>{{ cast.wetendtag }}</td>
+                <td>{{ cast.dryendtag }}</td>
+                <td>{{ cast.motor }}</td>
+                <td><a href="{% url 'castedit' cast.pk %}">Edit</a></td>
+                <td><a href="{% url 'castmanualedit' cast.pk %}">Manual edit</a></td>
+                <td><a href="{% url 'castdelete' cast.pk %}">Delete</a></td>
             </tr>
-        </thead>
-        {% for cast in cast_complete %}
-        <tr>
-            <td>{{cast.format_startdate}}</td>
-            <td>{{cast.winch}}</td>
-            <td>{{cast.wire}}</td>
-            <td>{{cast.deploymenttype}}</td>
-            <td>{{cast.startoperator}}</td>
-            <td>{{cast.endoperator}}</td>
-            <td>{{cast.maxtension}}</td>
-            <td>{{cast.maxpayout}}</td>
-            <td>{{cast.payoutmaxtension}}</td>
-            <td>{{cast.metermaxtension}}</td>
-            <td>{{cast.format_timemaxtension}}</td>
-            <td>{{cast.wetendtag}}</td>
-            <td>{{cast.dryendtag}}</td>
-            <td>{{cast.motor}}</td>
-            <td><a href="{%url 'castedit' cast.pk %}">Edit</a></td>
-            <td><a href="{%url 'castmanualedit' cast.pk %}">Manual edit</a></td>
-            <td><a href="{%url 'castdelete' cast.pk %}">Delete</a></td>
-        </tr>
-        {% endfor %}
+            {% endfor %}
+        </tbody>
     </table>
     {% else %}
-    <p>There are no completed casts</p>
+    <p>No casts available.</p>
     {% endif %}
     <br />
     <script>
         $(document).ready(function () {
-            // Initialize DataTables
-            $('#example').DataTable({
+            $('#castTable').DataTable({
                 responsive: true,
                 scrollX: true,
                 order: [[0, "desc"]]
-                // Add more options as needed
             });
-
-            // Initialize tooltips (assuming you're using Bootstrap tooltips)
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-            // Initialize DataTables
-            $('#example2').DataTable({
-                responsive: true,
-                scrollX: true,
-                order: [[0, "desc"]]
-                // Add more options as needed
-            });
-
-            // Initialize tooltips (assuming you're using Bootstrap tooltips)
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>

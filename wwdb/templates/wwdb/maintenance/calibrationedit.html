@@ -1,0 +1,334 @@
+{% extends "wwdb/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container p-5">
+    <div class="row">
+        <!-- Left Sidebar: Calibration Info -->
+        <div class="col-md-4 mb-4">
+            <div style="position: sticky; top: 200px;">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Calibration Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Calibration date:</strong> {{ calibration.date }}</p>
+                        <p><strong>Operator:</strong> {{ calibration.operator }}</p>
+                        <p><strong>Wire:</strong> {{ calibration.wire }}</p>
+                        <p><strong>Winch:</strong> {{ calibration.winch }}</p>
+                        <p><strong>Factor of safety:</strong> {{ calibration.factorofsafety }}</p>
+                        <p><strong>Safe working tension (free end):</strong> {{ calibration.safeworkingtension }}</p>
+                        <p><strong>Monitoring accuracy:</strong> {{ calibration.tensionmonitoringaccuracy }} %</p>
+                        <p><strong>Calibration high setpoint:</strong> {{ calibration.calhighsetpoint }}</p>
+                        <p><strong>Calibration low setpoint:</strong> {{ calibration.callowsetpoint }}</p>
+                    </div>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-secondary" id="calculateErrors1" style="min-width: 150px;">Calculate Errors</button>
+                    <button type="button" class="btn btn-info" id="plotStandardCurve">Standard Curve</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Right Content: Tables and Form -->
+        <div class="col-md-8">
+            <form method="post">
+                {% csrf_token %}
+                {{ formset1.management_form }}
+                {{ formset2.management_form }}
+                {{ formset3.management_form }}
+                <h2>Tension Verification</h2>
+                <table id="table1" class="table">
+                    <thead>
+                        <tr>
+                            <th>Applied Load (lbs)</th>
+                            <th>Load Cell Tension (lbs)</th>
+                            <th>Load Cell Raw mV</th>
+                            <th>Error (lbs)</th>
+                            <th>Error (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset1 %}
+                        <tr>
+                            <td>{{ form.appliedload }}</td>
+                            <td>{{ form.loadcelltension }}</td>
+                            <td>{{ form.loadcellrawmv }}</td>
+                            <td class="errorlbs">--</td>
+                            <td class="errorpercent">--</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Hidden template row for JS cloning (formset1) -->
+                <table id="table1-hidden" style="display: none;">
+                    <tbody id="tv1-empty-form">
+                        {% with form=formset1.empty_form %}
+                        <tr>
+                            <td>{{ form.appliedload }}</td>
+                            <td>{{ form.loadcelltension }}</td>
+                            <td>{{ form.loadcellrawmv }}</td>
+                            <td class="errorlbs">--</td>
+                            <td class="errorpercent">--</td>
+                        </tr>
+                        {% endwith %}
+                    </tbody>
+                </table>
+                </br>
+                <button type="button" class="btn btn-warning btn-sm mb-4" onclick="addFormRow('tv1', 'table1')">+ Add Row</button>
+                <h2 class="mt-4">Tension Calibration</h2>
+                <table id="table2" class="table">
+                    <thead>
+                        <tr>
+                            <th>Applied Load (lbs)</th>
+                            <th>Load Cell Tension (lbs)</th>
+                            <th>Load Cell Raw mV</th>
+                            <th>Error (lbs)</th>
+                            <th>Error (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset2 %}
+                        <tr>
+                            <td>{{ form.appliedload }}</td>
+                            <td>{{ form.loadcelltension }}</td>
+                            <td>{{ form.loadcellrawmv }}</td>
+                            <td class="errorlbs">--</td>
+                            <td class="errorpercent">--</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Hidden template row for JS cloning (formset1) -->
+                <table id="table2-hidden" style="display: none;">
+                    <tbody id="tc1-empty-form">
+                        {% with form=formset2.empty_form %}
+                        <tr>
+                            <td>{{ form.appliedload }}</td>
+                            <td>{{ form.loadcelltension }}</td>
+                            <td>{{ form.loadcellrawmv }}</td>
+                            <td class="errorlbs">--</td>
+                            <td class="errorpercent">--</td>
+                        </tr>
+                        {% endwith %}
+                    </tbody>
+                </table>
+                </br>
+                <button type="button" class="btn btn-warning btn-sm mb-4" onclick="addFormRow('tc1', 'table2')">+ Add Row</button>
+                <h2 class="mt-4">Calibration Verification</h2>
+                <table id="table3" class="table">
+                    <thead>
+                        <tr>
+                            <th>Applied Load (lbs)</th>
+                            <th>Load Cell Tension (lbs)</th>
+                            <th>Load Cell Raw mV</th>
+                            <th>Error (lbs)</th>
+                            <th>Error (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset3 %}
+                        <tr>
+                            <td>{{ form.appliedload }}</td>
+                            <td>{{ form.loadcelltension }}</td>
+                            <td>{{ form.loadcellrawmv }}</td>
+                            <td class="errorlbs">--</td>
+                            <td class="errorpercent">--</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Hidden template row for JS cloning (formset1) -->
+                <table id="table3-hidden" style="display: none;">
+                    <tbody id="cv1-empty-form">
+                        {% with form=formset3.empty_form %}
+                        <tr>
+                            <td>{{ form.appliedload }}</td>
+                            <td>{{ form.loadcelltension }}</td>
+                            <td>{{ form.loadcellrawmv }}</td>
+                            <td class="errorlbs">--</td>
+                            <td class="errorpercent">--</td>
+                        </tr>
+                        {% endwith %}
+                    </tbody>
+                </table>
+                </br>
+                <button type="button" class="btn btn-warning btn-sm mb-4" onclick="addFormRow('cv1', 'table3')">+ Add Row</button>
+                </br>
+                </br>
+                <div class="col-12 col-md-auto">
+                    <button type="submit" class="btn btn-primary" style="min-width: 60px;">Save All</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculateErrors(tableId) {
+        const monitoringAccuracy = parseFloat("{{ calibration.tensionmonitoringaccuracy }}");
+        const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+
+        rows.forEach((row) => {
+            const appliedInput = row.querySelector('input.appliedload');
+            const tensionInput = row.querySelector('input.loadcelltension');
+            const errorLbsCell = row.querySelector('.errorlbs');
+            const errorPercentCell = row.querySelector('.errorpercent');
+
+            if (appliedInput && tensionInput) {
+                const applied = parseFloat(appliedInput.value);
+                const tension = parseFloat(tensionInput.value);
+
+                if (!isNaN(applied) && !isNaN(tension) && applied !== 0) {
+                    const errorLbs = tension - applied;
+                    const errorPercent = Math.abs((errorLbs / applied) * 100);
+
+                    errorLbsCell.textContent = errorLbs.toFixed(2);
+                    errorPercentCell.textContent = errorPercent.toFixed(2) + ' %';
+
+                    if (errorPercent > monitoringAccuracy) {
+                        errorPercentCell.style.color = 'red';
+                        errorPercentCell.style.fontWeight = 'bold';
+                    } else {
+                        errorPercentCell.style.color = '';
+                        errorPercentCell.style.fontWeight = '';
+                    }
+                } else {
+                    errorLbsCell.textContent = '--';
+                    errorPercentCell.textContent = '--';
+                }
+            }
+        });
+    }
+
+    document.getElementById('calculateErrors1').addEventListener('click', function () {
+        calculateErrors('table1');
+        calculateErrors('table2');
+        calculateErrors('table3');
+    });
+
+    $(document).ready(function () {
+        $('#table1, #table2, #table3').DataTable({
+            responsive: true,
+            scrollX: true,
+            paging: false,
+            ordering: false,
+            info: false,
+            searching: false,
+            autoWidth: false,
+        });
+    });
+</script>
+<script>
+    document.getElementById('plotStandardCurve').addEventListener('click', function () {
+        const xData = [];  // Applied Tension
+        const yData = [];  // Load Cell Tension
+
+        // Extract data from #table3
+        document.querySelectorAll('#table3 tbody tr').forEach(row => {
+            const appliedInput = row.querySelector('input.appliedload');
+            const tensionInput = row.querySelector('input.loadcelltension');
+
+            if (appliedInput && tensionInput) {
+                const x = parseFloat(appliedInput.value);
+                const y = parseFloat(tensionInput.value);
+                if (!isNaN(x) && !isNaN(y)) {
+                    xData.push(x);
+                    yData.push(y);
+                }
+            }
+        });
+
+        if (xData.length < 2) {
+            alert("Not enough data to plot.");
+            return;
+        }
+
+        // Linear regression (y = mx + b)
+        const n = xData.length;
+        const sumX = xData.reduce((a, b) => a + b, 0);
+        const sumY = yData.reduce((a, b) => a + b, 0);
+        const sumXY = xData.reduce((sum, x, i) => sum + x * yData[i], 0);
+        const sumXX = xData.reduce((sum, x) => sum + x * x, 0);
+
+        const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+        const intercept = (sumY - slope * sumX) / n;
+
+        const yPred = xData.map(x => slope * x + intercept);
+
+        // R^2 calculation
+        const meanY = yData.reduce((a, b) => a + b, 0) / yData.length;
+        const ssTot = yData.reduce((sum, y) => sum + Math.pow(y - meanY, 2), 0);
+        const ssRes = yData.reduce((sum, y, i) => sum + Math.pow(y - yPred[i], 2), 0);
+        const rSquared = 1 - (ssRes / ssTot);
+
+        // Plot traces
+        const dataPointsTrace = {
+            x: xData,
+            y: yData,
+            mode: 'markers',
+            name: 'Verification Data',
+            marker: { color: 'blue', size: 10 }
+        };
+
+        const regressionTrace = {
+            x: [Math.min(...xData), Math.max(...xData)],
+            y: [Math.min(...xData) * slope + intercept, Math.max(...xData) * slope + intercept],
+            mode: 'lines',
+            name: 'Best Fit Line',
+            line: { color: 'green', dash: 'dot' }
+        };
+
+        const layout = {
+            title: `Load Cell vs Applied Tension (R^2 = ${rSquared.toFixed(4)})`,
+            xaxis: { title: 'Applied Tension (lbs)' },
+            yaxis: { title: 'Load Cell Tension (lbs)' },
+            legend: { orientation: 'h', x: 0.3, y: -0.2 }
+        };
+
+        Plotly.newPlot('plotDiv', [dataPointsTrace, regressionTrace], layout);
+
+        const plotModal = new bootstrap.Modal(document.getElementById('plotModal'));
+        plotModal.show();
+    });
+</script>
+<script>
+    function updateElementIndex(el, prefix, index) {
+        const idRegex = new RegExp(`${prefix}-(\\d+|__prefix__)`);
+        const replacement = `${prefix}-${index}`;
+        if (el.name) el.name = el.name.replace(idRegex, replacement);
+        if (el.id) el.id = el.id.replace(idRegex, replacement);
+    }
+
+    function addFormRow(formsetPrefix, tableId) {
+        const totalForms = document.querySelector(`#id_${formsetPrefix}-TOTAL_FORMS`);
+        const table = document.getElementById(tableId).querySelector('tbody');
+        const emptyFormHtml = document.querySelector(`#${formsetPrefix}-empty-form`).innerHTML;
+
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = emptyFormHtml;
+
+        const formCount = parseInt(totalForms.value);
+        newRow.querySelectorAll('input, select, textarea').forEach((input) => {
+            updateElementIndex(input, formsetPrefix, formCount);
+        });
+
+        table.appendChild(newRow);
+        totalForms.value = formCount + 1;
+    }
+</script>
+<div class="modal fade" id="plotModal" tabindex="-1" aria-labelledby="plotModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="plotModalLabel">Standard Curve</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="plotDiv" style="width: 100%; height: 500px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

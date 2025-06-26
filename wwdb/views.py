@@ -25,84 +25,228 @@ from reportlab.lib.enums import TA_LEFT
 from reportlab.platypus import Table, TableStyle, Paragraph
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 import io
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from django.db.models import Q
 from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from django.contrib.auth import logout
 from django.core.exceptions import ValidationError
+from math import ceil
+from dateutil import parser
+import traceback
+from django.db import transaction
 
 
 
 logger = logging.getLogger(__name__)
 
-def get_data_from_external_db(start_date, end_date, winch):
 
-    conn_str = 'Driver={SQL Server};Server=EN-WINCH\MSSQLSERVER01, 1433;Database=WinchDb;Trusted_Connection=no;UID=remoteadmin;PWD=eris.2003;'
 
-    query = f"""
-        SELECT DateTime, Tension, Payout
-        FROM {winch}
-        WHERE DateTime BETWEEN '{start_date}' AND '{end_date}'
-        """
+def _parse_iso(ts: str) -> datetime:
+    return parser.isoparse(ts)
 
-    with pyodbc.connect(conn_str) as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query)
-            rows = cursor.fetchall()
+def chart_data_zoom(request):
+    """AJAX endpoint that returns rebinned data for the visible range."""
+    try:
+        start = _parse_iso(request.GET["start"])
+        end = _parse_iso(request.GET["end"])
+        print(request.GET.get("winch"))
+        winch_id = request.GET.get("winch", "").strip()
+        max_points = min(int(request.GET.get("max_points", MAX_POINTS)), MAX_CAP)
 
-    if len(rows) > 1000:
-        binned_data = {}
-        for row in rows:
-            dt = row[0]
-            if dt not in binned_data:
-                binned_data[dt] = {'max_tension': row[1], 'max_payout': row[2]}
+        if not winch_id.isdigit():
+            raise ValueError("Invalid winch ID")
+
+        winch = Winch.objects.get(id=int(winch_id))
+        data_pts = get_data_from_external_db(start, end, winch.name)
+        data_pts = auto_bin_to_target(data_pts, max_points=max_points)
+
+        data_t = [
+            {"date": dt.strftime("%Y-%m-%d %H:%M:%S"), "value": v["max_tension"]}
+            for dt, v in data_pts
+        ]
+        data_p = [
+            {"date": dt.strftime("%Y-%m-%d %H:%M:%S"), "value": v["max_payout"]}
+            for dt, v in data_pts
+        ]
+        return JsonResponse({"tension": data_t, "payout": data_p})
+
+    except Exception as e:
+        traceback.print_exc()
+        print("chart_data_zoom ERROR:", e)
+        return JsonResponse({"error": str(e)}, status=400)
+
+def bin_data(data_points, *, bin_minutes: float) -> list:
+
+    if not data_points:
+        return []
+
+    bin_delta = timedelta(minutes=bin_minutes)
+    binned    = []
+
+    bin_start   = data_points[0][0]
+    bin_end     = bin_start + bin_delta
+    bin_tens    = []
+    bin_payouts = []
+
+    for dt, vals in data_points:
+        while dt >= bin_end:                        # time to close the bin
+            if bin_tens:                           # avoid /0
+                avg_t = sum(t for t in bin_tens    if t is not None) / len(bin_tens)
+                avg_p = sum(p for p in bin_payouts if p is not None) / len(bin_payouts)
             else:
-                binned_data[dt]['max_tension'] = max(binned_data[dt]['max_tension'], row[1])
-                binned_data[dt]['max_payout'] = max(binned_data[dt]['max_payout'], row[2])
-        rows = sorted(binned_data.items())
-    else:
-        # For the non-binned case, directly use rows as is.
-        rows = [(row[0], {'max_tension': row[1], 'max_payout': row[2]}) for row in rows]
+                avg_t = avg_p = None
 
-    return rows
+            binned.append((bin_start, {'max_tension': avg_t, 'max_payout': avg_p}))
+            bin_start   = bin_end
+            bin_end     = bin_start + bin_delta
+            bin_tens    = []
+            bin_payouts = []
+
+        bin_tens.append(vals['max_tension'])
+        bin_payouts.append(vals['max_payout'])
+
+    # final partially filled bin
+    if bin_tens:
+        avg_t = sum(t for t in bin_tens    if t is not None) / len(bin_tens)
+        avg_p = sum(p for p in bin_payouts if p is not None) / len(bin_payouts)
+        binned.append((bin_start, {'max_tension': avg_t, 'max_payout': avg_p}))
+
+    return binned
+
+MAX_DAYS = 14
+MAX_PROCESS_SECONDS = 5  
+MAX_POINTS  = 2000  
+MAX_CAP = 5000 
+MIN_BIN_SEC = 1 
+
+def auto_bin_to_target(data_points, max_points=MAX_POINTS):
+
+    n = len(data_points)
+    if n <= max_points:
+        return data_points                        # already small
+
+    # overall timespan in seconds
+    total_sec = (data_points[-1][0] - data_points[0][0]).total_seconds()
+    if total_sec <= 0:
+        return data_points[:max_points]           # degenerate, just clip
+
+    bin_sec = max(MIN_BIN_SEC, ceil(total_sec / max_points))
+    bin_minutes = bin_sec / 60.0
+
+    binned = bin_data(data_points, bin_minutes=bin_minutes)
+
+    if len(binned) > max_points:
+        step = ceil(len(binned) / max_points)
+        binned = binned[::step]
+
+    return binned
+
+def get_data_from_external_db(start_date, end_date, winch):
+    try:
+        conn_str = 'Driver={SQL Server};Server=EN-WINCH\MSSQLSERVER01, 1433;Database=WinchDb;Trusted_Connection=no;UID=remoteadmin;PWD=eris.2003;'
+
+        start_str = start_date.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        end_str   = end_date.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+
+        query = f"""
+            SELECT DateTime, Tension, Payout
+            FROM {winch}
+            WHERE DateTime BETWEEN '{start_str}' AND '{end_str}'
+            """
+
+        with pyodbc.connect(conn_str) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query)
+                rows = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return [(row[0], {'max_tension': row[1], 'max_payout': row[2]}) for row in rows]
+
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        return None
 
 def charts(request):
-    form = DataFilterForm(request.GET or None)
+    db_connected = True
+    error_message = None
+
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+    winch_id = request.GET.get("winch") or '3'
+    if not winch_id:
+        winch = Winch.objects.last()     # fallback to any winch you like
+    else:
+        winch = Winch.objects.get(id=int(winch_id))
+
+    # Validate input and limit date range
+    try:
+        if start_date_str and end_date_str:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+
+            if (end_date - start_date).days > MAX_DAYS:
+                error_message = f"Please select a date range of {MAX_DAYS} days or less."
+
+            # Include full day
+            end_date = end_date + timedelta(days=1)
+        else:
+            end_date = datetime.utcnow()
+            start_date = end_date - timedelta(days=1)
+            end_date = end_date + timedelta(days=1)
+
+    except ValueError:
+        error_message = "Invalid date format."
+
+
+
+    try:
+        winch = Winch.objects.get(id=int(winch_id))
+    except (Winch.DoesNotExist, ValueError):
+        winch = Winch.objects.last()
+
     data_tension = []
     data_payout = []
-    
-    if not form.is_valid():
-        end_date_initial = datetime.utcnow().date()
-        end_date = end_date_initial + timedelta(days=1)
-        start_date = end_date_initial - timedelta(days=1)
-    else:
-        start_date = form.cleaned_data['start_date']
-        end_date = form.cleaned_data['end_date']
-        end_date = end_date + timedelta(days=1)
 
-    if form.is_valid():
-        winch = form.cleaned_data['winch']
-    else:
-        winch = Winch.objects.last()  # Get the first winch or handle as appropriate
-        winch = winch.id 
+    if not error_message:
+        data_points = get_data_from_external_db(start_date, end_date, winch.name)
 
-    winch_obj = Winch.objects.filter(id=winch).first()
-    if winch_obj:
-        winch = winch_obj.name
+        if data_points == 'timeout':
+            error_message = "Data processing timed out. Please select a smaller date range."
+            db_connected = False
+            data_points = []
+        elif data_points is None:
+            db_connected = False
+            data_points = []
 
-    data_points = get_data_from_external_db(start_date, end_date, winch)
-    
-    if data_points:
-        for dt, values in data_points:
-            data_tension.append({'date': dt.strftime('%Y-%m-%d %H:%M:%S'), 'value': values['max_tension']})
-            data_payout.append({'date': dt.strftime('%Y-%m-%d %H:%M:%S'), 'value': values['max_payout']})
-    # Serialize the data to JSON
+        data_points = auto_bin_to_target(data_points, MAX_POINTS)
+
+        for dt, vals in data_points:
+            data_tension.append({'date': dt.strftime('%Y-%m-%d %H:%M:%S'), 'value': vals['max_tension']})
+            data_payout.append({'date': dt.strftime('%Y-%m-%d %H:%M:%S'), 'value': vals['max_payout']})
+
     data_json_tension = json.dumps(data_tension)
     data_json_payout = json.dumps(data_payout)
 
-    return render(request, 'wwdb/reports/charts.html', {'form': form, 'data_json_tension': data_json_tension, 'data_json_payout': data_json_payout })
+    form = DataFilterForm(initial={
+        'start_date': start_date.date() if start_date else None,
+        'end_date': (end_date - timedelta(days=1)).date() if end_date else None,
+        'winch': winch.id 
+    })
+
+    context = {
+        'form': form,
+        'data_json_tension': data_json_tension,
+        'data_json_payout': data_json_payout,
+        'db_connected': db_connected,
+        'no_db_connection': not db_connected,
+    }
+
+    return render(request, 'wwdb/reports/charts.html', context)
 
 def custom_logout(request):
     logout(request)  # Logs out the user
@@ -232,12 +376,10 @@ def caststartend(request):
 
 
 def castlist(request):
-    cast_complete = Cast.objects.filter(flagforreview=False, maxpayout__isnull=False, payoutmaxtension__isnull=False, maxtension__isnull=False) 
-    cast_flag = Cast.objects.filter((Q(winch=1) | Q(winch=2) | Q(winch=3)), (Q(flagforreview=True) | Q(maxpayout__isnull=True) | Q(payoutmaxtension__isnull=True) | Q(maxtension__isnull=True)))
+    casts = Cast.objects.filter(deleted=False).order_by('-starttime')  # Or however you're fetching them
 
     context = {
-        'cast_complete': cast_complete,
-        'cast_flag': cast_flag,
+        'casts': casts,
        }
 
     return render(request, 'wwdb/reports/castlist.html', context=context)
@@ -473,9 +615,7 @@ def cruiselist(request):
 def castreport(request):
     # Initialize form with data from GET request (if any)
     form = CastFilterForm(request.GET)
-    casts = Cast.objects.all()
-    cast_complete = Cast.objects.filter(flagforreview=False, maxpayout__isnull=False, payoutmaxtension__isnull=False, maxtension__isnull=False) 
-    cast_flag = Cast.objects.filter((Q(winch=1) | Q(winch=2) | Q(winch=3)), (Q(flagforreview=True) | Q(maxpayout__isnull=True) | Q(payoutmaxtension__isnull=True) | Q(maxtension__isnull=True)))
+    casts = Cast.objects.all().order_by('-startdate')
 
     # Handle form submission and filtering
     if form.is_valid():
@@ -500,8 +640,6 @@ def castreport(request):
             casts = casts.filter(Q(startoperator=operator) | Q(endoperator=operator))
 
     context = {
-        'cast_complete': cast_complete,
-        'cast_flag': cast_flag,
         'casts': casts,
         'form': form,
        }
@@ -1513,6 +1651,156 @@ def operatoradd(request):
     context['form']= form
 
     return render(request, 'wwdb/configuration/deploymentadd.html', context)
+
+"""
+CALIBRATIONS
+Classes related to calibrations
+"""
+
+class CalibrationDelete(DeleteView):
+    model = Calibration
+    template_name="wwdb/maintenance/calibrationdelete.html"
+    success_url= reverse_lazy('calibrationlist')
+
+def calibrationdetail(request, pk):
+    calibration = get_object_or_404(Calibration, id=pk)
+
+    def add_error_fields(queryset):
+        for obj in queryset:
+            try:
+                applied = float(obj.appliedload)
+                tension = float(obj.loadcelltension)
+                error_lbs = tension - applied
+                error_pct = (error_lbs / applied * 100) if applied != 0 else None
+            except (TypeError, ZeroDivisionError, ValueError):
+                error_lbs = None
+                error_pct = None
+            obj.error_lbs = error_lbs
+            obj.error_pct = error_pct
+        return queryset
+
+    tension_verifications = add_error_fields(TensionVerification.objects.filter(calibration=calibration))
+    tension_calibrations = add_error_fields(TensionCalibration.objects.filter(calibration=calibration))
+    calibration_verifications = add_error_fields(CalibrationVerification.objects.filter(calibration=calibration))
+
+    return render(request, 'wwdb/maintenance/calibrationdetail.html', {
+        'calibration': calibration,
+        'tension_verifications': tension_verifications,
+        'tension_calibrations': tension_calibrations,
+        'calibration_verifications': calibration_verifications,
+    })
+
+def calibrationedit(request, pk):
+    calibration = get_object_or_404(Calibration, id=pk)
+
+    formset1 = TensionVerificationFormSet(
+        request.POST or None,
+        queryset=TensionVerification.objects.filter(calibration=calibration),
+        prefix='tv1'
+    )
+    formset2 = TensionCalibrationFormSet(
+        request.POST or None,
+        queryset=TensionCalibration.objects.filter(calibration=calibration),
+        prefix='tc1'
+    )
+    formset3 = CalibrationVerificationFormSet(
+        request.POST or None,
+        queryset=CalibrationVerification.objects.filter(calibration=calibration),
+        prefix='cv1'
+    )
+
+    if request.method == 'POST':
+        if formset1.is_valid() and formset2.is_valid() and formset3.is_valid():
+            instances1 = formset1.save(commit=False)
+            instances2 = formset2.save(commit=False)
+            instances3 = formset3.save(commit=False)
+
+            # Reassign calibration FK before saving
+            for instance in instances1 + instances2 + instances3:
+                instance.calibration = calibration
+                instance.save()
+
+            return redirect('calibrationdetail', pk=calibration.id)
+
+    return render(request, 'wwdb/maintenance/calibrationedit.html', {
+        'calibration': calibration,
+        'formset1': formset1,
+        'formset2': formset2,
+        'formset3': formset3,
+    })
+
+def calibrationlist(request):
+    calibrations=Calibration.objects.all()
+    context={
+        'calibrations': calibrations,
+        }
+    return render(request, 'wwdb/maintenance/calibrationlist.html', context)
+
+def calibrationlogsheet(request, pk):
+    calibration = Calibration.objects.get(id=pk)
+
+    formset1 = TensionVerificationFormSet(request.POST or None, queryset=TensionVerification.objects.none(), prefix='tv1')
+    formset2 = TensionCalibrationFormSet(request.POST or None, queryset=TensionCalibration.objects.none(), prefix='tc1')
+    formset3 = CalibrationVerificationFormSet(request.POST or None, queryset=CalibrationVerification.objects.none(), prefix='cv1')
+
+    for formset in [formset1, formset2, formset3]:
+        for form in formset:
+            form.fields['appliedload'].widget.attrs.update({'class': 'appliedload form-control'})
+            form.fields['loadcelltension'].widget.attrs.update({'class': 'loadcelltension form-control'})
+            form.fields['loadcellrawmv'].widget.attrs.update({'class': 'loadcellrawmv form-control'})
+
+    if request.method == 'POST':
+        if formset1.is_valid() and formset2.is_valid() and formset3.is_valid():
+            for instances in [formset1.save(commit=False), formset2.save(commit=False), formset3.save(commit=False)]:
+                for instance in instances:
+                    instance.calibration = calibration
+                    instance.save()
+            return redirect('calibrationlist')
+
+
+    return render(request, 'wwdb/maintenance/calibrationlogsheet.html', {
+        'formset1': formset1,
+        'formset2': formset2,
+        'formset3': formset3,
+        'calibration': calibration,
+    })
+
+
+def calibrationworksheet(request):
+
+    form = CalibrationWorksheetForm(request.POST or None)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            obj = form.save(commit=False)  
+            obj.worksheet_calculation()
+            obj.save()
+            return redirect('calibrationlogsheet', pk=obj.id)
+
+    context = {
+        'form':form,
+    }
+
+    return render(request, "wwdb/maintenance/calibrationworksheet.html", context)
+
+def calibrationeditdetails(request, pk):
+    calibration = get_object_or_404(Calibration, pk=pk)
+    form = CalibrationWorksheetForm(request.POST or None, instance=calibration)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.worksheet_calculation()
+            obj.save()
+            return redirect('calibrationdetail', pk=obj.id)
+
+    context = {
+        'form': form,
+        'calibration': calibration,
+    }
+
+    return render(request, "wwdb/maintenance/calibrationeditdetails.html", context)
+
 
 """
 DEPLOYMENTS 

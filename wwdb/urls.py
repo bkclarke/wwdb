@@ -116,6 +116,13 @@ urlpatterns = [
     path('maintenance/lubricationlist', views.lubricationlist, name='lubricationlist'),
     path('maintenance/lubrication/<int:pk>/lubricationdetail', views.lubricationdetail, name='lubricationdetail'),
     path('maintenance/lubrication/<int:pk>/delete/', LubricationDelete.as_view(), name='lubricationdelete'),
+    path('maintenance/calibration/<int:pk>/delete/', CalibrationDelete.as_view(), name='calibrationdelete'),
+    path('maintenance/calibration/<int:pk>/calibrationdetail', views.calibrationdetail, name='calibrationdetail'),
+    path('maintenance/calibrationlist', views.calibrationlist, name='calibrationlist'),
+    path('maintenance/calibration/<int:pk>/edit/', views.calibrationedit, name='calibrationedit'),
+    path('maintenance/calibration/<int:pk>/editdetails/', views.calibrationeditdetails, name='calibrationeditdetails'),
+    path('maintenance/calibrationworksheet', views.calibrationworksheet, name='calibrationworksheet'),
+    path('maintenance/calibrationlogsheet/<int:pk>/', views.calibrationlogsheet, name='calibrationlogsheet'),
 
 
     #URLS related to reports
@@ -132,4 +139,6 @@ urlpatterns = [
     path('reports/unols_report_csv/', views.unols_report_csv, name='unols_report_csv'),
     path('reports/cast_table_csv/', views.cast_table_csv, name='cast_table_csv'),
     path('reports/charts/', charts, name='charts'),
+
+    path('zoom-data', views.chart_data_zoom, name='chart_data_zoom'),
 ]

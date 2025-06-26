@@ -1,31 +1,50 @@
 <!doctype html>
 {% extends "wwdb/base.html" %}
 {% load static %}
-
 {% block content %}
-
 <h1>Winch Plots</h1>
-</br>
-<form method="get" id="dateRangeForm">
-    <div>
-        <label for="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" value="{{ form.start_date.value|date:'Y-m-d'|default_if_none:'' }}" required>
+<br>
+<form method="get" id="dateRangeForm" class="row g-3 align-items-center">
+    <div class="col-auto">
+        <label for="start_date" class="col-form-label">Start Date:</label>
+    </div>
+    <div class="col-auto">
+        <input type="date" id="start_date" name="start_date"
+               class="form-control"
+               value="{{ form.start_date.value|date:'Y-m-d'|default_if_none:'' }}" required>
     </div>
 
-    <div>
-        <label for="end_date">End Date:</label>
-        <input type="date" id="end_date" name="end_date" value="{{ form.end_date.value|date:'Y-m-d'|default_if_none:'' }}" required>
+    <div class="col-auto">
+        <label for="end_date" class="col-form-label">End Date:</label>
     </div>
-    {{ form.winch }}
-    <button type="submit">Filter Data</button>
+    <div class="col-auto">
+        <input type="date" id="end_date" name="end_date"
+               class="form-control"
+               value="{{ form.end_date.value|date:'Y-m-d'|default_if_none:'' }}" required>
+    </div>
+
+    <div class="col-auto">
+        {{ form.winch }}
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Filter Data</button>
+    </div>
 </form>
-<div id="container" style="width: 100%; height: 400px;"></div>
-</br>
-</br>
+<br />
+<br />
+<div id="container"
+     data-winch="{{ winch.id }}"
+     style="width:100%;height:400px;"></div>
+<br>
+<br>
+
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function () {
         var startDateInput = document.getElementById('start_date');
         var endDateInput = document.getElementById('end_date');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const winchId = urlParams.get("winch");
 
         var currentDate = new Date();
         var currentDateString = currentDate.toISOString().split('T')[0];
@@ -34,19 +53,30 @@
         var oneDayAgoString = oneDayAgo.toISOString().split('T')[0];
 
         if (startDateInput && endDateInput) {
-            startDateInput.value = oneDayAgoString;
-            endDateInput.value = currentDateString;
+            if (!startDateInput.value) {
+                startDateInput.value = oneDayAgoString;
+            }
+            if (!endDateInput.value) {
+                endDateInput.value = currentDateString;
+            }
 
-            // Set max date for the end date to be the current date
+        if (startDateInput.value) {
+            var startDate = new Date(startDateInput.value);
+            var endLimit = new Date(startDate);
+            endLimit.setDate(endLimit.getDate() + 14);
+            endDateInput.setAttribute('min', startDateInput.value);
+            endDateInput.setAttribute('max', endLimit.toISOString().split('T')[0]);
+        }
+
             endDateInput.setAttribute('max', currentDateString);
-            // Set the min date for the end date based on the start date
+
             startDateInput.addEventListener('change', function () {
                 var startDate = new Date(startDateInput.value);
                 var endDate = new Date(startDate);
-                endDate.setDate(endDate.getDate() + 14); // 2 weeks later
+                endDate.setDate(endDate.getDate() + 14);
                 endDateInput.setAttribute('min', startDateInput.value);
                 endDateInput.setAttribute('max', endDate.toISOString().split('T')[0]);
-                endDateInput.value = ''; // Reset end date
+                endDateInput.value = '';
             });
 
             endDateInput.addEventListener('change', function () {
@@ -59,116 +89,162 @@
             var endDate = new Date(endDateInput.value);
             if (startDate >= endDate) {
                 alert('Start date must be before end date.');
-                endDateInput.value = ''; // Reset end date
+                endDateInput.value = '';
             }
         }
+
+        var noDbConnection = {{ no_db_connection|yesno:"true,false"}};
+        let data_tension = [];
+        let data_payout = [];
 
         try {
-            var data_tension = JSON.parse('{{ data_json_tension|escapejs }}');
-            var data_payout = JSON.parse('{{ data_json_payout|escapejs }}');
+            data_tension = JSON.parse("{{ data_json_tension|default:'[]'|escapejs }}");
+            data_payout = JSON.parse("{{ data_json_payout|default:'[]'|escapejs }}");
+            console.log('Tension data:', data_tension);
+            console.log('Payout data:', data_payout);
+        } catch (e) {
+            console.error("Failed to parse chart data:", e);
+        }
 
-            var chart = Highcharts.chart('container', {
-                chart: {
-                    type: 'line',
-                    zoomType: 'x',
-                    events: {
-                        load: function() {
-                            updateMaxTensionPlotLine(this);
-                        }
-                    }
-                },
-                title: {
-                    text: 'Tension, Payout vs. Time'
-                },
-                xAxis: {
-                    type: 'datetime',
-                    title: {
-                        text: 'Date'
-                    },
-                    events: {
-                        afterSetExtremes: function (e) {
-                            updateMaxTensionPlotLine(this.chart);
-                        }
-                    }
-                },
-                yAxis: [{
-                    title: {
-                        text: 'Tension lbs'
-                    },
-                    labels: {
-                        format: '{value} lbs'
-                    }
-                }, {
-                    title: {
-                        text: 'Payout (m)'
-                    },
-                    labels: {
-                        format: '{value} m'
-                    },
-                    opposite: true
-                }],
-                series: [{
-                    name: 'Tension',
-                    type: 'line',
-                    yAxis: 0,
-                    data: data_tension.map(function (point) {
-                        return [new Date(point.date).getTime(), point.value];
-                    })
-                }, {
-                    name: 'Payout',
-                    type: 'line',
-                    yAxis: 1,
-                    data: data_payout.map(function (point) {
-                        return [new Date(point.date).getTime(), point.value];
-                    })
-                }]
-            });
+    const toSeries = arr => arr.map(p => [new Date(p.date).getTime(), p.value]);
 
-            function updateMaxTensionPlotLine(chart) {
-                var xAxis = chart.xAxis[0];
-                var min = xAxis.min;
-                var max = xAxis.max;
+    let chart = Highcharts.chart("container", {
+        chart: {
+            zoomType: "x",
+            events: {
+                load() { if (!noDbConnection) updateMaxTension(this); },
+                selection(evt) {
+                    if (!evt.xAxis || noDbConnection) return;
 
-                var visibleTensionData = data_tension.filter(function(point) {
-                    var pointTime = new Date(point.date).getTime();
-                    return pointTime >= min && pointTime <= max;
-                });
+                    let winchId =
+                        document.querySelector('select[name="winch"]')?.value      
+                        || document.getElementById('container')?.dataset.winch    
+                        || "3";
 
-                if (visibleTensionData.length > 0) {
-                    var maxTensionData = visibleTensionData.reduce(function(prev, current) {
-                        return (prev.value > current.value) ? prev : current;
+                    const min = evt.xAxis[0].min;
+                    const max = evt.xAxis[0].max;
+                    const maxPts = Math.min(this.chartWidth, 10000);
+                    const params = new URLSearchParams({
+                        start: new Date(min).toISOString(),
+                        end: new Date(max).toISOString(),
+                        winch: winchId,
+                        max_points: maxPts
                     });
 
-                    var maxTensionValue = maxTensionData.value;
-                    var maxTensionDate = new Date(maxTensionData.date).getTime();
+                    console.log("zoom request: ", params.toString());
+                    console.log("Zoom winchId:", winchId);
 
-                    xAxis.update({
-                        plotLines: [{
-                            color: 'rgba(255, 0, 0, 0.8)',
-                            width: 2,
-                            value: maxTensionDate,
-                            label: {
-                                text: 'Max Tension: ' + maxTensionValue,
-                                style: {
-                                    color: 'red'
-                                },
-                                align: 'left',
-                                verticalAlign: 'bottom',
-                                x: 10,
-                                y: -20,
-                                rotation: 0
-                            }
-                        }]
-                    });
-                } else {
-                    xAxis.update({
-                        plotLines: []
-                    });
+                    fetch("{% url 'chart_data_zoom' %}?" + params)
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.error) { console.error(data.error); return; }
+                            data_tension = data.tension;
+                            data_payout = data.payout;
+                            chart.series[0].setData(toSeries(data_tension), false);
+                            chart.series[1].setData(toSeries(data_payout), false);
+                            updateMaxTension(chart);
+                        })
+                        .catch(console.error);
+
+                    evt.preventDefault();
                 }
             }
-        } catch (e) {
-            console.error('Error parsing or plotting data:', e);
-        }
+        },
+        title: { text: "Tension, Payout vs. Time" },
+        xAxis: { type: "datetime" },
+        yAxis: [
+            { title: { text: "Tension (lbs)" }, labels: { format: "{value} lbs" } },
+            { title: { text: "Payout (m)" }, labels: { format: "{value} m" }, opposite: true }
+        ],
+        series: [
+            { name: "Tension", yAxis: 0, data: toSeries(data_tension) },
+            { name: "Payout", yAxis: 1, data: toSeries(data_payout) }
+        ]
     });
+
+    function updateMaxTension(chart) {
+        const xAxis = chart.xAxis[0];
+        const min = xAxis.min;
+        const max = xAxis.max;
+
+        const visibleTensionData = data_tension.filter(p => {
+            const time = new Date(p.date).getTime();
+            return time >= min && time <= max;
+        });
+
+        const nonNullTension = visibleTensionData.filter(p => p.value !== null);
+
+        // Remove previous no-data label if present
+        if (chart.customNoDataLabel) {
+            chart.customNoDataLabel.destroy();
+            chart.customNoDataLabel = null;
+        }
+
+        // PlotBands for null regions
+        const nullBands = [];
+        let i = 0;
+        while (i < visibleTensionData.length) {
+            if (visibleTensionData[i].value === null) {
+                // Find start of null region
+                let startIdx = i;
+                while (i < visibleTensionData.length && visibleTensionData[i].value === null) {
+                    i++;
+                }
+                let prev = visibleTensionData[startIdx - 1];
+                let next = visibleTensionData[i];
+                if (prev && next) {
+                    nullBands.push({
+                        color: 'rgba(150, 150, 150, 0.3)',
+                        from: new Date(prev.date).getTime(),
+                        to: new Date(next.date).getTime(),
+                        zIndex: 1,
+                    });
+                }
+            } else {
+                i++;
+            }
+    }
+
+        xAxis.update({
+            plotLines: [],
+            plotBands: nullBands
+        });
+
+        // Max tension plot line
+        if (nonNullTension.length > 0) {
+            const maxPoint = nonNullTension.reduce((a, b) => a.value > b.value ? a : b);
+            const maxDate = new Date(maxPoint.date).getTime();
+
+            xAxis.update({
+                plotLines: [{
+                    color: 'red',
+                    width: 2,
+                    value: maxDate,
+                    label: {
+                        text: 'Max Tension: ' + maxPoint.value,
+                        align: 'left',
+                        verticalAlign: 'bottom',
+                        x: 10,
+                        y: -20,
+                        rotation: 0,
+                        style: { color: 'red' }
+                    }
+                }]
+            });
+        } else {
+            chart.customNoDataLabel = chart.renderer.text(
+                'No values in the selected date range',
+                chart.plotLeft + chart.plotWidth / 2 - 100,
+                chart.plotTop + chart.plotHeight / 2
+            ).css({
+                color: 'gray',
+                fontSize: '16px'
+            }).attr({ zIndex: 5 }).add();
+        }
+    }
+
+    });
+
 </script>
+
 {% endblock content %}

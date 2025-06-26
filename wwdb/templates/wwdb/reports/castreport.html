@@ -1,77 +1,23 @@
 <!doctype html>
 {% extends "wwdb/base.html" %}
 {% load static %}
-
-
 {% block content %}
+<style>
+    .js-hide {
+        visibility: hidden;
+        height: 0;
+    }
+</style>
+<style>
+    #cast-table-container {
+        opacity: 0;
+        transition: opacity .15s;
+    }
+</style>
 <button id="caststartend" class="btn btn-secondary btn-sm">Enter Past Cast</button>
 <img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use to retroactively enter a cast and calculate payout and tension from the database">
 <button id="castmanualenter" class="btn btn-primary btn-sm">Enter cast without calculation</button>
 <img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered">
-</br>
-</br>
-{% if cast_flag %}
-<h3>Flagged casts</h3>
-</br>
-<table id="table1" class="display table-danger nowrap" style="width:100%">
-    <thead>
-        <tr>
-            <th>View Plot</th>
-            <th>Start time</th>
-            <th>Duration (min)</th>
-            <th>Winch</th>
-            <th>Wire</th>
-            <th>Deployment type</th>
-            <th>Start operator</th>
-            <th>End operator</th>
-            <th>Max tension</th>
-            <th>Max payout</th>
-            <th>Payout at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
-            <th>Meter mark at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
-            <th>Time at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
-            <th>Wet end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the wet end"></th>
-            <th>Dry end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the dry end"></th>
-            <th>Wire in at max tension</th>
-            <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
-            <th>Manual edit<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
-            <th>Delete</th>
-        </tr>
-    </thead>
-    {% for cast in cast_flag %}
-    <tr>
-        <td>
-            <a href="{% url 'charts' %}?start_date={{ cast.format_startdate_url }}&end_date={{ cast.format_enddate_url }}&winch={{ cast.winch.id }}" class="btn btn-info btn-sm">View Plot</a>
-        </td>
-        <td>{{cast.format_startdate}}</td>
-        <td>{{cast.duration}}</td>
-        <td>{{cast.winch}}</td>
-        <td>{{cast.wire}}</td>
-        <td>{{cast.deploymenttype}}</td>
-        <td>{{cast.startoperator}}</td>
-        <td>{{cast.endoperator}}</td>
-        <td>{{cast.maxtension}}</td>
-        <td>{{cast.maxpayout}}</td>
-        <td>{{cast.payoutmaxtension}}</td>
-        <td>{{cast.metermaxtension}}</td>
-        <td>{{cast.format_timemaxtension}}</td>
-        <td>{{cast.wetendtag}}</td>
-        <td>{{cast.dryendtag}}</td>
-        <td>{{cast.wire_in}}</td>
-        <td>
-            <a href="{% url 'castedit' cast.pk %}" class="btn btn-primary btn-sm">Edit</a>
-        </td>
-        <td>
-            <a href="{% url 'castmanualedit' cast.pk %}" class="btn btn-secondary btn-sm">Manual Edit</a>
-        </td>
-        <td>
-            <a href="{% url 'castdelete' cast.pk %}" class="btn btn-danger btn-sm delete-button" data-cast-id="{{ cast.pk }}">Delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-{% endif %}
-<br />
-<h3>All casts</h3>
 <br />
 <form method="get">
     {{ form.winch }}
@@ -86,92 +32,86 @@
     </br>
     </br>
 </form>
-<table id="table2" class="display nowrap">
-    <thead>
-        <tr>
-            <th>View Plot</th>
-            <th>Start time</th>
-            <th>Duration (min)</th>
-            <th>Winch</th>
-            <th>Wire</th>
-            <th>Deployment type</th>
-            <th>Start operator</th>
-            <th>End operator</th>
-            <th>Max tension</th>
-            <th>Max payout</th>
-            <th>Wire out at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
-            <th>Meter mark at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
-            <th>Time of max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
-            <th>Wet end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the wet end"></th>
-            <th>Dry end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the dry end"></th>
-            <th>Wire rinse</th>
-            <th>Ship</th>
-            <th>Institution</th>
-            <th>Winch manufacturer</th>
-            <th>Wire type</th>
-            <th>Wire length (m)</th>
-            <th>factor of Safety</th>
-            <th>Safe working tension (lbs)</th>
-            <th>Wire in at max tension</th>
-            <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
-            <th>Manual edit<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
-            <th>Delete</th>
+<div id="cast-table-container">
+    <table id="table" class="display nowrap">
+        <thead>
+            <tr>
+                <th>View Plot</th>
+                <th>Start time</th>
+                <th>Duration (min)</th>
+                <th>Winch</th>
+                <th>Wire</th>
+                <th>Deployment type</th>
+                <th>Start operator</th>
+                <th>End operator</th>
+                <th>Max tension</th>
+                <th>Max payout</th>
+                <th>Wire out at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Payout at which max tension occured."></th>
+                <th>Meter mark at max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Marks where along the wire the max tension occured"></th>
+                <th>Time of max tension<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Time at which the max tension occured"></th>
+                <th>Wet end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the wet end"></th>
+                <th>Dry end<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Value of meter mark at the dry end"></th>
+                <th>Wire rinse</th>
+                <th>Ship</th>
+                <th>Institution</th>
+                <th>Winch manufacturer</th>
+                <th>Wire type</th>
+                <th>Wire length (m)</th>
+                <th>factor of Safety</th>
+                <th>Safe working tension (lbs)</th>
+                <th>Wire in at max tension</th>
+                <th>Edit cast<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Edit a cast and automatically calculate max payout and tension."></th>
+                <th>Manual edit<img src="{% static 'img/info_icon.png' %}" alt="Example Image" data-toggle="tooltip" data-placement="left" title="Use only if payout and tension need to be manually entered"></th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+
+        {% for cast in casts %}
+        <tr class="{% if cast.flagforreview or not cast.maxtension or not cast.maxpayout %}table-danger{% endif %}">
+            <td>
+                <a href="{% url 'charts' %}?start_date={{ cast.format_startdate_url }}&end_date={{ cast.format_enddate_url }}&winch={{ cast.winch.id }}" class="btn btn-info btn-sm">View Plot</a>
+            </td>
+            <td>{{cast.format_startdate_csv}}</td>
+            <td>{{cast.duration}}</td>
+            <td>{{cast.winch}}</td>
+            <td>{{cast.wire}}</td>
+            <td>{{cast.deploymenttype}}</td>
+            <td>{{cast.startoperator}}</td>
+            <td>{{cast.endoperator}}</td>
+            <td>{{cast.maxtension}}</td>
+            <td>{{cast.maxpayout}}</td>
+            <td>{{cast.payoutmaxtension}}</td>
+            <td>{{cast.metermaxtension}}</td>
+            <td>{{cast.format_timemaxtension}}</td>
+            <td>{{cast.wetendtag}}</td>
+            <td>{{cast.dryendtag}}</td>
+            <td>{{cast.wirerinse}}</td>
+            <td>{{cast.winch.ship}}</td>
+            <td>{{cast.winch.institution}}</td>
+            <td>{{cast.winch.manufacturer}}</td>
+            <td>{{cast.wire.wirerope.name}}</td>
+            <td>{{cast.wirelength}}</td>
+            <td>{{cast.factorofsafety}}</td>
+            <td>{{cast.safeworkingtension}}</td>
+            <td>{{cast.wire_in}}</td>
+            <td>
+                <a href="{% url 'castedit' cast.pk %}" class="btn btn-primary btn-sm delete-button">Edit</a>
+            </td>
+            <td>
+                <a href="{% url 'castmanualedit' cast.pk %}" class="btn btn-secondary btn-sm delete-button">Manual Edit</a>
+            </td>
+            <td>
+                <a href="{% url 'castdelete' cast.pk %}" class="btn btn-danger btn-sm delete-button" data-cast-id="{{ cast.pk }}">Delete</a>
+            </td>
         </tr>
-    </thead>
-
-    {% for cast in casts %}
-    <tr>
-        <td>
-            <a href="{% url 'charts' %}?start_date={{ cast.format_startdate_url }}&end_date={{ cast.format_enddate_url }}&winch={{ cast.winch.id }}" class="btn btn-info btn-sm">View Plot</a>
-        </td>
-        <td>{{cast.format_startdate_csv}}</td>
-        <td>{{cast.duration}}</td>
-        <td>{{cast.winch}}</td>
-        <td>{{cast.wire}}</td>
-        <td>{{cast.deploymenttype}}</td>
-        <td>{{cast.startoperator}}</td>
-        <td>{{cast.endoperator}}</td>
-        <td>{{cast.maxtension}}</td>
-        <td>{{cast.maxpayout}}</td>
-        <td>{{cast.payoutmaxtension}}</td>
-        <td>{{cast.metermaxtension}}</td>
-        <td>{{cast.format_timemaxtension}}</td>
-        <td>{{cast.wetendtag}}</td>
-        <td>{{cast.dryendtag}}</td>
-        <td>{{cast.wirerinse}}</td>
-        <td>{{cast.winch.ship}}</td>
-        <td>{{cast.winch.institution}}</td>
-        <td>{{cast.winch.manufacturer}}</td>
-        <td>{{cast.wire.wirerope.name}}</td>
-        <td>{{cast.wirelength}}</td>
-        <td>{{cast.factorofsafety}}</td>
-        <td>{{cast.safeworkingtension}}</td>
-        <td>{{cast.wire_in}}</td>
-        <td>
-            <a href="{% url 'castedit' cast.pk %}" class="btn btn-primary btn-sm delete-button">Edit</a>
-        </td>
-        <td>
-            <a href="{% url 'castmanualedit' cast.pk %}" class="btn btn-secondary btn-sm delete-button">Manual Edit</a>
-        </td>
-        <td>
-            <a href="{% url 'castdelete' cast.pk %}" class="btn btn-danger btn-sm delete-button" data-cast-id="{{ cast.pk }}">Delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-</br>
-<button id="unolsButton">Download UNOLS report</button>
-<button id="tableButton">Download table</button>
-<script>
+        {% endfor %}
+    </table>
+</div>
+    </br>
+    <button id="unolsButton">Download UNOLS report</button>
+    <button id="tableButton">Download table</button>
+    <script>
     $(document).ready(function () {
-        // Initialize DataTables
-        $('#table1').DataTable({
-            responsive: true,
-            scrollX: true,
-            order: [[1, "desc"]]
-            // Add more options as needed
-        });
-
         // Initialize tooltips (assuming you're using Bootstrap tooltips)
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -185,12 +125,15 @@
             window.location.href = "{% url 'caststartend' %}";
         });
     });
-    $(document).ready(function () {
-        var table = $('#table2').DataTable({
-            responsive: true,
-            scrollX: true,
-            order: [[1, "desc"]]
-        });
+        $(document).ready(function () {
+            const table = $('#table').DataTable({
+                responsive: true,
+                scrollX: true,
+                order: [[1, 'desc']],
+                initComplete: function () {
+                    $('#cast-table-container').css('opacity', 1);
+                }
+            });
 
         // Function to count unique values in a column
         function verifyCountUniqueValues(columnIndex) {
@@ -245,7 +188,7 @@
         // Button click handler
         $('#unolsButton').on('click', function () {
             // Check if DataTable is initialized
-            if ($.fn.DataTable.isDataTable('#table2')) {
+            if ($.fn.DataTable.isDataTable('#table')) {
                 var uniqueCount = verifyCountUniqueValues(4);
                 var uniqueValues3 = getUniqueValues(4);
                 var uniqueValues16 = getUniqueValues(17);
@@ -335,7 +278,7 @@
         // Button click handler
         $('#tableButton').on('click', function () {
             // Check if DataTable is initialized
-            if ($.fn.DataTable.isDataTable('#table2')) {
+            if ($.fn.DataTable.isDataTable('#table')) {
 
                 // Proceed with CSV download logic
                 var data = table.rows({ search: 'applied' }).data();
@@ -382,5 +325,5 @@
             }
         });
     });
-</script>
-{% endblock content %}
+    </script>
+    {% endblock content %}

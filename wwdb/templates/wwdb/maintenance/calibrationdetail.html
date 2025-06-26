@@ -1,0 +1,256 @@
+{% extends "wwdb/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container p-5">
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-md-4 mb-4">
+            <div style="position: sticky; top: 200px;">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Calibration Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Calibration date:</strong> {{ calibration.date }}</p>
+                        <p><strong>Operator:</strong> {{ calibration.operator }}</p>
+                        <p><strong>Wire:</strong> {{ calibration.wire }}</p>
+                        <p><strong>Winch:</strong> {{ calibration.winch }}</p>
+                        <p><strong>Factor of safety:</strong> {{ calibration.factorofsafety }}</p>
+                        <p><strong>Safe working tension (free end):</strong> {{ calibration.safeworkingtension }}</p>
+                        <p><strong>Monitoring accuracy:</strong> {{ calibration.tensionmonitoringaccuracy }} %</p>
+                        <p><strong>Calibration high setpoint:</strong> {{ calibration.calhighsetpoint }}</p>
+                        <p><strong>Calibration low setpoint:</strong> {{ calibration.callowsetpoint }}</p>
+                    </div>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-secondary" id="calibrationedit">Edit Calibration Data</button>
+                    <button type="button" class="btn btn-info" id="plotStandardCurve">Standard Curve</button>
+                    </br>
+                    </br>
+                    <button type="button" class="btn btn-warning" id="calibrationeditdetails">Edit Calibration Details</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content -->
+        <div class="col-md-8">
+            <h2>Tension Verification</h2>
+            <table class="table table-bordered" id="table1">
+                <thead>
+                    <tr>
+                        <th>Applied Load (lbs)</th>
+                        <th>Load Cell Tension (lbs)</th>
+                        <th>Load Cell Raw mV</th>
+                        <th>Error (lbs)</th>
+                        <th>Error (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in tension_verifications %}
+                    <tr>
+                        <td>{{ item.appliedload }}</td>
+                        <td>{{ item.loadcelltension }}</td>
+                        <td>{{ item.loadcellrawmv }}</td>
+                        <td>
+                            {% if item.error_lbs is not None %}
+                            {{ item.error_lbs|floatformat:2 }}
+                            {% else %}
+                            --
+                            {% endif %}
+                        </td>
+                        <td class="errorpercent">
+                            {% if item.error_pct is not None %}
+                            {{ item.error_pct|floatformat:2 }}%
+                            {% else %}
+                            --
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h2 class="mt-4">Tension Calibration</h2>
+            <table class="table table-bordered" id="table2">
+                <thead>
+                    <tr>
+                        <th>Applied Load (lbs)</th>
+                        <th>Load Cell Tension (lbs)</th>
+                        <th>Load Cell Raw mV</th>
+                        <th>Error (lbs)</th>
+                        <th>Error (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in tension_calibrations %}
+                    <tr>
+                        <td>{{ item.appliedload }}</td>
+                        <td>{{ item.loadcelltension }}</td>
+                        <td>{{ item.loadcellrawmv }}</td>
+                        <td>
+                            {% if item.error_lbs is not None %}
+                            {{ item.error_lbs|floatformat:2 }}
+                            {% else %}
+                            --
+                            {% endif %}
+                        </td>
+                        <td class="errorpercent">
+                            {% if item.error_pct is not None %}
+                            {{ item.error_pct|floatformat:2 }}%
+                            {% else %}
+                            --
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h2 class="mt-4">Calibration Verification</h2>
+            <table class="table table-bordered" id="table3">
+                <thead>
+                    <tr>
+                        <th>Applied Load (lbs)</th>
+                        <th>Load Cell Tension (lbs)</th>
+                        <th>Load Cell Raw mV</th>
+                        <th>Error (lbs)</th>
+                        <th>Error (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in calibration_verifications %}
+                    <tr>
+                        <td>{{ item.appliedload }}</td>
+                        <td>{{ item.loadcelltension }}</td>
+                        <td>{{ item.loadcellrawmv }}</td>
+                        <td>
+                            {% if item.error_lbs is not None %}
+                            {{ item.error_lbs|floatformat:2 }}
+                            {% else %}
+                            --
+                            {% endif %}
+                        </td>
+                        <td class="errorpercent">
+                            {% if item.error_pct is not None %}
+                            {{ item.error_pct|floatformat:2 }}%
+                            {% else %}
+                            --
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $('#calibrationedit').click(function () {
+        window.location.href = "{% url 'calibrationedit' calibration.pk %}";
+    });
+    $('#calibrationeditdetails').click(function () {
+        window.location.href = "{% url 'calibrationeditdetails' calibration.pk %}";
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const monitoringAccuracy = parseFloat("{{ calibration.tensionmonitoringaccuracy }}");
+
+        // Select all .errorpercent elements
+        document.querySelectorAll(".errorpercent").forEach(cell => {
+            const text = cell.textContent.trim().replace('%', '');
+            const value = parseFloat(text);
+
+            if (!isNaN(value)) {
+                if (Math.abs(value) > monitoringAccuracy) {
+                    cell.style.color = 'red';
+                    cell.style.fontWeight = 'bold';
+                }
+            }
+        });
+    });
+</script>
+<script>
+    document.getElementById('plotStandardCurve').addEventListener('click', function () {
+        const xData = []; // Applied Tension
+        const yData = []; // Load Cell Tension
+
+        // Extract from read-only #table3
+        document.querySelectorAll('#table3 tbody tr').forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 2) {
+                const x = parseFloat(cells[0].textContent.trim()); // Applied Tension
+                const y = parseFloat(cells[1].textContent.trim()); // Load Cell Tension
+                if (!isNaN(x) && !isNaN(y)) {
+                    xData.push(x);
+                    yData.push(y);
+                }
+            }
+        });
+
+        if (xData.length < 2) {
+            alert("Not enough data to plot.");
+            return;
+        }
+
+        // Linear regression (y = mx + b)
+        const n = xData.length;
+        const sumX = xData.reduce((a, b) => a + b, 0);
+        const sumY = yData.reduce((a, b) => a + b, 0);
+        const sumXY = xData.reduce((sum, x, i) => sum + x * yData[i], 0);
+        const sumXX = xData.reduce((sum, x) => sum + x * x, 0);
+
+        const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+        const intercept = (sumY - slope * sumX) / n;
+
+        const yPred = xData.map(x => slope * x + intercept);
+
+        // R^2 calculation
+        const meanY = yData.reduce((a, b) => a + b, 0) / yData.length;
+        const ssTot = yData.reduce((sum, y) => sum + Math.pow(y - meanY, 2), 0);
+        const ssRes = yData.reduce((sum, y, i) => sum + Math.pow(y - yPred[i], 2), 0);
+        const rSquared = 1 - (ssRes / ssTot);
+
+        // Plot data
+        const dataPointsTrace = {
+            x: xData,
+            y: yData,
+            mode: 'markers',
+            name: 'Verification Data',
+            marker: { color: 'blue', size: 10 }
+        };
+
+        const regressionTrace = {
+            x: [Math.min(...xData), Math.max(...xData)],
+            y: [Math.min(...xData) * slope + intercept, Math.max(...xData) * slope + intercept],
+            mode: 'lines',
+            name: 'Best Fit Line',
+            line: { color: 'green', dash: 'dot' }
+        };
+
+        const layout = {
+            title: `Load Cell vs Applied Tension (R^2 = ${rSquared.toFixed(4)})`,
+            xaxis: { title: 'Applied Tension (lbs)' },
+            yaxis: { title: 'Load Cell Tension (lbs)' },
+            legend: { orientation: 'h', x: 0.3, y: -0.2 }
+        };
+
+        Plotly.newPlot('plotDiv', [dataPointsTrace, regressionTrace], layout);
+
+        const plotModal = new bootstrap.Modal(document.getElementById('plotModal'));
+        plotModal.show();
+    });
+</script>
+<div class="modal fade" id="plotModal" tabindex="-1" aria-labelledby="plotModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="plotModalLabel">Standard Curve</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="plotDiv" style="height: 500px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

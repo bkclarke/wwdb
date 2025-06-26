@@ -5,6 +5,8 @@ from bootstrap_datepicker_plus.widgets import DatePickerInput, DateTimePickerInp
 from django.forms.widgets import HiddenInput, Widget
 from datetime import datetime
 from django.core.exceptions import ValidationError
+from django.forms import modelformset_factory
+
 
 
 class StartCastForm(ModelForm):
@@ -970,3 +972,87 @@ class WireRopeDataAddForm(ModelForm):
                     "placeholder": "cable type",
                 }),
         }
+
+
+class CalibrationWorksheetForm(ModelForm):
+    class Meta:
+        model = Calibration
+        fields = ['date', 'operator', 'winch', 'weightofgear', 'notes']
+        widgets = {
+            'date': DatePickerInput(
+                options={"format": "YYYY-MM-DD"}
+            ),
+            'notes': forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%;",
+                    "placeholder": "notes",
+                }
+            ),
+            'operator': forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "style": "max-width: 100%;",
+                    "placeholder": "name",
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Set required fields
+        self.fields['date'].required = True
+        self.fields['operator'].required = True
+        self.fields['winch'].required = True
+
+class TensionVerificationForm(forms.ModelForm):
+    class Meta:
+        model = TensionVerification
+        fields = ['appliedload', 'loadcelltension', 'loadcellrawmv']
+        widgets = {
+            'appliedload': forms.NumberInput(attrs={'class': 'appliedload form-control'}),
+            'loadcelltension': forms.NumberInput(attrs={'class': 'loadcelltension form-control'}),
+            'loadcellrawmv': forms.NumberInput(attrs={'class': 'loadcellrawmv form-control'}),
+        }
+
+class TensionCalibrationForm(forms.ModelForm):
+    class Meta:
+        model = TensionCalibration
+        fields = ['appliedload', 'loadcelltension', 'loadcellrawmv']
+        widgets = {
+            'appliedload': forms.NumberInput(attrs={'class': 'appliedload form-control'}),
+            'loadcelltension': forms.NumberInput(attrs={'class': 'loadcelltension form-control'}),
+            'loadcellrawmv': forms.NumberInput(attrs={'class': 'loadcellrawmv form-control'}),
+        }
+
+class CalibrationVerificationForm(forms.ModelForm):
+    class Meta:
+        model = CalibrationVerification
+        fields = ['appliedload', 'loadcelltension', 'loadcellrawmv']
+        widgets = {
+            'appliedload': forms.NumberInput(attrs={'class': 'appliedload form-control'}),
+            'loadcelltension': forms.NumberInput(attrs={'class': 'loadcelltension form-control'}),
+            'loadcellrawmv': forms.NumberInput(attrs={'class': 'loadcellrawmv form-control'}),
+        }
+
+TensionVerificationFormSet = modelformset_factory(
+    TensionVerification,
+    form=TensionVerificationForm,
+    extra=2,
+    can_delete=False
+)
+
+TensionCalibrationFormSet = modelformset_factory(
+    TensionCalibration,
+    form=TensionCalibrationForm,
+    extra=2,
+    can_delete=False
+)
+
+CalibrationVerificationFormSet = modelformset_factory(
+    CalibrationVerification,
+    form=CalibrationVerificationForm,
+    extra=3,
+    can_delete=False
+)
