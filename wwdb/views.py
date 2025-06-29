@@ -145,7 +145,7 @@ def auto_bin_to_target(data_points, max_points=MAX_POINTS):
 
 def get_data_from_external_db(start_date, end_date, winch):
     try:
-        conn_str = 'Driver={SQL Server};Server=EN-WINCH\MSSQLSERVER01, 1433;Database=WinchDb;Trusted_Connection=no;UID=remoteadmin;PWD=eris.2003;'
+        conn_str = 'Driver={SQL Server};Server=EN-WINCH\\MSSQLSERVER01, 1433;Database=WinchDb;Trusted_Connection=no;UID=remoteadmin;PWD=eris.2003;'
 
         start_str = start_date.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         end_str   = end_date.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
